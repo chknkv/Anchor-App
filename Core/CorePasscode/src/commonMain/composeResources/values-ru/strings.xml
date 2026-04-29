@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Create passcode -->
+    <string name="create_passcode_step1_title">Установите код-пароль</string>
+    <string name="create_passcode_step2_title">Повторите код-пароль</string>
+    <string name="create_passcode_subtitle">Этот 5-значный&#160;пароль будет использоваться для&#160;быстрой авторизации в&#160;приложении</string>
+    <string name="create_passcode_skip">Пропустить</string>
+    <string name="create_passcode_skip_alert_title">Пропустить установку код-пароля?</string>
+    <string name="create_passcode_skip_alert_subtitle">Вы сможете установить код-пароль позже в&#160;настройках. Без&#160;защиты паролем ваши&#160;данные будут уязвимы</string>
+    <string name="create_passcode_skip_alert_confirm">Пропустить</string>
+    <string name="create_passcode_skip_alert_cancel">Отмена</string>
+    <string name="create_passcode_mismatch_snackbar">Коды не&#160;совпадают. Пожалуйста, попробуйте ещё&#160;раз</string>
+
+    <!-- Enter passcode -->
+    <string name="enter_passcode_title">Anchor</string>
+    <string name="enter_passcode_title_change">Код-пароль</string>
+    <string name="enter_passcode_subtitle">Введите код-пароль, который вы создавали при регистрации</string>
+    <string name="enter_passcode_subtitle_change">Введите текущий код-пароль для&#160;его изменения</string>
+    <string name="enter_passcode_forgot">Забыли код-пароль?</string>
+    <string name="enter_passcode_forgot_alert_title">Забыли код-пароль?</string>
+    <string name="enter_passcode_forgot_alert_subtitle">Для&#160;восстановления доступа все защищённые данные будут безвозвратно удалены. Это действие нельзя отменить</string>
+    <string name="enter_passcode_forgot_alert_confirm">Сбросить</string>
+    <string name="enter_passcode_forgot_alert_cancel">Отмена</string>
+    <string name="enter_passcode_error_snackbar">Неверный код-пароль. Попробуйте ещё&#160;раз.</string>
+
+    <!-- Biometry setup -->
+    <string name="biometry_title">Включите биометрию</string>
+    <string name="biometry_subtitle">Вход в&#160;приложение будет осуществляться по&#160;биометрическим данным</string>
+    <string name="biometry_enable">Включить</string>
+    <string name="biometry_skip">Пропустить</string>
+    <string name="biometry_face_id_title">Face ID</string>
+    <string name="biometry_touch_id_title">Touch ID</string>
+    <string name="biometry_prompt_reason">Подтвердите вход для&#160;включения биометрической разблокировки</string>
+    <string name="biometry_prompt_cancel">Отмена</string>
+</resources>

@@ -1,0 +1,118 @@
+<resources>
+    <!-- Addiction Selection Screen -->
+    <string name="addiction_selection_header_title">Choose your habits</string>
+    <string name="addiction_selection_body_subtitle">Select the habits you\'d like to track.\nYou can skip this step</string>
+    <string name="addiction_selection_counter">Selected %1$d of %2$d</string>
+    <string name="addiction_selection_button_skip">Skip</string>
+    <string name="addiction_selection_button_next">Continue</string>
+
+    <!-- Habit Groups -->
+    <string name="habit_group_lifestyle_title">Lifestyle</string>
+    <string name="habit_group_health_title">Health</string>
+    <string name="habit_group_sport_title">Sport</string>
+    <string name="habit_group_productivity_title">Productivity</string>
+    <string name="habit_group_finance_title">Finance</string>
+    <string name="habit_group_relationships_title">Relationships &amp; Growth</string>
+    <string name="habit_group_other_title">Other</string>
+
+    <!-- Habits: Lifestyle -->
+    <string name="habit_no_smoking">No smoking</string>
+    <string name="habit_no_alcohol">No alcohol</string>
+    <string name="habit_fastfood">No fast food</string>
+    <string name="habit_late_bedtime">Go to bed on time</string>
+    <string name="habit_early_wakeup">Early wake-up</string>
+    <string name="habit_meditation">Meditation</string>
+    <string name="habit_walking">Daily walk</string>
+    <string name="habit_no_social_media">Less social media</string>
+
+    <!-- Habits: Health -->
+    <string name="habit_water">Drink water</string>
+    <string name="habit_vitamins">Take vitamins</string>
+    <string name="habit_warmup">Morning warm-up</string>
+    <string name="habit_stretching">Stretching</string>
+    <string name="habit_posture">Mind your posture</string>
+    <string name="habit_sleep_eight">Sleep 8 hours</string>
+    <string name="habit_fasting_sugar">No sugar</string>
+    <string name="habit_steps_ten_k">10,000 steps</string>
+
+    <!-- Habits: Sport -->
+    <string name="habit_gym_cardio">Cardio</string>
+    <string name="habit_gym_strength">Strength training</string>
+    <string name="habit_yoga">Yoga</string>
+    <string name="habit_running">Running</string>
+    <string name="habit_swimming">Swimming</string>
+    <string name="habit_horseback">Cycling</string>
+    <string name="habit_pullups">Pull-ups</string>
+    <string name="habit_home_workout">Home workout</string>
+
+    <!-- Habits: Productivity -->
+    <string name="habit_reading">Reading</string>
+    <string name="habit_deep_work">Deep work</string>
+    <string name="habit_no_procrastination">No procrastination</string>
+    <string name="habit_weekly_planning">Weekly planning</string>
+    <string name="habit_daily_review">Daily review</string>
+    <string name="habit_learning_courses">Online courses</string>
+    <string name="habit_diary">Journaling</string>
+    <string name="habit_no_screens_before_bed">No screens before bed</string>
+
+    <!-- Habits: Finance -->
+    <string name="habit_spending_tracking">Track spending</string>
+    <string name="habit_no_spontaneous_spending">No impulse purchases</string>
+    <string name="habit_save_percent">Save a percentage</string>
+    <string name="habit_no_creditcard">No credit cards</string>
+    <string name="habit_revise_budget">Revise budget</string>
+    <string name="habit_investing_reading">Learn investing</string>
+    <string name="habit_no_subscriptions">Audit subscriptions</string>
+    <string name="habit_use_cashback">Use cashback</string>
+
+    <!-- Habits: Relationships -->
+    <string name="habit_call_relatives">Call relatives</string>
+    <string name="habit_compliments">Give compliments</string>
+    <string name="habit_new_acquaintance">Meet someone new</string>
+    <string name="habit_gratitude">Gratitude practice</string>
+    <string name="habit_time_alone">Time alone</string>
+    <string name="habit_language">Learn a language</string>
+    <string name="habit_hobby">Hobby time</string>
+    <string name="habit_volunteering">Volunteering</string>
+
+    <!-- Habits: Other -->
+    <string name="habit_check_documents">Check documents</string>
+    <string name="habit_paint_picture">Paint a picture</string>
+
+    <!-- Addiction Create Screen -->
+    <string name="addictionCreate_header_title">Create habit</string>
+    <string name="addictionCreate_name_hint">Habit name</string>
+    <string name="addictionCreate_description_hint">Description (optional)</string>
+    <string name="addictionCreate_icon_section_label">Icon</string>
+    <string name="addictionCreate_gradient_section_label">Color</string>
+    <string name="addictionCreate_category_section_label">Category</string>
+    <string name="addictionCreate_submit_button">Create</string>
+    <string name="addictionCreate_nameEmpty_error">Enter a habit name</string>
+    <string name="addictionCreate_submit_error">Failed to create habit. Please try again</string>
+    <string name="addictionCreate_categoryEmpty_error">Please select a category</string>
+
+    <!-- Addiction Details Screen -->
+    <string name="addictionDetails_header_title">Habit details</string>
+    <string name="addictionDetails_activity_section_title">Activity</string>
+    <string name="addictionDetails_edit_button">Edit</string>
+    <string name="addictionDetails_delete_button">Delete habit</string>
+    <string name="addictionDetails_incrementDays_button">Mark today</string>
+    <string name="addictionDetails_controlDays_label">Days under control</string>
+    <string name="addictionDetails_nameEmpty_error">Enter a habit name</string>
+    <string name="addictionDetails_categoryEmpty_error">Please select a category</string>
+    <string name="addictionDetails_submit_error">Failed to update habit. Please try again</string>
+    <string name="addictionDetails_errorState_description">Failed to load habit details</string>
+    <string name="addictionDetails_errorState_retry_button">Retry</string>
+
+    <!-- Addiction All Screen -->
+    <string name="addictionAll_addHabit_button">Add habit</string>
+    <string name="addictionAll_filterAll_label">All</string>
+    <string name="addictionAll_filterEmpty_description">No habits in this category</string>
+    <string name="addictionAll_emptyState_description">You haven\'t added any habits yet</string>
+    <string name="addictionAll_errorState_description">Failed to load habits</string>
+    <string name="addictionAll_errorState_retry_button">Retry</string>
+    <plurals name="addictionAll_controlDays_label">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+</resources>

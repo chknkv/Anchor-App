@@ -1,0 +1,120 @@
+<resources>
+    <!-- Addiction Selection Screen -->
+    <string name="addiction_selection_header_title">Выберите привычки</string>
+    <string name="addiction_selection_body_subtitle">Выберите привычки, которые хотите отслеживать.\nЭтот шаг можно пропустить</string>
+    <string name="addiction_selection_counter">Выбрано %1$d из %2$d</string>
+    <string name="addiction_selection_button_skip">Пропустить</string>
+    <string name="addiction_selection_button_next">Продолжить</string>
+
+    <!-- Habit Groups -->
+    <string name="habit_group_lifestyle_title">Образ жизни</string>
+    <string name="habit_group_health_title">Здоровье</string>
+    <string name="habit_group_sport_title">Спорт</string>
+    <string name="habit_group_productivity_title">Продуктивность</string>
+    <string name="habit_group_finance_title">Финансы</string>
+    <string name="habit_group_relationships_title">Отношения &amp; Развитие</string>
+    <string name="habit_group_other_title">Другое</string>
+
+    <!-- Habits: Lifestyle -->
+    <string name="habit_no_smoking">Не курить</string>
+    <string name="habit_no_alcohol">Без алкоголя</string>
+    <string name="habit_fastfood">Без фастфуда</string>
+    <string name="habit_late_bedtime">Ложиться вовремя</string>
+    <string name="habit_early_wakeup">Ранний подъём</string>
+    <string name="habit_meditation">Медитация</string>
+    <string name="habit_walking">Ежедневная прогулка</string>
+    <string name="habit_no_social_media">Меньше соцсетей</string>
+
+    <!-- Habits: Health -->
+    <string name="habit_water">Пить воду</string>
+    <string name="habit_vitamins">Принимать витамины</string>
+    <string name="habit_warmup">Утренняя разминка</string>
+    <string name="habit_stretching">Растяжка</string>
+    <string name="habit_posture">Следить за осанкой</string>
+    <string name="habit_sleep_eight">Спать 8 часов</string>
+    <string name="habit_fasting_sugar">Без сахара</string>
+    <string name="habit_steps_ten_k">10 000 шагов</string>
+
+    <!-- Habits: Sport -->
+    <string name="habit_gym_cardio">Кардио</string>
+    <string name="habit_gym_strength">Силовые тренировки</string>
+    <string name="habit_yoga">Йога</string>
+    <string name="habit_running">Бег</string>
+    <string name="habit_swimming">Плавание</string>
+    <string name="habit_horseback">Велоспорт</string>
+    <string name="habit_pullups">Подтягивания</string>
+    <string name="habit_home_workout">Тренировка дома</string>
+
+    <!-- Habits: Productivity -->
+    <string name="habit_reading">Чтение</string>
+    <string name="habit_deep_work">Глубокая работа</string>
+    <string name="habit_no_procrastination">Без прокрастинации</string>
+    <string name="habit_weekly_planning">Планирование недели</string>
+    <string name="habit_daily_review">Итог дня</string>
+    <string name="habit_learning_courses">Онлайн-курсы</string>
+    <string name="habit_diary">Дневник</string>
+    <string name="habit_no_screens_before_bed">Без экранов перед сном</string>
+
+    <!-- Habits: Finance -->
+    <string name="habit_spending_tracking">Учёт расходов</string>
+    <string name="habit_no_spontaneous_spending">Без импульсивных покупок</string>
+    <string name="habit_save_percent">Откладывать часть дохода</string>
+    <string name="habit_no_creditcard">Без кредитных карт</string>
+    <string name="habit_revise_budget">Пересматривать бюджет</string>
+    <string name="habit_investing_reading">Изучать инвестиции</string>
+    <string name="habit_no_subscriptions">Аудит подписок</string>
+    <string name="habit_use_cashback">Использовать кэшбэк</string>
+
+    <!-- Habits: Relationships -->
+    <string name="habit_call_relatives">Звонить близким</string>
+    <string name="habit_compliments">Делать комплименты</string>
+    <string name="habit_new_acquaintance">Знакомиться с новыми людьми</string>
+    <string name="habit_gratitude">Практика благодарности</string>
+    <string name="habit_time_alone">Время наедине с собой</string>
+    <string name="habit_language">Учить язык</string>
+    <string name="habit_hobby">Время на хобби</string>
+    <string name="habit_volunteering">Волонтёрство</string>
+
+    <!-- Habits: Other -->
+    <string name="habit_check_documents">Проверка документов</string>
+    <string name="habit_paint_picture">Рисовать картину</string>
+
+    <!-- Addiction Create Screen -->
+    <string name="addictionCreate_header_title">Создание привычки</string>
+    <string name="addictionCreate_name_hint">Название привычки</string>
+    <string name="addictionCreate_description_hint">Описание (необязательно)</string>
+    <string name="addictionCreate_icon_section_label">Иконка</string>
+    <string name="addictionCreate_gradient_section_label">Цвет</string>
+    <string name="addictionCreate_category_section_label">Категория</string>
+    <string name="addictionCreate_submit_button">Создать</string>
+    <string name="addictionCreate_nameEmpty_error">Введите название привычки</string>
+    <string name="addictionCreate_submit_error">Не&#160;удалось создать привычку. Попробуйте ещё раз</string>
+    <string name="addictionCreate_categoryEmpty_error">Выберите категорию привычки</string>
+
+    <!-- Addiction Details Screen -->
+    <string name="addictionDetails_header_title">О привычке</string>
+    <string name="addictionDetails_activity_section_title">Активность</string>
+    <string name="addictionDetails_edit_button">Изменить</string>
+    <string name="addictionDetails_delete_button">Удалить привычку</string>
+    <string name="addictionDetails_incrementDays_button">Отметить сегодня</string>
+    <string name="addictionDetails_controlDays_label">Дней под контролем</string>
+    <string name="addictionDetails_nameEmpty_error">Введите название привычки</string>
+    <string name="addictionDetails_categoryEmpty_error">Выберите категорию привычки</string>
+    <string name="addictionDetails_submit_error">Не&#160;удалось обновить привычку. Попробуйте ещё раз</string>
+    <string name="addictionDetails_errorState_description">Не&#160;удалось загрузить информацию о привычке</string>
+    <string name="addictionDetails_errorState_retry_button">Повторить</string>
+
+    <!-- Addiction All Screen -->
+    <string name="addictionAll_addHabit_button">Добавить привычку</string>
+    <string name="addictionAll_filterAll_label">Все</string>
+    <string name="addictionAll_filterEmpty_description">Привычек в&#160;этой категории нет</string>
+    <string name="addictionAll_emptyState_description">У&#160;вас пока нет привычек</string>
+    <string name="addictionAll_errorState_description">Не&#160;удалось загрузить привычки</string>
+    <string name="addictionAll_errorState_retry_button">Обновить</string>
+    <plurals name="addictionAll_controlDays_label">
+        <item quantity="one">%1$d день</item>
+        <item quantity="few">%1$d дня</item>
+        <item quantity="many">%1$d дней</item>
+        <item quantity="other">%1$d дня</item>
+    </plurals>
+</resources>

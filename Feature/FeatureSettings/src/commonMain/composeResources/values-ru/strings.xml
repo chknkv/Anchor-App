@@ -1,0 +1,20 @@
+<resources>
+    <!-- Settings Region -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_anchor_premium">Anchor Premium</string>
+    <string name="settings_not_available">Подписка пока недоступна, она скоро появится</string>
+    <string name="settings_appearance">Оформление</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_privacy">Конфиденциальность</string>
+    <string name="settings_version">Версия</string>
+    <string name="settings_theme_system">Автоматически</string>
+    <string name="settings_theme_light">Светлое</string>
+    <string name="settings_theme_dark">Тёмное</string>
+    <string name="settings_language_russian">Русский</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_logout">Выйти из аккаунта</string>
+    <string name="settings_logout_confirm_title">Выйти</string>
+    <string name="settings_logout_confirm_subtitle">Вы уверены, что&#160;хотите выйти? Для этого придется совершить повторный вход</string>
+    <string name="settings_logout_confirm_button">Выйти</string>
+    <!-- End Settings Region -->
+</resources>

@@ -1,0 +1,20 @@
+<resources>
+    <!-- Settings Region -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_anchor_premium">Anchor Premium</string>
+    <string name="settings_not_available">Subscription is not available yet, it&#160;will appear soon</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_language_russian">Русский</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_logout">Logout</string>
+    <string name="settings_logout_confirm_title">Logout</string>
+    <string name="settings_logout_confirm_subtitle">Are you sure you want to&#160;logout? You will need to&#160;login again</string>
+    <string name="settings_logout_confirm_button">Logout</string>
+    <!-- End Settings Region -->
+</resources>

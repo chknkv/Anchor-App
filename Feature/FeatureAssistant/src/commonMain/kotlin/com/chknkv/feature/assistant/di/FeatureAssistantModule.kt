@@ -1,0 +1,26 @@
+package com.chknkv.feature.assistant.di
+
+import com.chknkv.feature.assistant.data.repository.AssistanceRepository
+import com.chknkv.feature.assistant.data.repository.AssistanceRepositoryImpl
+import com.chknkv.feature.assistant.domain.interactor.AssistanceInteractor
+import com.chknkv.feature.assistant.domain.interactor.AssistanceInteractorImpl
+import com.chknkv.feature.assistant.presentation.AssistanceWidgetViewModel
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
+
+/**
+ * Koin DI-модуль фичи виджета помощи.
+ *
+ * Регистрирует:
+ * - [AssistanceRepository] как `single` — future-proof для состояния кэша / БД.
+ * - [AssistanceInteractor] как `single` — тонкий прокси без состояния; заменить на `factory`
+ *   только при необходимости создавать новый экземпляр на каждый запрос.
+ * - [AssistanceWidgetViewModel] — жизненный цикл управляется [androidx.lifecycle.ViewModelStore].
+ *
+ * Подключение: добавить `includes(featureAssistantModule)` в `featureMainModule`.
+ */
+val featureAssistantModule = module {
+    single<AssistanceRepository> { AssistanceRepositoryImpl() }
+    factory<AssistanceInteractor> { AssistanceInteractorImpl(get()) }
+    viewModel { AssistanceWidgetViewModel(get()) }
+}

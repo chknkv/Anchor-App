@@ -1,0 +1,72 @@
+package com.chknkv.designsystem
+
+import androidx.compose.ui.graphics.Color
+
+val White0 = Color(0xFFFFFFFF)
+val White1 = Color(0xFFF2F2F7)
+val White2 = Color(0x99EBEBF5)
+val White3 = Color(0xFFEBEBF5)
+val White4 = Color(0xFFF4F4F9)
+
+val Black0 = Color(0xFF000000)
+val Black1 = Color(0xFF1C1C1E)
+val Black2 = Color(0xFF2C2C2E)
+val Black3 = Color(0xFF444446)
+val Black4 = Color(0xFF555555)
+val Black5 = Color(0xFF3A3A3C)
+val Black6 = Color(0x1FFFFFFF)
+val Black7 = Color(0xCC1C1C1E)
+val Black8 = Color(0x0A000000)
+val Black9 = Color(0xBD000000)
+
+val Gray0 = Color(0xFFD1D1D6)
+val Gray1 = Color(0xFF98989D)
+val Gray2 = Color(0xFF8E8E93)
+val Gray3 = Color(0xFF636366)
+val Gray4 = Color(0x99545458)
+val Gray5 = Color(0x4D545458)
+val Gray6 = Color(0x333C3C43)
+val Gray7 = Color(0x4D8E8E93)
+val Gray8 = Color(0x1A3C3C43)
+
+val Blue0 = Color(0xFF007AFF)
+val Blue1 = Color(0xFF0A84FF)
+val Blue2 = Color(0xFF409CFF)
+val Blue3 = Color(0xFF5AC8FA)
+
+val Indigo0 = Color(0xFF5E5CE6)
+val Indigo1 = Color(0xFF4644B1)
+val Indigo2 = Color(0xFF7D7AFF)
+val Indigo3 = Color(0xFF3634A3)
+
+val Purple0 = Color(0xFFAF52DE)
+val Purple1 = Color(0xFFC67CFD)
+val Purple2 = Color(0xFFDA8FFF)
+val Purple3 = Color(0xFF8944AB)
+
+val Pink0 = Color(0xFFFF2D55)
+val Pink1 = Color(0xFFFF80AB)
+val Pink2 = Color(0xFFFF6482)
+val Pink3 = Color(0xFFD30F45)
+
+val Red0 = Color(0xFFFF3B30)
+val Red1 = Color(0xFFFF453A)
+val Red2 = Color(0xFFFF3131)
+val Red3 = Color(0xFFFF5E55)
+val Red4 = Color(0xFFFF6961)
+val Red5 = Color(0xFFE5484D)
+val Red6 = Color(0xFFA50E0E)
+val Red7 = Color(0xFF991B1B)
+
+val Orange0 = Color(0xFFFF9500)
+val Orange1 = Color(0xFFFF9F0A)
+val Orange2 = Color(0xFFFFD60A)
+val Orange3 = Color(0xFFFFB340)
+val Orange4 = Color(0xFFE67E22)
+val Orange5 = Color(0xFFBF5B17)
+
+val Green0 = Color(0xFF34C759)
+val Green1 = Color(0xFF30D158)
+val Green2 = Color(0xFF32DE60)
+val Green3 = Color(0xFF63E6BE)
+val Green4 = Color(0xFF248A3D)

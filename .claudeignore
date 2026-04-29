@@ -1,0 +1,38 @@
+# Build outputs — скомпилированные артефакты, не нужны для разработки
+build/
+**/build/
+
+# Gradle cache и враппер-бинарники
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+
+# IDE — настройки рабочего места, не относятся к коду
+.idea/caches/
+.idea/workspace.xml
+.idea/deploymentTargetSelector.xml
+.idea/assetWizardSettings.xml
+.idea/appInsightsSettings.xml
+.idea/receipt.json
+.idea/migrations.xml
+
+# iOS Xcode
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+**/Pods/
+**/DerivedData/
+
+# Логи сборки
+build_log.txt
+**/*.log
+
+# Бинарники и архивы
+**/*.apk
+**/*.aab
+**/*.ipa
+**/*.dSYM
+
+# local.properties содержит только пути к SDK, не нужен для анализа кода
+local.properties
+
+# Дипломная работа
+Дипломная работа - "Разработка клиентской части цифрового продукта для коррекции поведенческих привычек и профилактики зависимостей (на основе стартап-проекта «Якорь»)".docx

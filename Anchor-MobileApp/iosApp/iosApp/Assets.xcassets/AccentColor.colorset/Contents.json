@@ -1,0 +1,12 @@
+{
+  "colors" : [
+    {
+      "filename" : "icon_light_mode.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

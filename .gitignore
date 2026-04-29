@@ -1,0 +1,88 @@
+### AI
+.skills/
+.cursorrules
+graphify-out/cache/
+
+### General
+.gradle/
+.gradle
+local.properties
+build/
+**/build/
+**/*.db
+*.kotlin
+*.log
+.cache/
+
+# IntelliJ IDEA (legacy, already covered above)
+.fleet/
+
+### VS Code ###
+.vscode/
+# VS Code настройки - персональные, каждый настраивает локально
+
+### iOS Xcode generated ###
+# Xcode user data
+SubTrack-MobileApp/iosApp-SubTrack/iosApp.xcodeproj/xcuserdata/
+SubTrack-MobileApp/iosApp-SubTrack/iosApp.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdatad
+
+# Xcode build artifacts
+SubTrack-MobileApp/iosApp-SubTrack/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+DerivedData/
+build/ios/
+*.xccheckout
+*.xcscmblueprint
+
+# Swift Package Manager
+.swiftpm/
+Package.resolved
+.netrc
+
+# iOS Simulator
+*.simulator
+
+# Legacy iOS project (if exists)
+iOSDemoApp/iOSDemoApp.xcodeproj/*
+!iOSDemoApp/iOSDemoApp.xcodeproj/project.pbxproj
+/.build
+/Packages
+
+### Android ###
+# Build outputs
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.hprof
+
+# Android Studio / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Gradle
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Local configuration files
+*.keystore
+!debug.keystore
+
+# Android NDK
+obj/
+.externalNativeBuild/
+.cxx/
+
+### Mac OS ###
+.DS_Store
+
+### Firebase ###
+/androidApp/google-services.json
+SubTrack-MobileApp/iosApp-SubTrack/iosApp/GoogleService-Info.plist
+iOSDemoApp/iOSDemoApp/GoogleService-Info.plist

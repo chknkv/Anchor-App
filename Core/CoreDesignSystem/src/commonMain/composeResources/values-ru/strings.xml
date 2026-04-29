@@ -1,0 +1,22 @@
+<resources>
+    <!-- TextInput Region -->
+    <string name="text_input_show_password">Показать</string>
+    <string name="text_input_hide_password">Скрыть</string>
+    <string name="text_input_clear_content_description">Очистить</string>
+    <string name="text_input_action_content_description">Действие</string>
+    <!-- End TextInput Region -->
+
+    <!-- Passcode Region -->
+    <string name="passcode_key_2_letters_latin">ABC</string>
+    <string name="passcode_key_3_letters_latin">DEF</string>
+    <string name="passcode_key_4_letters_latin">GHI</string>
+    <string name="passcode_key_5_letters_latin">JKL</string>
+    <string name="passcode_key_6_letters_latin">MNO</string>
+    <string name="passcode_key_7_letters_latin">PQRS</string>
+    <string name="passcode_key_8_letters_latin">TUV</string>
+    <string name="passcode_key_9_letters_latin">WXYZ</string>
+
+    <string name="passcode_delete_content_description">Удалить</string>
+    <string name="passcode_biometry_content_description">Биометрия</string>
+    <!-- End Passcode Region -->
+</resources>

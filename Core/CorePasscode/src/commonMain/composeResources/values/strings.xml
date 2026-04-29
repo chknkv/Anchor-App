@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Create passcode -->
+    <string name="create_passcode_step1_title">Create Passcode</string>
+    <string name="create_passcode_step2_title">Repeat Passcode</string>
+    <string name="create_passcode_subtitle">Use a&#160;5-digit&#160;code to&#160;unlock the&#160;app</string>
+    <string name="create_passcode_skip">Skip</string>
+    <string name="create_passcode_skip_alert_title">Skip Passcode?</string>
+    <string name="create_passcode_skip_alert_subtitle">You can&#160;enable passcode later from&#160;Settings. Your&#160;data will&#160;not be&#160;protected.</string>
+    <string name="create_passcode_skip_alert_confirm">Skip</string>
+    <string name="create_passcode_skip_alert_cancel">Cancel</string>
+    <string name="create_passcode_mismatch_snackbar">Passcodes do&#160;not match.&#160;Try again.</string>
+
+    <!-- Enter passcode -->
+    <string name="enter_passcode_title">Anchor</string>
+    <string name="enter_passcode_title_change">Passcode</string>
+    <string name="enter_passcode_subtitle">Enter the&#160;passcode you&#160;created during&#160;registration</string>
+    <string name="enter_passcode_subtitle_change">Enter the&#160;current passcode to&#160;change it</string>
+    <string name="enter_passcode_forgot">Forgot Passcode?</string>
+    <string name="enter_passcode_forgot_alert_title">Forgot Passcode?</string>
+    <string name="enter_passcode_forgot_alert_subtitle">All secured&#160;data will&#160;be erased&#160;to restore&#160;access. This&#160;action cannot&#160;be undone.</string>
+    <string name="enter_passcode_forgot_alert_confirm">Reset</string>
+    <string name="enter_passcode_forgot_alert_cancel">Cancel</string>
+    <string name="enter_passcode_error_snackbar">Wrong passcode</string>
+
+    <!-- Biometry setup -->
+    <string name="biometry_title">Enable Biometry</string>
+    <string name="biometry_subtitle">Unlock the&#160;app faster&#160;using biometric&#160;authentication</string>
+    <string name="biometry_enable">Enable</string>
+    <string name="biometry_skip">Skip</string>
+    <string name="biometry_face_id_title">Face ID</string>
+    <string name="biometry_touch_id_title">Touch ID</string>
+    <string name="biometry_prompt_reason">Authenticate to&#160;enable biometric&#160;unlock</string>
+    <string name="biometry_prompt_cancel">Cancel</string>
+</resources>
