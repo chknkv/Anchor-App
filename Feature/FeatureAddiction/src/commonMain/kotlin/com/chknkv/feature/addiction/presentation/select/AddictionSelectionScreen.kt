@@ -43,7 +43,7 @@ fun AddictionSelectionScreen(onFinished: () -> Unit) {
 
     when (val state = uiState) {
         is AddictionSelectionUiState.Init -> Unit
-        is AddictionSelectionUiState.Error -> AddictionSelectionErrorContent()
+        is AddictionSelectionUiState.Error -> AddictionSelectionErrorContent { viewModel.emitAction(AddictionSelectionUiAction.OnSkipClicked) }
         is AddictionSelectionUiState.Loading -> AddictionSelectionLoadingContent { viewModel.emitAction(AddictionSelectionUiAction.OnSkipClicked) }
         is AddictionSelectionUiState.Successful -> AddictionSelectionSuccessfulContent(
             result = state.result,

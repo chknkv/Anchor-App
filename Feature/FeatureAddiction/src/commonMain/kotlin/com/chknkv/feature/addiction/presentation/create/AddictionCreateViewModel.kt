@@ -3,14 +3,18 @@ package com.chknkv.feature.addiction.presentation.create
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chknkv.feature.addiction.domain.interactor.AddictionInteractor
-import com.chknkv.feature.addiction.models.domain.create.AddictionCreate
-import com.chknkv.feature.addiction.presentation.toDomain
+import com.chknkv.feature.addiction.models.domain.AddictionCreate
+import com.chknkv.feature.addiction.models.presentation.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.presentation.AddictionGradientUi
+import com.chknkv.feature.addiction.models.presentation.AddictionIconUi
+import com.chknkv.feature.addiction.models.presentation.ErrorMessageUiResult
 import com.chknkv.feature.addiction.models.presentation.create.AddictionCreateUiAction
 import com.chknkv.feature.addiction.models.presentation.create.AddictionCreateUiEvent
 import com.chknkv.feature.addiction.models.presentation.create.AddictionCreateUiResult
 import com.chknkv.feature.addiction.models.presentation.create.AddictionCreateUiState
-import com.chknkv.feature.addiction.presentation.AVAILABLE_GRADIENT_KEYS
-import com.chknkv.feature.addiction.presentation.AVAILABLE_ICON_KEYS
+import com.chknkv.feature.addiction.presentation.AVAILABLE_GRADIENTS
+import com.chknkv.feature.addiction.presentation.AVAILABLE_ICONS
+import com.chknkv.feature.addiction.presentation.toDomain
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,9 +49,10 @@ internal class AddictionCreateViewModel(
 
     private val submitExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
+
         val current = successfulResult ?: return@CoroutineExceptionHandler
         _uiState.value = AddictionCreateUiState.Successful(
-            current.copy(isLoading = false, errorMessage = throwable.message)
+            current.copy(isLoading = false, isError = ErrorMessageUiResult(isNetworkError = true))
         )
     }
 
@@ -74,18 +79,14 @@ internal class AddictionCreateViewModel(
                     when (action) {
                         is AddictionCreateUiAction.Init -> handleInit()
                         is AddictionCreateUiAction.ChangeTitle -> handleChangeTitle(action.value)
-                        is AddictionCreateUiAction.ChangeDescription -> handleChangeDescription(
-                            action.value
-                        )
-
-                        is AddictionCreateUiAction.SelectIcon -> handleSelectIcon(action.iconKey)
-                        is AddictionCreateUiAction.SelectGradient -> handleSelectGradient(action.gradientKey)
+                        is AddictionCreateUiAction.ChangeDescription -> handleChangeDescription(action.value)
+                        is AddictionCreateUiAction.SelectIcon -> handleSelectIcon(action.icon)
+                        is AddictionCreateUiAction.SelectGradient -> handleSelectGradient(action.gradient)
                         is AddictionCreateUiAction.SelectCategory -> handleSelectCategory(action.category)
                         is AddictionCreateUiAction.Submit -> handleSubmit(
                             action.emptyTitleError,
-                            action.emptyCategoryError
+                            action.emptyCategoryError,
                         )
-
                         is AddictionCreateUiAction.NavigateBack -> Unit
                     }
                 }
@@ -95,10 +96,11 @@ internal class AddictionCreateViewModel(
     /** Инициализирует форму значениями по умолчанию. */
     private fun handleInit() {
         val initialResult = AddictionCreateUiResult(
-            selectedIconKey = AVAILABLE_ICON_KEYS.first(),
-            selectedGradientKey = AVAILABLE_GRADIENT_KEYS.first(),
-            availableIconKeys = AVAILABLE_ICON_KEYS,
-            availableGradientKeys = AVAILABLE_GRADIENT_KEYS,
+            selectedIcon = AVAILABLE_ICONS.first(),
+            selectedGradient = AVAILABLE_GRADIENTS.first(),
+            availableIcons = AVAILABLE_ICONS,
+            availableGradients = AVAILABLE_GRADIENTS,
+            availableCategories = AddictionCategoryUi.entries,
         )
         _uiState.value = AddictionCreateUiState.Successful(initialResult)
     }
@@ -106,54 +108,54 @@ internal class AddictionCreateViewModel(
     /** Обрабатывает изменение поля названия привычки. */
     private fun handleChangeTitle(value: String) {
         val result = successfulResult ?: return
-        updateResult(result.copy(title = value, errorMessage = null))
+        updateResult(result.copy(title = value, isError = null))
     }
 
     /** Обрабатывает изменение поля описания привычки. */
     private fun handleChangeDescription(value: String) {
         val result = successfulResult ?: return
-        updateResult(result.copy(description = value, errorMessage = null))
+        updateResult(result.copy(description = value, isError = null))
     }
 
     /** Обрабатывает выбор иконки. */
-    private fun handleSelectIcon(iconKey: String) {
+    private fun handleSelectIcon(icon: AddictionIconUi) {
         val result = successfulResult ?: return
-        updateResult(result.copy(selectedIconKey = iconKey, errorMessage = null))
+        updateResult(result.copy(selectedIcon = icon, isError = null))
     }
 
     /** Обрабатывает выбор градиента. */
-    private fun handleSelectGradient(gradientKey: String) {
+    private fun handleSelectGradient(gradient: AddictionGradientUi) {
         val result = successfulResult ?: return
-        updateResult(result.copy(selectedGradientKey = gradientKey, errorMessage = null))
+        updateResult(result.copy(selectedGradient = gradient, isError = null))
     }
 
     /** Обрабатывает выбор (или снятие) категории. */
-    private fun handleSelectCategory(category: com.chknkv.feature.addiction.models.presentation.all.AddictionCategoryUi) {
+    private fun handleSelectCategory(category: AddictionCategoryUi) {
         val result = successfulResult ?: return
         val newCategory = if (result.selectedCategory == category) null else category
-        updateResult(result.copy(selectedCategory = newCategory, errorMessage = null))
+        updateResult(result.copy(selectedCategory = newCategory, isError = null))
     }
 
     /** Валидирует форму и отправляет запрос на создание привычки. */
     private fun handleSubmit(emptyTitleError: String, emptyCategoryError: String) {
         val result = successfulResult ?: return
         if (result.title.isBlank()) {
-            updateResult(result.copy(errorMessage = emptyTitleError))
+            updateResult(result.copy(isError = ErrorMessageUiResult(message = emptyTitleError)))
             return
         }
         if (result.selectedCategory == null) {
-            updateResult(result.copy(errorMessage = emptyCategoryError))
+            updateResult(result.copy(isError = ErrorMessageUiResult(message = emptyCategoryError)))
             return
         }
-        updateResult(result.copy(isLoading = true, errorMessage = null))
+        updateResult(result.copy(isLoading = true, isError = null))
         viewModelScope.launch(submitExceptionHandler) {
             interactor.createNewClientAddiction(
                 AddictionCreate(
                     name = result.title,
                     description = result.description,
-                    iconKey = result.selectedIconKey,
-                    gradientKey = result.selectedGradientKey,
-                    category = result.selectedCategory.toDomain(),
+                    iconKey = result.selectedIcon.toDomain(),
+                    gradientKey = result.selectedGradient.toDomain(),
+                    categoryKey = result.selectedCategory.toDomain(),
                 )
             )
             _uiEvent.emit(AddictionCreateUiEvent.OnCreated)

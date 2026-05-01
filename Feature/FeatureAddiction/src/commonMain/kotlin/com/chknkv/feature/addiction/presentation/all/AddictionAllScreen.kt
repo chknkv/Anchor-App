@@ -16,15 +16,17 @@ import org.koin.compose.viewmodel.koinViewModel
  * Экран всех привычек пользователя.
  *
  * Разветвляется на состояния: загрузка, список привычек, ошибка, пустой список.
- * Навигация к экрану добавления привычки передаётся через лямбду — ViewModel не знает о навигации.
+ * Навигация передаётся через лямбды — ViewModel не знает о навигации.
  *
  * @param onAddAddiction Коллбэк для перехода к экрану добавления новой привычки.
+ * @param onOpenSettings Коллбэк для перехода в раздел настроек (подписки).
  * @param onInfoAddiction Коллбэк для перехода к экрану с информацией о привычке.
  */
 @Composable
 fun AddictionAllScreen(
     onAddAddiction: () -> Unit = {},
-    onInfoAddiction: (Int) -> Unit = {}
+    onOpenSettings: () -> Unit = {},
+    onInfoAddiction: (Int) -> Unit = {},
 ) {
     val viewModel = koinViewModel<AddictionAllViewModel>()
 
@@ -40,6 +42,7 @@ fun AddictionAllScreen(
         is AddictionAllUiState.Successful -> AddictionAllSuccessfulContent(
             result = state.result,
             onAddAddiction = onAddAddiction,
+            onOpenSettings = onOpenSettings,
             onInfoAddiction = onInfoAddiction,
         )
 

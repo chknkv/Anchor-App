@@ -10,13 +10,10 @@ import androidx.compose.ui.unit.dp
 import com.chknkv.designsystem.module.Module
 import com.chknkv.designsystem.theme.Tokens
 import com.chknkv.designsystem.theme.getThemedColor
+import com.chknkv.feature.addiction.models.presentation.AddictionGradientUi
 import com.chknkv.feature.addiction.presentation.toGradientPrimaryColor
 import kotlin.time.Clock
 
-/** Количество отображаемых недель. */
-private const val WEEKS_COUNT = 16
-/** Дней в неделе. */
-private const val DAYS_IN_WEEK = 7
 /** Отступ между ячейками. */
 private val CELL_GAP = 5.dp
 
@@ -27,19 +24,19 @@ private data class CalendarDay(val dateIso: String?, val isFuture: Boolean)
 
 /**
  * Компонент календаря активности привычки.
- * 
+ *
  * @param completedDates Список дат выполнения (ISO).
- * @param gradientKey Ключ градиента для закрашивания.
+ * @param gradient Градиент для закрашивания.
  */
 @Composable
 internal fun AddictionDetailsActivityCalendar(
     completedDates: Set<String>,
-    gradientKey: String,
+    gradient: AddictionGradientUi,
     modifier: Modifier = Modifier,
 ) {
     val todayIso = remember { getCurrentDateIso() }
     val weeks = remember(todayIso) { buildCalendarWeeks(todayIso) }
-    val filledColor = gradientKey.toGradientPrimaryColor()
+    val filledColor = gradient.toGradientPrimaryColor()
     val emptyColor = Tokens.IconSecondary.getThemedColor().copy(alpha = 0.6f)
 
     Module(
@@ -48,10 +45,10 @@ internal fun AddictionDetailsActivityCalendar(
         modifier = modifier,
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-            val cellSize = (maxWidth - CELL_GAP * (WEEKS_COUNT - 1)) / WEEKS_COUNT
+            val cellSize = (maxWidth - CELL_GAP * (AddictionCalendarConstants.WEEKS_COUNT - 1)) / AddictionCalendarConstants.WEEKS_COUNT
 
             Column {
-                for (dayIndex in 0 until DAYS_IN_WEEK) {
+                for (dayIndex in 0 until AddictionCalendarConstants.DAYS_IN_WEEK) {
                     Row {
                         weeks.forEachIndexed { weekIndex, days ->
                             val cell = days[dayIndex]
@@ -71,7 +68,7 @@ internal fun AddictionDetailsActivityCalendar(
                             }
                         }
                     }
-                    if (dayIndex < DAYS_IN_WEEK - 1) {
+                    if (dayIndex < AddictionCalendarConstants.DAYS_IN_WEEK - 1) {
                         Spacer(modifier = Modifier.height(CELL_GAP))
                     }
                 }
@@ -87,7 +84,7 @@ internal fun AddictionDetailsActivityCalendar(
 private fun getCurrentDateIso(): String = try {
     val epochMs = Clock.System.now().toEpochMilliseconds()
     epochMsToIso(epochMs)
-} catch (e: Exception) { "" }
+} catch (_: Exception) { "" }
 
 private fun epochMsToIso(epochMs: Long): String {
     val z = ((epochMs / 86_400_000L) + 719468).toInt()
@@ -150,12 +147,12 @@ private fun formatDate(year: Int, month: Int, day: Int): String =
 private fun buildCalendarWeeks(todayIso: String): List<List<CalendarDay>> {
     val (todayYear, todayMonth, todayDay) = parseIsoDate(todayIso) ?: return emptyList()
     val daysBackToMonday = dayOfWeek(todayYear, todayMonth, todayDay) - 1
-    val totalBack = daysBackToMonday + (WEEKS_COUNT - 1) * DAYS_IN_WEEK
+    val totalBack = daysBackToMonday + (AddictionCalendarConstants.WEEKS_COUNT - 1) * AddictionCalendarConstants.DAYS_IN_WEEK
     val (sy, sm, sd) = addDays(todayYear, todayMonth, todayDay, -totalBack)
 
-    return List(WEEKS_COUNT) { weekIndex ->
-        List(DAYS_IN_WEEK) { dayIndex ->
-            val offset = weekIndex * DAYS_IN_WEEK + dayIndex
+    return List(AddictionCalendarConstants.WEEKS_COUNT) { weekIndex ->
+        List(AddictionCalendarConstants.DAYS_IN_WEEK) { dayIndex ->
+            val offset = weekIndex * AddictionCalendarConstants.DAYS_IN_WEEK + dayIndex
             val (cy, cm, cd) = addDays(sy, sm, sd, offset)
             val iso = formatDate(cy, cm, cd)
             CalendarDay(dateIso = if (iso > todayIso) null else iso, isFuture = iso > todayIso)

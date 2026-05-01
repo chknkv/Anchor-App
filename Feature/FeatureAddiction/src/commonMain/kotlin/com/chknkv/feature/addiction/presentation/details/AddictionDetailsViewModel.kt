@@ -3,31 +3,30 @@ package com.chknkv.feature.addiction.presentation.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chknkv.feature.addiction.domain.interactor.AddictionInteractor
-import com.chknkv.feature.addiction.models.domain.update.AddictionUpdate
-import com.chknkv.feature.addiction.models.presentation.all.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.domain.AddictionUpdate
+import com.chknkv.feature.addiction.models.presentation.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.presentation.AddictionGradientUi
+import com.chknkv.feature.addiction.models.presentation.AddictionIconUi
+import com.chknkv.feature.addiction.models.presentation.ErrorMessageUiResult
 import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.Init
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.NavigateBack
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.SwitchToEditMode
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.IncrementDays
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.ChangeDeleteConfirmationVisibility
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.ChangeTitle
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.ChangeDescription
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.SelectIcon
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.SelectGradient
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.SelectCategory
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.SubmitEdit
+import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction.DeleteHabit
 import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiEvent
 import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiResult
 import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiState
 import com.chknkv.feature.addiction.models.presentation.details.DetailsMode
-import com.chknkv.feature.addiction.presentation.GRADIENT_BLACK
-import com.chknkv.feature.addiction.presentation.GRADIENT_BLUE
-import com.chknkv.feature.addiction.presentation.GRADIENT_DARK_ORANGE
-import com.chknkv.feature.addiction.presentation.GRADIENT_DARK_RED
-import com.chknkv.feature.addiction.presentation.GRADIENT_GRAY
-import com.chknkv.feature.addiction.presentation.GRADIENT_GREEN
-import com.chknkv.feature.addiction.presentation.GRADIENT_INDIGO
-import com.chknkv.feature.addiction.presentation.GRADIENT_ORANGE
-import com.chknkv.feature.addiction.presentation.GRADIENT_PINK
-import com.chknkv.feature.addiction.presentation.GRADIENT_PURPLE
-import com.chknkv.feature.addiction.presentation.GRADIENT_RED
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_FINANCE
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_HEALTH
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_LIFESTYLE
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_PLACEHOLDER
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_PRODUCTIVITY
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_RELATIONSHIPS
-import com.chknkv.feature.addiction.presentation.ICON_HABIT_SPORT
+import com.chknkv.feature.addiction.presentation.AVAILABLE_GRADIENTS
+import com.chknkv.feature.addiction.presentation.AVAILABLE_ICONS
 import com.chknkv.feature.addiction.presentation.toDomain
 import com.chknkv.feature.addiction.presentation.toUi
 import io.github.aakira.napier.Napier
@@ -78,7 +77,10 @@ internal class AddictionDetailsViewModel(
         Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
         val current = successfulResult ?: return@CoroutineExceptionHandler
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(isLoading = false, errorMessage = throwable.message)
+            current.copy(
+                isLoading = false,
+                isError = ErrorMessageUiResult(isNetworkError = true)
+            )
         )
     }
 
@@ -86,14 +88,24 @@ internal class AddictionDetailsViewModel(
     private val incrementExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
         val current = successfulResult ?: return@CoroutineExceptionHandler
-        _uiState.value = AddictionDetailsUiState.Successful(current.copy(isLoading = false))
+        _uiState.value = AddictionDetailsUiState.Successful(
+            current.copy(
+                isLoading = false,
+                isError = ErrorMessageUiResult(isNetworkError = true)
+            )
+        )
     }
 
     /** Обработчик ошибок при удалении привычки. */
     private val deleteExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
         val current = successfulResult ?: return@CoroutineExceptionHandler
-        _uiState.value = AddictionDetailsUiState.Successful(current.copy(isLoading = false))
+        _uiState.value = AddictionDetailsUiState.Successful(
+            current.copy(
+                isLoading = false,
+                isError = ErrorMessageUiResult(isNetworkError = true)
+            )
+        )
     }
 
     private var isScreenInitialized = false
@@ -115,22 +127,21 @@ internal class AddictionDetailsViewModel(
     private fun subscribeToActions() {
         viewModelScope.launch {
             _actionFlow
-                .onStart { emit(AddictionDetailsUiAction.Init) }
+                .onStart { emit(Init) }
                 .collect { action ->
                     when (action) {
-                        AddictionDetailsUiAction.Init             -> handleInit()
-                        AddictionDetailsUiAction.NavigateBack     -> handleNavigateBack()
-                        AddictionDetailsUiAction.SwitchToEditMode -> handleSwitchToEditMode()
-                        AddictionDetailsUiAction.IncrementDays    -> handleIncrementDays()
-                        AddictionDetailsUiAction.DeleteHabit      -> handleDeleteHabit()
-                        is AddictionDetailsUiAction.ChangeTitle       -> handleChangeTitle(action.value)
-                        is AddictionDetailsUiAction.ChangeDescription -> handleChangeDescription(action.value)
-                        is AddictionDetailsUiAction.SelectIcon        -> handleSelectIcon(action.iconKey)
-                        is AddictionDetailsUiAction.SelectGradient    -> handleSelectGradient(action.gradientKey)
-                        is AddictionDetailsUiAction.SelectCategory    -> handleSelectCategory(action.category)
-                        is AddictionDetailsUiAction.SubmitEdit        -> handleSubmitEdit(
-                            action.emptyTitleError, action.emptyCategoryError,
-                        )
+                        is Init                                 -> handleInit()
+                        is NavigateBack                         -> handleNavigateBack()
+                        is SwitchToEditMode                     -> handleSwitchToEditMode()
+                        is IncrementDays                        -> handleIncrementDays()
+                        is DeleteHabit                          -> handleDeleteHabit()
+                        is ChangeDeleteConfirmationVisibility   -> handleChangeDeleteConfirmationVisibility(action.isVisible)
+                        is ChangeTitle                          -> handleChangeTitle(action.value)
+                        is ChangeDescription                    -> handleChangeDescription(action.value)
+                        is SelectIcon                           -> handleSelectIcon(action.icon)
+                        is SelectGradient                       -> handleSelectGradient(action.gradient)
+                        is SelectCategory                       -> handleSelectCategory(action.category)
+                        is SubmitEdit                           -> handleSubmitEdit(action.emptyTitleError, action.emptyCategoryError)
                     }
                 }
         }
@@ -145,17 +156,17 @@ internal class AddictionDetailsViewModel(
                 mode = DetailsMode.ViewMode,
                 title = addiction.name,
                 category = addiction.category.toUi(),
-                iconKey = addiction.iconKey,
-                gradientKey = addiction.gradient,
+                icon = addiction.iconKey.toUi(),
+                gradient = addiction.gradient.toUi(),
                 description = addiction.description,
                 controlDays = addiction.controlDays,
                 editTitle = addiction.name,
                 editDescription = addiction.description,
-                editIconKey = addiction.iconKey,
-                editGradientKey = addiction.gradient,
+                editIcon = addiction.iconKey.toUi(),
+                editGradient = addiction.gradient.toUi(),
                 editCategory = addiction.category.toUi(),
-                availableIconKeys = AVAILABLE_ICON_KEYS,
-                availableGradientKeys = AVAILABLE_GRADIENT_KEYS,
+                availableIcons = AVAILABLE_ICONS,
+                availableGradients = AVAILABLE_GRADIENTS,
                 completedDates = addiction.completedDates,
                 canIncrementToday = addiction.canIncrementToday,
                 nextIncrementSeconds = addiction.nextIncrementAvailableInSeconds,
@@ -188,7 +199,7 @@ internal class AddictionDetailsViewModel(
     private fun handleSwitchToEditMode() {
         val current = successfulResult ?: return
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(mode = DetailsMode.EditMode, errorMessage = null)
+            current.copy(mode = DetailsMode.EditMode, isError = null)
         )
     }
 
@@ -200,7 +211,7 @@ internal class AddictionDetailsViewModel(
 
         if (current.mode is DetailsMode.EditMode) {
             _uiState.value = AddictionDetailsUiState.Successful(
-                current.copy(mode = DetailsMode.ViewMode, errorMessage = null)
+                current.copy(mode = DetailsMode.ViewMode, isError = null)
             )
         } else {
             viewModelScope.launch { _uiEvent.emit(AddictionDetailsUiEvent.NavigateBack) }
@@ -210,28 +221,28 @@ internal class AddictionDetailsViewModel(
     private fun handleChangeTitle(value: String) {
         val current = successfulResult ?: return
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(editTitle = value, errorMessage = null)
+            current.copy(editTitle = value, isError = null)
         )
     }
 
     private fun handleChangeDescription(value: String) {
         val current = successfulResult ?: return
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(editDescription = value, errorMessage = null)
+            current.copy(editDescription = value, isError = null)
         )
     }
 
-    private fun handleSelectIcon(iconKey: String) {
+    private fun handleSelectIcon(icon: AddictionIconUi) {
         val current = successfulResult ?: return
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(editIconKey = iconKey, errorMessage = null)
+            current.copy(editIcon = icon, isError = null)
         )
     }
 
-    private fun handleSelectGradient(gradientKey: String) {
+    private fun handleSelectGradient(gradient: AddictionGradientUi) {
         val current = successfulResult ?: return
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(editGradientKey = gradientKey, errorMessage = null)
+            current.copy(editGradient = gradient, isError = null)
         )
     }
 
@@ -239,7 +250,7 @@ internal class AddictionDetailsViewModel(
         val current = successfulResult ?: return
         val newCategory = if (current.editCategory == category) null else category
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(editCategory = newCategory, errorMessage = null)
+            current.copy(editCategory = newCategory, isError = null)
         )
     }
 
@@ -247,18 +258,18 @@ internal class AddictionDetailsViewModel(
         val current = successfulResult ?: return
         if (current.editTitle.isBlank()) {
             _uiState.value = AddictionDetailsUiState.Successful(
-                current.copy(errorMessage = emptyTitleError)
+                current.copy(isError = ErrorMessageUiResult(message = emptyTitleError))
             )
             return
         }
         if (current.editCategory == null) {
             _uiState.value = AddictionDetailsUiState.Successful(
-                current.copy(errorMessage = emptyCategoryError)
+                current.copy(isError = ErrorMessageUiResult(message = emptyCategoryError))
             )
             return
         }
         _uiState.value = AddictionDetailsUiState.Successful(
-            current.copy(isLoading = true, errorMessage = null)
+            current.copy(isLoading = true, isError = null)
         )
         viewModelScope.launch(submitExceptionHandler) {
             interactor.updateClientAddiction(
@@ -266,12 +277,36 @@ internal class AddictionDetailsViewModel(
                     id = current.addictionId,
                     name = current.editTitle,
                     description = current.editDescription,
-                    iconKey = current.editIconKey,
-                    gradientKey = current.editGradientKey,
-                    category = current.editCategory.toDomain(),
+                    iconKey = current.editIcon.toDomain(),
+                    gradientKey = current.editGradient.toDomain(),
+                    categoryKey = current.editCategory.toDomain(),
                 )
             )
-            handleInit()
+            countdownJob?.cancel()
+            countdownJob = null
+            val addiction = interactor.getClientDetailsAddiction(addictionId)
+            val result = AddictionDetailsUiResult(
+                addictionId = addiction.id,
+                mode = DetailsMode.ViewMode,
+                title = addiction.name,
+                category = addiction.category.toUi(),
+                icon = addiction.iconKey.toUi(),
+                gradient = addiction.gradient.toUi(),
+                description = addiction.description,
+                controlDays = addiction.controlDays,
+                editTitle = addiction.name,
+                editDescription = addiction.description,
+                editIcon = addiction.iconKey.toUi(),
+                editGradient = addiction.gradient.toUi(),
+                editCategory = addiction.category.toUi(),
+                availableIcons = AVAILABLE_ICONS,
+                availableGradients = AVAILABLE_GRADIENTS,
+                completedDates = addiction.completedDates,
+                canIncrementToday = addiction.canIncrementToday,
+                nextIncrementSeconds = addiction.nextIncrementAvailableInSeconds,
+            )
+            _uiState.value = AddictionDetailsUiState.Successful(result)
+            startCountdownIfNeeded()
         }
     }
 
@@ -285,20 +320,39 @@ internal class AddictionDetailsViewModel(
             _uiState.value = AddictionDetailsUiState.Successful(
                 updated.copy(
                     controlDays = updated.controlDays + 1,
+                    canIncrementToday = false,
+                    nextIncrementSeconds = SECONDS_IN_DAY,
                     isLoading = false,
                 )
             )
+            startCountdownIfNeeded()
         }
+    }
+
+    private fun handleChangeDeleteConfirmationVisibility(isVisible: Boolean) {
+        val current = successfulResult ?: return
+        _uiState.value = AddictionDetailsUiState.Successful(
+            current.copy(isDeleteConfirmationVisible = isVisible)
+        )
     }
 
     private fun handleDeleteHabit() {
         val current = successfulResult ?: return
         if (current.isLoading) return
-        _uiState.value = AddictionDetailsUiState.Successful(current.copy(isLoading = true))
+        _uiState.value = AddictionDetailsUiState.Successful(current.copy(
+            isDeleteConfirmationVisible = false,
+            isLoading = true,
+        ))
         viewModelScope.launch(deleteExceptionHandler) {
             interactor.deleteClientAddiction(current.addictionId)
             _uiEvent.emit(AddictionDetailsUiEvent.HabitDeleted)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        countdownJob?.cancel()
+        countdownJob = null
     }
 
     private val successfulResult: AddictionDetailsUiResult?
@@ -306,19 +360,6 @@ internal class AddictionDetailsViewModel(
 
     companion object {
         private const val TAG = "AddictionDetailsViewModel"
-
-        private val AVAILABLE_ICON_KEYS: List<String>
-            get() = listOf(
-                ICON_HABIT_PLACEHOLDER, ICON_HABIT_LIFESTYLE, ICON_HABIT_HEALTH,
-                ICON_HABIT_SPORT, ICON_HABIT_PRODUCTIVITY, ICON_HABIT_FINANCE,
-                ICON_HABIT_RELATIONSHIPS,
-            )
-
-        private val AVAILABLE_GRADIENT_KEYS: List<String>
-            get() = listOf(
-                GRADIENT_GRAY, GRADIENT_GREEN, GRADIENT_BLUE, GRADIENT_INDIGO,
-                GRADIENT_PURPLE, GRADIENT_PINK, GRADIENT_RED, GRADIENT_ORANGE,
-                GRADIENT_DARK_ORANGE, GRADIENT_DARK_RED, GRADIENT_BLACK,
-            )
+        private const val SECONDS_IN_DAY = 86400
     }
 }

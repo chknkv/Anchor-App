@@ -1,10 +1,15 @@
 <resources>
+    <!-- Common Addiction Strings -->
+    <string name="addiction_common_error_generic">Произошла ошибка, попробуйте позже</string>
+
     <!-- Addiction Selection Screen -->
     <string name="addiction_selection_header_title">Выберите привычки</string>
     <string name="addiction_selection_body_subtitle">Выберите привычки, которые хотите отслеживать.\nЭтот шаг можно пропустить</string>
     <string name="addiction_selection_counter">Выбрано %1$d из %2$d</string>
+    <string name="addiction_selection_errorState_description">Не&#160;удалось загрузить привычки. Попробуйте позже или&#160;пропустите этот шаг</string>
     <string name="addiction_selection_button_skip">Пропустить</string>
     <string name="addiction_selection_button_next">Продолжить</string>
+    <string name="addiction_selection_saveFailed_warning">Не&#160;удалось сохранить привычки. Попробуйте&#160;ещё&#160;раз</string>
 
     <!-- Habit Groups -->
     <string name="habit_group_lifestyle_title">Образ жизни</string>
@@ -93,9 +98,13 @@
 
     <!-- Addiction Details Screen -->
     <string name="addictionDetails_header_title">О привычке</string>
+    <string name="addictionDetails_header_edit_title">Редактирование</string>
     <string name="addictionDetails_activity_section_title">Активность</string>
     <string name="addictionDetails_edit_button">Изменить</string>
     <string name="addictionDetails_delete_button">Удалить привычку</string>
+    <string name="addictionDetails_deleteConfirmation_title">Удалить привычку</string>
+    <string name="addictionDetails_deleteConfirmation_subtitle">Вы уверены, что хотите удалить привычку? Все данные и прогресс безвозвратно пропадут</string>
+    <string name="addictionDetails_deleteConfirmation_button">Удалить</string>
     <string name="addictionDetails_incrementDays_button">Отметить сегодня</string>
     <string name="addictionDetails_controlDays_label">Дней под контролем</string>
     <string name="addictionDetails_nameEmpty_error">Введите название привычки</string>
@@ -111,6 +120,9 @@
     <string name="addictionAll_emptyState_description">У&#160;вас пока нет привычек</string>
     <string name="addictionAll_errorState_description">Не&#160;удалось загрузить привычки</string>
     <string name="addictionAll_errorState_retry_button">Обновить</string>
+    <string name="addictionAll_limitSheet_title">Достигнут лимит</string>
+    <string name="addictionAll_limitSheet_subtitle">Вы достигли максимального количества возможных привычек. Оформите подписку AnchorPremium,&#160;чтобы&#160;добавить больше</string>
+    <string name="addictionAll_limitSheet_button">Оформить подписку</string>
     <plurals name="addictionAll_controlDays_label">
         <item quantity="one">%1$d день</item>
         <item quantity="few">%1$d дня</item>

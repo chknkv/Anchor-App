@@ -1,14 +1,19 @@
 package com.chknkv.feature.addiction.models.presentation.all
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Brush
+import com.chknkv.feature.addiction.models.presentation.AddictionCategoryUi
 import org.jetbrains.compose.resources.DrawableResource
 
 /**
  * Результат успешной загрузки экрана всех привычек.
  *
+ * @param isCreateNewAvailable Разрешено ли создание новой привычки.
  * @param groups Список групп привычек, сгруппированных по категории.
  */
+@Immutable
 internal data class AddictionAllUiResult(
+    val isCreateNewAvailable: Boolean = false,
     val groups: List<UserAddictionGroupUi>,
 )
 
@@ -18,6 +23,7 @@ internal data class AddictionAllUiResult(
  * @param category Категория группы.
  * @param addictions Список привычек в этой категории.
  */
+@Immutable
 internal data class UserAddictionGroupUi(
     val category: AddictionCategoryUi,
     val addictions: List<UserAddictionUi>,
@@ -33,6 +39,7 @@ internal data class UserAddictionGroupUi(
  * @param iconGradient Градиентный фон иконки привычки.
  * @param controlDays Количество дней под контролем.
  */
+@Immutable
 internal data class UserAddictionUi(
     val id: Int,
     val name: String,

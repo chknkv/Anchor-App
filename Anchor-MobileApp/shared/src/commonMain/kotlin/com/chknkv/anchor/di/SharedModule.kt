@@ -2,7 +2,7 @@ package com.chknkv.anchor.di
 
 import com.chknkv.anchor.root.AnchorViewModel
 import com.chknkv.corepasscode.di.corePasscodeModule
-import com.chknkv.corenetwork.di.coreNetworkModule
+import com.chknkv.corenetwork.mock.coreMockNetworkModule
 import com.chknkv.coreutils.AppIdentifier
 import com.chknkv.coreutils.coreUtilsModule
 import com.chknkv.feature.main.di.featureMainModule
@@ -22,7 +22,8 @@ val sharedModule = module {
     includes(
         coreUtilsModule(AppIdentifier.ANCHOR),
         corePasscodeModule,
-        coreNetworkModule,
+//        coreNetworkModule, TODO: remove & add real HTTP-client
+        coreMockNetworkModule,
         featureMainModule,
         featureWelcomeModule,
     )

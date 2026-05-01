@@ -30,7 +30,7 @@ You own the implementation layer: ViewModels, Interactors, Repositories, domain 
 - **SQLDelight** 2.3.2 — when persistence is needed
 - **Multiplatform Settings** 1.3.0 — via `AppSettings` from `CoreUtils`
 - **Napier** 2.7.1 — logging (`Napier.d`, `Napier.e`)
-- Package root: `com.chknkv`
+- Package root: `com.yourapp` (замени на реальный пакет проекта)
 
 ### ViewModel base: `androidx.lifecycle.ViewModel` (JetBrains multiplatform variant)
 - `viewModelScope` is available and correct on both platforms
@@ -47,7 +47,7 @@ The project uses **two variants** depending on whether the screen has async load
 ### Pattern A — Flat UiResult (no loading skeleton)
 Use when: the screen renders immediately with default values and async ops only show inline loading flags (e.g. `isLoading: Boolean`).
 
-**Reference:** `AuthorizationViewModel` + `AuthorizationUiResult`
+**Когда использовать:** форма/настройки — экран рендерится сразу с default-значениями.
 
 ```kotlin
 // models/presentation/x/XUiAction.kt
@@ -130,7 +130,7 @@ internal class XViewModel(
 ### Pattern B — Sealed UiState (with loading/error skeleton)
 Use when: the screen starts with a full-screen loader and transitions through `Init → Loading → Successful | Error`.
 
-**Reference:** `AddictionSelectionViewModel` + `AddictionSelectionUiState`
+**Когда использовать:** список, детали — экран требует загрузки данных до первого рендера.
 
 ```kotlin
 // models/presentation/x/XUiState.kt
@@ -228,59 +228,255 @@ internal class XViewModel(
 
 ---
 
+## KDOC — интерфейс vs реализация
+
+Правило одно для всех `Interactor`, `Repository`, `ApiMapper`:
+
+- **Interface** — полный KDOC на классе + на каждом методе (`@param`, `@return`, `@throws`).
+- **Impl** — только `/** Реализация [XxxInterface]. */` + `@param` на конструктор. Методы **не** документируются.
+
+Контракт описывается один раз — в интерфейсе. Impl ссылается на него через `[XxxInterface]`.
+
+---
+
 ## Interactor Pattern
 
 ```kotlin
-// domain/XInteractor.kt
-interface XInteractor {
+// domain/interactor/XInteractor.kt
+/**
+ * Контракт доменного слоя для работы с X.
+ *
+ * Предоставляет доступ к данным X и позволяет управлять ими.
+ */
+internal interface XInteractor {
+
+    /** Поток событий обновления данных (создание, удаление, изменение). */
+    val updates: SharedFlow<Unit>
+
+    /**
+     * Возвращает список всех элементов X.
+     *
+     * @return Список доменных моделей [XDomainModel].
+     */
     suspend fun getItems(): List<XDomainModel>
-    suspend fun saveItem(item: XDomainModel): Boolean
-    fun nonSuspendOp(): Unit
+
+    /**
+     * Сохраняет элемент X.
+     *
+     * @param item Данные для сохранения.
+     */
+    suspend fun saveItem(item: XDomainModel)
 }
 
-// domain/XInteractorImpl.kt
+// domain/interactor/XInteractorImpl.kt
+/**
+ * Реализация [XInteractor].
+ *
+ * @param repository Источник данных для работы с X.
+ */
 internal class XInteractorImpl(
     private val repository: XRepository,
 ) : XInteractor {
 
+    override val updates: SharedFlow<Unit> = repository.updates
+
     override suspend fun getItems(): List<XDomainModel> =
         repository.fetchAll()
 
-    override suspend fun saveItem(item: XDomainModel): Boolean =
-        runCatching { repository.save(item) }.isSuccess
-
-    override fun nonSuspendOp() { /* ... */ }
+    override suspend fun saveItem(item: XDomainModel) =
+        repository.saveItem(item)
 }
 ```
 
 **Rules:**
-- Interface in `domain/`, Impl in `domain/` (same package, both `internal`)
-- Interactor never references Compose or UI models
-- Interactor never holds state — stateless by design
-- Repository calls go through Interactor, never directly from ViewModel
-- `runCatching` at the Interactor boundary — ViewModel sees `Result<T>` or receives `Boolean`
+- Interface и Impl — оба в `domain/interactor/`, оба `internal`
+- Interactor никогда не импортирует Compose или UI-модели
+- `updates: SharedFlow<Unit>` — делегируется напрямую из `repository.updates`
+- Repository вызывается через Interactor, никогда напрямую из ViewModel
+- `runCatching` — на уровне ViewModel, не Interactor
 
 ---
 
 ## Repository Pattern
 
 ```kotlin
-// data/XRepository.kt
-interface XRepository {
+// data/repository/XRepository.kt
+/**
+ * Интерфейс репозитория для работы с X.
+ *
+ * Предоставляет доступ к данным через API и уведомляет подписчиков об изменениях.
+ */
+internal interface XRepository {
+
+    /** Поток событий обновления. Эмитит Unit при любом изменении (создание, удаление, обновление). */
+    val updates: SharedFlow<Unit>
+
+    /**
+     * Возвращает все элементы X.
+     *
+     * @return Список доменных моделей [XDomainModel].
+     */
     suspend fun fetchAll(): List<XDomainModel>
-    suspend fun save(item: XDomainModel)
+
+    /**
+     * Сохраняет элемент X.
+     *
+     * @param item Данные для сохранения.
+     */
+    suspend fun saveItem(item: XDomainModel)
 }
 
-// data/XRepositoryImpl.kt
+// data/repository/XRepositoryImpl.kt
+/**
+ * Реализация [XRepository].
+ *
+ * @param apiMapper Сетевой маппер для взаимодействия с API X.
+ */
 internal class XRepositoryImpl(
-    private val db: XDatabase,  // SQLDelight or Settings
+    private val apiMapper: XApiMapper,
 ) : XRepository {
-    override suspend fun fetchAll(): List<XDomainModel> =
-        db.xQueries.selectAll().executeAsList().map { it.toDomain() }
 
-    override suspend fun save(item: XDomainModel) {
-        db.xQueries.insert(item.id, item.name)
+    private val _updates = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    override val updates: SharedFlow<Unit> = _updates.asSharedFlow()
+
+    override suspend fun fetchAll(): List<XDomainModel> =
+        apiMapper.getAll().map { it.toDomain() }
+
+    override suspend fun saveItem(item: XDomainModel) {
+        apiMapper.save(item.toRequest())
+        _updates.emit(Unit)
     }
+}
+```
+
+**ApiMapper — полный паттерн:**
+
+Все Response DTO наследуют `NetworkEntity<XxxBody>()`. Body — отдельный `@Serializable data class`. Метод интерфейса возвращает `XxxBody`, а не `List<T>` напрямую.
+
+```kotlin
+// models/data/XModels.kt
+@Serializable
+internal class XResponse : NetworkEntity<XBody>()
+
+@Serializable
+internal data class XBody(
+    @SerialName("items") val items: List<XItemBody>,
+)
+
+@Serializable
+internal data class XItemBody(
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String,
+)
+
+@Serializable
+internal data class XCreateRequest(
+    @SerialName("name") val name: String,
+)
+```
+
+```kotlin
+// data/mapper/XApiMapper.kt
+/**
+ * Интерфейс сетевого маппера для работы с API X.
+ */
+internal interface XApiMapper {
+
+    /**
+     * Возвращает все элементы X.
+     *
+     * `GET /x`
+     *
+     * @return Body-объект [XBody] с результатами.
+     * @throws NetworkException.Unauthorized При истёкшем / невалидном токене.
+     * @throws NetworkException.NoConnection При отсутствии сети.
+     * @throws NetworkException.HttpError При ошибке на стороне сервера.
+     */
+    suspend fun getAll(): XBody
+
+    /**
+     * Создаёт новый элемент X.
+     *
+     * `POST /x`
+     *
+     * @param request Тело запроса.
+     * @throws NetworkException.Unauthorized При истёкшем / невалидном токене.
+     * @throws NetworkException.NoConnection При отсутствии сети.
+     * @throws NetworkException.HttpError При ошибке на стороне сервера.
+     */
+    suspend fun create(request: XCreateRequest)
+}
+
+// data/mapper/XApiMapperImpl.kt
+/**
+ * Реализация [XApiMapper].
+ *
+ * @param apiClient DSL-клиент из CoreNetwork.
+ */
+internal class XApiMapperImpl(
+    private val apiClient: ApiClient,
+) : XApiMapper {
+
+    override suspend fun getAll(): XBody =
+        apiClient.request<XResponse> {
+            endpoint = ENDPOINT_ALL
+            method = HttpMethod.Get
+        }.requireBody()
+
+    override suspend fun create(request: XCreateRequest) {
+        apiClient.request<NetworkEntity<Unit>> {
+            endpoint = ENDPOINT_CREATE
+            method = HttpMethod.Post
+            body = request
+        }.isSuccessfulExecute()
+    }
+
+    companion object {
+        private const val ENDPOINT_ALL = "x/all"
+        private const val ENDPOINT_CREATE = "x/create"
+    }
+}
+```
+
+**Правила ApiMapper:**
+- Все строки эндпоинтов — **только** в `companion object` реализации; нигде больше.
+- GET с телом → `.requireBody()`; POST/PATCH/DELETE без тела → `.isSuccessfulExecute()`.
+- `ApiMapper` — `single<>` в Koin.
+
+**domain/converter/ — extension-функции (не классы):**
+
+Один файл на сущность: `domain/converter/XConverter.kt`. KDOC — только указание source→target.
+
+```kotlin
+// domain/converter/XConverter.kt
+/** Конвертирует data-model [XBody] в domain-model [XDomainModel]. */
+internal fun XItemBody.toDomain(): XDomainModel = XDomainModel(
+    id = id,
+    name = name,
+)
+
+/** Конвертирует domain-model [XDomainModel] в data-model [XCreateRequest]. */
+internal fun XDomainModel.toRequest(): XCreateRequest = XCreateRequest(
+    name = name,
+)
+```
+
+**domain/converter/base/ — data-enum↔domain-type:**
+
+Один файл на enum: `domain/converter/base/XKeyConverter.kt`. Без Compose-типов.
+
+```kotlin
+// domain/converter/base/XKeyConverter.kt
+/** Конвертирует data-enum [XKey] в domain-sealed [XDomain]. */
+internal fun XKey.toDomain(): XDomain = when (this) {
+    XKey.ALPHA -> XDomain.Alpha
+    XKey.BETA  -> XDomain.Beta
+}
+
+/** Конвертирует domain-sealed [XDomain] в data-enum [XKey]. */
+internal fun XDomain.toApiKey(): XKey = when (this) {
+    XDomain.Alpha -> XKey.ALPHA
+    XDomain.Beta  -> XKey.BETA
 }
 ```
 
@@ -414,3 +610,8 @@ List issues as: `[CRITICAL | WARNING | SUGGESTION]` file:line — description �
 - **Always** make ViewModel, Interactor, InteractorImpl, Repository, RepositoryImpl `internal`.
 - **Always** check if the needed DI binding already exists in an `includes()`-d module before adding a duplicate.
 - If asked to use a library not in `libs.versions.toml`: flag it and ask before adding.
+- **Never** write a `Response` DTO that does not extend `NetworkEntity<XxxBody>()` — the `Body` is always a separate `@Serializable data class`.
+- **Never** return `List<T>` directly from an `ApiMapper` method — always return the `Body` wrapper.
+- **Never** hardcode an endpoint string inside a method body of `ApiMapperImpl` — all endpoints go in `companion object` constants.
+- **Never** write KDOC on `override` methods in `ApiMapperImpl`, `RepositoryImpl`, or `InteractorImpl` — the contract is documented once in the interface.
+- **Never** put `Brush`, `DrawableResource`, `Color`, or `StringResource` in `domain/converter/` — these types belong exclusively in `presentation/Utils.kt`.

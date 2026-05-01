@@ -1,6 +1,8 @@
-package com.chknkv.feature.addiction.models.domain.create
+package com.chknkv.feature.addiction.models.domain
 
-import com.chknkv.feature.addiction.models.domain.AddictionCategory
+import com.chknkv.feature.addiction.models.domain.base.AddictionCategory
+import com.chknkv.feature.addiction.models.domain.base.AddictionGradient
+import com.chknkv.feature.addiction.models.domain.base.AddictionIcon
 
 /**
  * Запрос на создание новой пользовательской привычки.
@@ -10,14 +12,14 @@ import com.chknkv.feature.addiction.models.domain.AddictionCategory
  *
  * @param name Название привычки (не пустое, проверяется в ViewModel).
  * @param description Описание привычки (может быть пустым).
- * @param iconKey Строковый ключ выбранной иконки (например, `"ic_habit_sport"`).
- * @param gradientKey Строковый ключ выбранного градиента (например, `"orange"`).
- * @param category Категория привычки.
+ * @param iconKey Иконка выбранной привычки.
+ * @param gradientKey Градиент оформления привычки.
+ * @param categoryKey Категория привычки.
  */
 internal data class AddictionCreate(
     val name: String,
     val description: String,
-    val iconKey: String,
-    val gradientKey: String,
-    val category: AddictionCategory,
+    val iconKey: AddictionIcon,
+    val gradientKey: AddictionGradient,
+    val categoryKey: AddictionCategory,
 )

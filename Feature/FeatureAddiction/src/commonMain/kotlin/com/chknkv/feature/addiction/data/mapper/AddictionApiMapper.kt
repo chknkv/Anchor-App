@@ -1,89 +1,70 @@
 package com.chknkv.feature.addiction.data.mapper
 
-import com.chknkv.feature.addiction.models.data.AddictionAllGroupResponse
+import com.chknkv.feature.addiction.models.data.AddictionAllGroupsBody
 import com.chknkv.feature.addiction.models.data.AddictionCreateRequest
-import com.chknkv.feature.addiction.models.data.AddictionDetailResponse
+import com.chknkv.feature.addiction.models.data.AddictionDetailsBody
 import com.chknkv.feature.addiction.models.data.AddictionSelectedRequest
-import com.chknkv.feature.addiction.models.data.AddictionSelectionGroupResponse
+import com.chknkv.feature.addiction.models.data.AddictionSelectionGroupsBody
 import com.chknkv.feature.addiction.models.data.AddictionUpdateRequest
 
 /**
  * Интерфейс сетевого маппера для работы с API привычек.
- *
  */
 internal interface AddictionApiMapper {
 
     /**
-     * Возвращает список групп привычек для экрана выбора при онбординге.
+     * Возвращает тело ответа с группами привычек для экрана выбора при онбординге.
      *
-     * `GET /`
-     *
-     * @return Список с группами привычек для экрана выбора при онбординге.
+     * `GET /addictions/default-groups`
      */
-    suspend fun getAddictionGroupsForSelection(): List<AddictionSelectionGroupResponse>
+    suspend fun getAddictionGroupsForSelection(): AddictionSelectionGroupsBody
 
     /**
      * Сохраняет выбранные клиентом привычки при онбординге.
      *
-     * `POST /`
-     *
-     * @param request Список ID выбранных привычек.
+     * `POST /addictions/save-selected`
      */
     suspend fun saveSelectedAddictions(request: AddictionSelectedRequest)
 
     /**
-     * Возвращает привычки клиента, сгруппированные по категории.
+     * Возвращает тело ответа с привычками клиента, сгруппированными по категории.
      *
-     * `GET /`
-     *
-     * @return Список со всеми группами и привычками, подключенные у клиента.
+     * `GET /client/addictions/all`
      */
-    suspend fun getAllClientAddictions(): List<AddictionAllGroupResponse>
+    suspend fun getAllClientAddictions(): AddictionAllGroupsBody
 
     /**
      * Создаёт новую привычку клиента.
      *
-     * `POST /`
-     *
-     * @param request Новая, созданная клиентом, привычка.
+     * `POST /client/addictions/create`
      */
     suspend fun createNewClientAddiction(request: AddictionCreateRequest)
 
     /**
-     * Возвращает полные данные одной привычки клиента по идентификатору.
+     * Возвращает тело ответа с полными данными одной привычки клиента по идентификатору.
      *
-     * `GET /`
-     *
-     * @param id Идентификатор привычки.
-     * @return Детальная информация о привычке клиента.
+     * `GET /client/addictions/details/{id}`
      */
-    suspend fun getClientDetailsAddiction(id: Int): AddictionDetailResponse
+    suspend fun getClientDetailsAddiction(id: Int): AddictionDetailsBody
 
     /**
      * Увеличивает счётчик контрольных дней привычки на 1.
      *
-     * `POST /`
-     *
-     * @param id Идентификатор привычки.
+     * `POST /client/addictions/increment/{id}`
      */
     suspend fun incrementAddictionControlDays(id: Int)
 
     /**
      * Обновляет параметры существующей привычки.
      *
-     * `PATCH /`
-     *
-     * @param id Идентификатор привычки.
-     * @param request Тело запроса с обновлёнными данными.
+     * `PATCH /client/addictions/update/{id}`
      */
     suspend fun updateClientAddiction(id: Int, request: AddictionUpdateRequest)
 
     /**
      * Удаляет привычку клиента по идентификатору.
      *
-     * `DELETE /`
-     *
-     * @param id Идентификатор привычки.
+     * `DELETE /client/addictions/delete/{id}`
      */
     suspend fun deleteClientAddiction(id: Int)
 }

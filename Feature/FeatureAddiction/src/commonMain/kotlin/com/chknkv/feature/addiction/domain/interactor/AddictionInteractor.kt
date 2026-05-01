@@ -1,10 +1,10 @@
 package com.chknkv.feature.addiction.domain.interactor
 
-import com.chknkv.feature.addiction.models.domain.create.AddictionCreate
-import com.chknkv.feature.addiction.models.domain.select.AddictionGroup
-import com.chknkv.feature.addiction.models.domain.UserAddiction
-import com.chknkv.feature.addiction.models.domain.UserAddictionGroup
-import com.chknkv.feature.addiction.models.domain.update.AddictionUpdate
+import com.chknkv.feature.addiction.models.domain.AddictionCreate
+import com.chknkv.feature.addiction.models.domain.AddictionsSelectionGroups
+import com.chknkv.feature.addiction.models.domain.AddictionAllGroups
+import com.chknkv.feature.addiction.models.domain.AddictionDetails
+import com.chknkv.feature.addiction.models.domain.AddictionUpdate
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
@@ -18,7 +18,7 @@ internal interface AddictionInteractor {
     /**
      * Возвращает список групп привычек для выбора на экране "Выбор привычек".
      */
-    suspend fun getAddictionGroupsForSelection(): List<AddictionGroup>
+    suspend fun getAddictionGroupsForSelection(): List<AddictionsSelectionGroups>
 
     /**
      * Сохраняет идентификаторы выбранных пользователем привычек на экране "Выбор привычек".
@@ -31,7 +31,7 @@ internal interface AddictionInteractor {
      * Возвращает список привычек клиента, сгруппированных по категории.
      * Используется для отображения в функции "Все привычки" на Главном Экране.
      */
-    suspend fun getAllClientAddictions(): List<UserAddictionGroup>
+    suspend fun getAllClientAddictions(): List<AddictionAllGroups>
 
     /**
      * Создаёт новую пользовательскую привычку.
@@ -41,7 +41,7 @@ internal interface AddictionInteractor {
     /**
      * Возвращает привычку пользователя по идентификатору.
      */
-    suspend fun getClientDetailsAddiction(id: Int): UserAddiction
+    suspend fun getClientDetailsAddiction(id: Int): AddictionDetails
 
     /**
      * Увеличивает счётчик контрольных дней на 1. Ограничение 1 раз/24 ч — на бэке.

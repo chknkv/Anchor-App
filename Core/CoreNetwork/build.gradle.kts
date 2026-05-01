@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -39,6 +41,8 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.napier)
             implementation(libs.koin.core)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.components.resources)
 
             implementation(project(":Core:CoreUtils"))
         }

@@ -1,6 +1,8 @@
 package com.chknkv.feature.addiction.models.presentation.details
 
-import com.chknkv.feature.addiction.models.presentation.all.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.presentation.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.presentation.AddictionGradientUi
+import com.chknkv.feature.addiction.models.presentation.AddictionIconUi
 
 /**
  * Интенты (действия пользователя) экрана деталей привычки.
@@ -22,10 +24,10 @@ internal sealed interface AddictionDetailsUiAction {
     data class ChangeDescription(val value: String) : AddictionDetailsUiAction
     
     /** Выбор иконки. */
-    data class SelectIcon(val iconKey: String) : AddictionDetailsUiAction
-    
+    data class SelectIcon(val icon: AddictionIconUi) : AddictionDetailsUiAction
+
     /** Выбор градиента. */
-    data class SelectGradient(val gradientKey: String) : AddictionDetailsUiAction
+    data class SelectGradient(val gradient: AddictionGradientUi) : AddictionDetailsUiAction
     
     /** Выбор категории. */
     data class SelectCategory(val category: AddictionCategoryUi) : AddictionDetailsUiAction
@@ -43,6 +45,9 @@ internal sealed interface AddictionDetailsUiAction {
     
     /** Увеличение счетчика дней. */
     data object IncrementDays : AddictionDetailsUiAction
+
+    /** Переключение видимости шторки подтверждения удаления. */
+    data class ChangeDeleteConfirmationVisibility(val isVisible: Boolean) : AddictionDetailsUiAction
 
     /** Запрос на удаление привычки пользователя. */
     data object DeleteHabit : AddictionDetailsUiAction

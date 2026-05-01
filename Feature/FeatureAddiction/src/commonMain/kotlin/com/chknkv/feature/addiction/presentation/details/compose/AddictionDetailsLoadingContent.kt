@@ -20,12 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.chknkv.designsystem.modifier.shimmer
 import com.chknkv.designsystem.module.Module
-
-/** Количество отображаемых недель. */
-private const val WEEKS_COUNT = 16
-
-/** Дней в неделе. */
-private const val DAYS_IN_WEEK = 7
+import com.chknkv.feature.addiction.presentation.details.elements.AddictionCalendarConstants
 
 /** Отступ между ячейками. */
 private val CELL_GAP = 5.dp
@@ -81,23 +76,23 @@ internal fun AddictionDetailsLoadingContent(
             innerPaddingValues = PaddingValues(horizontal = 24.dp, vertical = 18.dp),
         ) {
             BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                val cellSize = (maxWidth - CELL_GAP * (WEEKS_COUNT - 1)) / WEEKS_COUNT
+                val cellSize = (maxWidth - CELL_GAP * (AddictionCalendarConstants.WEEKS_COUNT - 1)) / AddictionCalendarConstants.WEEKS_COUNT
 
                 Column {
-                    for (dayIndex in 0 until DAYS_IN_WEEK) {
+                    for (dayIndex in 0 until AddictionCalendarConstants.DAYS_IN_WEEK) {
                         Row {
-                            repeat(WEEKS_COUNT) { index ->
+                            repeat(AddictionCalendarConstants.WEEKS_COUNT) { index ->
                                 Box(
                                     modifier = Modifier
                                         .size(cellSize)
                                         .shimmer(shape = RoundedCornerShape(3.dp))
                                 )
-                                if (index < WEEKS_COUNT - 1) {
+                                if (index < AddictionCalendarConstants.WEEKS_COUNT - 1) {
                                     Spacer(modifier = Modifier.width(CELL_GAP))
                                 }
                             }
                         }
-                        if (dayIndex < DAYS_IN_WEEK - 1) {
+                        if (dayIndex < AddictionCalendarConstants.DAYS_IN_WEEK - 1) {
                             Spacer(modifier = Modifier.height(CELL_GAP))
                         }
                     }

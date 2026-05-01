@@ -9,12 +9,16 @@ import androidx.compose.ui.graphics.Color
 import com.chknkv.designsystem.*
 import com.chknkv.designsystem.theme.TokensColor
 import com.chknkv.designsystem.theme.getThemedColor
-import com.chknkv.feature.addiction.models.domain.AddictionCategory
-import com.chknkv.feature.addiction.models.domain.UserAddiction
-import com.chknkv.feature.addiction.models.domain.UserAddictionGroup
-import com.chknkv.feature.addiction.models.domain.select.AddictionGroup
+import com.chknkv.feature.addiction.models.domain.AddictionAllGroup
+import com.chknkv.feature.addiction.models.domain.base.AddictionCategory
+import com.chknkv.feature.addiction.models.domain.base.AddictionGradient
+import com.chknkv.feature.addiction.models.domain.base.AddictionIcon
+import com.chknkv.feature.addiction.models.domain.AddictionAllGroups
+import com.chknkv.feature.addiction.models.domain.AddictionsSelectionGroups
+import com.chknkv.feature.addiction.models.presentation.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.presentation.AddictionGradientUi
+import com.chknkv.feature.addiction.models.presentation.AddictionIconUi
 import com.chknkv.feature.addiction.models.presentation.all.AddictionAllUiResult
-import com.chknkv.feature.addiction.models.presentation.all.AddictionCategoryUi
 import com.chknkv.feature.addiction.models.presentation.all.UserAddictionGroupUi
 import com.chknkv.feature.addiction.models.presentation.all.UserAddictionUi
 import com.chknkv.feature.addiction.models.presentation.select.AddictionGroupUi
@@ -29,24 +33,27 @@ import org.jetbrains.compose.resources.StringResource
 /**
  * Преобразует список доменных групп привычек в [AddictionAllUiResult].
  */
-internal fun List<UserAddictionGroup>.toUiResult(): AddictionAllUiResult {
+internal fun List<AddictionAllGroups>.toUiResult(): AddictionAllUiResult {
     val groups = map { group ->
         UserAddictionGroupUi(
             category = group.category.toUi(),
-            addictions = group.addictions.map { it.toUi() },
+            addictions = group.addictions.map { it.toUi(group.category) },
         )
     }
-    return AddictionAllUiResult(groups = groups)
+    return AddictionAllUiResult(
+        groups = groups,
+        isCreateNewAvailable = firstOrNull()?.isCreateNewAvailable ?: false,
+    )
 }
 
 /**
  * Преобразует доменную модель привычки в UI-модель.
  */
-internal fun UserAddiction.toUi(): UserAddictionUi = UserAddictionUi(
+internal fun AddictionAllGroup.toUi(category: AddictionCategory): UserAddictionUi = UserAddictionUi(
     id = id,
     name = name,
     category = category.toUi(),
-    iconRes = iconKey.toIconDrawableResource(),
+    iconRes = icon.toIconDrawableResource(),
     iconGradient = gradient.toGradientBrush(),
     controlDays = controlDays,
 )
@@ -58,7 +65,7 @@ internal fun UserAddiction.toUi(): UserAddictionUi = UserAddictionUi(
 /**
  * Преобразует доменную модель группы привычек в модель для UI.
  */
-internal fun AddictionGroup.toUi() = AddictionGroupUi(
+internal fun AddictionsSelectionGroups.toUi() = AddictionGroupUi(
     category = category.toUi(),
     addictions = addictions.map { AddictionUi(id = it.id, name = it.name) },
 )
@@ -68,7 +75,7 @@ internal fun AddictionGroup.toUi() = AddictionGroupUi(
 // -----------------------------
 
 /**
- * Конвертирует доменную категорию в UI-enum.
+ * Конвертирует domain-enum [AddictionCategory] в presentation-enum [AddictionCategoryUi].
  */
 internal fun AddictionCategory.toUi(): AddictionCategoryUi = when (this) {
     AddictionCategory.LIFESTYLE     -> AddictionCategoryUi.LIFESTYLE
@@ -81,7 +88,7 @@ internal fun AddictionCategory.toUi(): AddictionCategoryUi = when (this) {
 }
 
 /**
- * Конвертирует UI-категорию в доменный enum.
+ * Конвертирует presentation-enum [AddictionCategoryUi] в domain-enum [AddictionCategory].
  */
 internal fun AddictionCategoryUi.toDomain(): AddictionCategory = when (this) {
     AddictionCategoryUi.LIFESTYLE     -> AddictionCategory.LIFESTYLE
@@ -94,9 +101,9 @@ internal fun AddictionCategoryUi.toDomain(): AddictionCategory = when (this) {
 }
 
 /**
- * Возвращает строковый ресурс заголовка для UI-категории.
+ * Конвертирует presentation-enum [AddictionCategoryUi] в [StringResource] заголовка.
  */
-internal fun AddictionCategoryUi.toTitleStringResource(): StringResource = when (this) {
+internal fun AddictionCategoryUi.toStringResource(): StringResource = when (this) {
     AddictionCategoryUi.LIFESTYLE     -> Res.string.habit_group_lifestyle_title
     AddictionCategoryUi.HEALTH        -> Res.string.habit_group_health_title
     AddictionCategoryUi.SPORT         -> Res.string.habit_group_sport_title
@@ -107,124 +114,143 @@ internal fun AddictionCategoryUi.toTitleStringResource(): StringResource = when 
 }
 
 // -----------------------------
-// UI Utils Region
+// AddictionIcon Region
 // -----------------------------
 
 /**
- * Конвертирует строковый ключ иконки в [DrawableResource].
+ * Конвертирует domain-sealed [AddictionIcon] в presentation-enum [AddictionIconUi].
  */
-internal fun String.toIconDrawableResource(): DrawableResource = when (this) {
-    ICON_HABIT_LIFESTYLE        -> Res.drawable.ic_habit_lifestyle
-    ICON_HABIT_HEALTH           -> Res.drawable.ic_habit_health
-    ICON_HABIT_SPORT            -> Res.drawable.ic_habit_sport
-    ICON_HABIT_PRODUCTIVITY     -> Res.drawable.ic_habit_productivity
-    ICON_HABIT_FINANCE          -> Res.drawable.ic_habit_finance
-    ICON_HABIT_RELATIONSHIPS    -> Res.drawable.ic_habit_relationships
-    else                        -> Res.drawable.ic_habit_placeholder
+internal fun AddictionIcon.toUi(): AddictionIconUi = when (this) {
+    AddictionIcon.Lifestyle     -> AddictionIconUi.LIFESTYLE
+    AddictionIcon.Health        -> AddictionIconUi.HEALTH
+    AddictionIcon.Sport         -> AddictionIconUi.SPORT
+    AddictionIcon.Productivity  -> AddictionIconUi.PRODUCTIVITY
+    AddictionIcon.Finance       -> AddictionIconUi.FINANCE
+    AddictionIcon.Relationships -> AddictionIconUi.RELATIONSHIPS
 }
 
 /**
- * Возвращает основной цвет градиента по его строковому ключу.
+ * Конвертирует presentation-enum [AddictionIconUi] в domain-sealed [AddictionIcon].
+ */
+internal fun AddictionIconUi.toDomain(): AddictionIcon = when (this) {
+    AddictionIconUi.LIFESTYLE     -> AddictionIcon.Lifestyle
+    AddictionIconUi.HEALTH        -> AddictionIcon.Health
+    AddictionIconUi.SPORT         -> AddictionIcon.Sport
+    AddictionIconUi.PRODUCTIVITY  -> AddictionIcon.Productivity
+    AddictionIconUi.FINANCE       -> AddictionIcon.Finance
+    AddictionIconUi.RELATIONSHIPS -> AddictionIcon.Relationships
+}
+
+/**
+ * Конвертирует presentation-enum [AddictionIconUi] в [DrawableResource].
+ */
+internal fun AddictionIconUi.toDrawableResource(): DrawableResource = when (this) {
+    AddictionIconUi.LIFESTYLE     -> Res.drawable.ic_habit_lifestyle
+    AddictionIconUi.HEALTH        -> Res.drawable.ic_habit_health
+    AddictionIconUi.SPORT         -> Res.drawable.ic_habit_sport
+    AddictionIconUi.PRODUCTIVITY  -> Res.drawable.ic_habit_productivity
+    AddictionIconUi.FINANCE       -> Res.drawable.ic_habit_finance
+    AddictionIconUi.RELATIONSHIPS -> Res.drawable.ic_habit_relationships
+}
+
+/**
+ * Конвертирует domain-sealed [AddictionIcon] в [DrawableResource].
+ * Используется при построении [UserAddictionUi] для экрана списка.
+ */
+internal fun AddictionIcon.toIconDrawableResource(): DrawableResource = toUi().toDrawableResource()
+
+// -----------------------------
+// AddictionGradient Region
+// -----------------------------
+
+/**
+ * Конвертирует domain-sealed [AddictionGradient] в presentation-enum [AddictionGradientUi].
+ */
+internal fun AddictionGradient.toUi(): AddictionGradientUi = when (this) {
+    AddictionGradient.Gray       -> AddictionGradientUi.GRAY
+    AddictionGradient.Green      -> AddictionGradientUi.GREEN
+    AddictionGradient.Blue       -> AddictionGradientUi.BLUE
+    AddictionGradient.Indigo     -> AddictionGradientUi.INDIGO
+    AddictionGradient.Purple     -> AddictionGradientUi.PURPLE
+    AddictionGradient.Pink       -> AddictionGradientUi.PINK
+    AddictionGradient.Red        -> AddictionGradientUi.RED
+    AddictionGradient.Orange     -> AddictionGradientUi.ORANGE
+    AddictionGradient.DarkOrange -> AddictionGradientUi.DARK_ORANGE
+    AddictionGradient.DarkRed    -> AddictionGradientUi.DARK_RED
+    AddictionGradient.Black      -> AddictionGradientUi.BLACK
+}
+
+/**
+ * Конвертирует presentation-enum [AddictionGradientUi] в domain-sealed [AddictionGradient].
+ */
+internal fun AddictionGradientUi.toDomain(): AddictionGradient = when (this) {
+    AddictionGradientUi.GRAY        -> AddictionGradient.Gray
+    AddictionGradientUi.GREEN       -> AddictionGradient.Green
+    AddictionGradientUi.BLUE        -> AddictionGradient.Blue
+    AddictionGradientUi.INDIGO      -> AddictionGradient.Indigo
+    AddictionGradientUi.PURPLE      -> AddictionGradient.Purple
+    AddictionGradientUi.PINK        -> AddictionGradient.Pink
+    AddictionGradientUi.RED         -> AddictionGradient.Red
+    AddictionGradientUi.ORANGE      -> AddictionGradient.Orange
+    AddictionGradientUi.DARK_ORANGE -> AddictionGradient.DarkOrange
+    AddictionGradientUi.DARK_RED    -> AddictionGradient.DarkRed
+    AddictionGradientUi.BLACK       -> AddictionGradient.Black
+}
+
+/**
+ * Конвертирует presentation-enum [AddictionGradientUi] в [Brush] для отрисовки в Compose.
+ */
+internal fun AddictionGradientUi.toGradientBrush(): Brush = when (this) {
+    AddictionGradientUi.BLACK       -> Brush.verticalGradient(listOf(Black4, Black0))
+    AddictionGradientUi.GRAY        -> Brush.verticalGradient(listOf(Gray0, Gray2))
+    AddictionGradientUi.BLUE        -> Brush.verticalGradient(listOf(Blue3, Blue0))
+    AddictionGradientUi.INDIGO      -> Brush.verticalGradient(listOf(Indigo0, Indigo1))
+    AddictionGradientUi.PURPLE      -> Brush.verticalGradient(listOf(Purple1, Purple0))
+    AddictionGradientUi.GREEN       -> Brush.verticalGradient(listOf(Green3, Green0))
+    AddictionGradientUi.ORANGE      -> Brush.verticalGradient(listOf(Orange2, Orange0))
+    AddictionGradientUi.DARK_ORANGE -> Brush.verticalGradient(listOf(Orange3, Orange4))
+    AddictionGradientUi.RED         -> Brush.verticalGradient(listOf(Red3, Red0))
+    AddictionGradientUi.DARK_RED    -> Brush.verticalGradient(listOf(Red0, Red6))
+    AddictionGradientUi.PINK        -> Brush.verticalGradient(listOf(Pink1, Pink0))
+}
+
+/**
+ * Возвращает основной цвет presentation-enum [AddictionGradientUi] для использования в Composable.
  */
 @Composable
 @ReadOnlyComposable
-internal fun String.toGradientPrimaryColor(): Color = when (this) {
-    GRADIENT_GRAY        -> TokensColor.Gray.getThemedColor()
-    GRADIENT_GREEN       -> TokensColor.Green.getThemedColor()
-    GRADIENT_BLUE        -> TokensColor.Blue.getThemedColor()
-    GRADIENT_INDIGO      -> TokensColor.Indigo.getThemedColor()
-    GRADIENT_PURPLE      -> TokensColor.Purple.getThemedColor()
-    GRADIENT_ORANGE      -> TokensColor.Orange.getThemedColor()
-    GRADIENT_DARK_ORANGE -> TokensColor.DarkOrange.getThemedColor()
-    GRADIENT_RED         -> TokensColor.Red.getThemedColor()
-    GRADIENT_DARK_RED    -> TokensColor.DarkRed.getThemedColor()
-    GRADIENT_PINK        -> TokensColor.Pink.getThemedColor()
-    GRADIENT_BLACK       -> TokensColor.Black.getThemedColor()
-    else                 -> TokensColor.Gray.getThemedColor()
+internal fun AddictionGradientUi.toGradientPrimaryColor(): Color = when (this) {
+    AddictionGradientUi.GRAY        -> TokensColor.Gray.getThemedColor()
+    AddictionGradientUi.GREEN       -> TokensColor.Green.getThemedColor()
+    AddictionGradientUi.BLUE        -> TokensColor.Blue.getThemedColor()
+    AddictionGradientUi.INDIGO      -> TokensColor.Indigo.getThemedColor()
+    AddictionGradientUi.PURPLE      -> TokensColor.Purple.getThemedColor()
+    AddictionGradientUi.ORANGE      -> TokensColor.Orange.getThemedColor()
+    AddictionGradientUi.DARK_ORANGE -> TokensColor.DarkOrange.getThemedColor()
+    AddictionGradientUi.RED         -> TokensColor.Red.getThemedColor()
+    AddictionGradientUi.DARK_RED    -> TokensColor.DarkRed.getThemedColor()
+    AddictionGradientUi.PINK        -> TokensColor.Pink.getThemedColor()
+    AddictionGradientUi.BLACK       -> TokensColor.Black.getThemedColor()
 }
 
 /**
- * Преобразует строковое название градиента в [Brush].
+ * Конвертирует domain-sealed [AddictionGradient] в [Brush].
+ * Используется при построении [UserAddictionUi] для экрана списка.
  */
-fun String.toGradientBrush(): Brush = when (this) {
-    GRADIENT_BLACK       -> Brush.verticalGradient(listOf(Black4, Black0))
-    GRADIENT_GRAY        -> Brush.verticalGradient(listOf(Gray0, Gray2))
-    GRADIENT_BLUE        -> Brush.verticalGradient(listOf(Blue3, Blue0))
-    GRADIENT_INDIGO      -> Brush.verticalGradient(listOf(Indigo0, Indigo1))
-    GRADIENT_PURPLE      -> Brush.verticalGradient(listOf(Purple1, Purple0))
-    GRADIENT_GREEN       -> Brush.verticalGradient(listOf(Green3, Green0))
-    GRADIENT_ORANGE      -> Brush.verticalGradient(listOf(Orange2, Orange0))
-    GRADIENT_DARK_ORANGE -> Brush.verticalGradient(listOf(Orange3, Orange4))
-    GRADIENT_RED         -> Brush.verticalGradient(listOf(Red3, Red0))
-    GRADIENT_DARK_RED    -> Brush.verticalGradient(listOf(Red0, Red6))
-    GRADIENT_PINK        -> Brush.verticalGradient(listOf(Pink1, Pink0))
-    else                 -> Brush.verticalGradient(listOf(Gray0, Gray2))
+internal fun AddictionGradient.toGradientBrush(): Brush = toUi().toGradientBrush()
+
+/** Список всех доступных иконок для выбора пользователем. */
+internal val AVAILABLE_ICONS: List<AddictionIconUi> = AddictionIconUi.entries
+
+/** Список всех доступных градиентов для выбора пользователем. */
+internal val AVAILABLE_GRADIENTS: List<AddictionGradientUi> = AddictionGradientUi.entries
+
+/**
+ * Форматирует количество секунд в строку обратного отсчёта формата ЧЧ:ММ:СС.
+ */
+internal fun Int.toCountdownString(): String {
+    val h = this / 3600
+    val m = (this % 3600) / 60
+    val s = this % 60
+    return "${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}"
 }
-
-// -----------------------------
-// Константы (GRADIENT / ICON)
-// -----------------------------
-
-/** Ключ чёрного градиента. */
-internal const val GRADIENT_BLACK = "black"
-/** Ключ серого градиента. */
-internal const val GRADIENT_GRAY = "gray"
-/** Ключ синего градиента. */
-internal const val GRADIENT_BLUE = "blue"
-/** Ключ индиго-градиента. */
-internal const val GRADIENT_INDIGO = "indigo"
-/** Ключ фиолетового градиента. */
-internal const val GRADIENT_PURPLE = "purple"
-/** Ключ зелёного градиента. */
-internal const val GRADIENT_GREEN = "green"
-/** Ключ оранжевого градиента. */
-internal const val GRADIENT_ORANGE = "orange"
-/** Ключ тёмно-оранжевого градиента. */
-internal const val GRADIENT_DARK_ORANGE = "dark_orange"
-/** Ключ красного градиента. */
-internal const val GRADIENT_RED = "red"
-/** Ключ тёмно-красного градиента. */
-internal const val GRADIENT_DARK_RED = "dark_red"
-/** Ключ розового градиента. */
-internal const val GRADIENT_PINK = "pink"
-
-/** Ключ иконки образа жизни. */
-internal const val ICON_HABIT_LIFESTYLE = "ic_habit_lifestyle"
-/** Ключ иконки здоровья. */
-internal const val ICON_HABIT_HEALTH = "ic_habit_health"
-/** Ключ иконки спорта. */
-internal const val ICON_HABIT_SPORT = "ic_habit_sport"
-/** Ключ иконки продуктивности. */
-internal const val ICON_HABIT_PRODUCTIVITY = "ic_habit_productivity"
-/** Ключ иконки финансов. */
-internal const val ICON_HABIT_FINANCE = "ic_habit_finance"
-/** Ключ иконки отношений. */
-internal const val ICON_HABIT_RELATIONSHIPS = "ic_habit_relationships"
-/** Ключ иконки-заглушки. */
-internal const val ICON_HABIT_PLACEHOLDER = "ic_habit_placeholder"
-
-/** Список всех доступных ключей иконок. */
-internal val AVAILABLE_ICON_KEYS = listOf(
-    ICON_HABIT_PLACEHOLDER,
-    ICON_HABIT_LIFESTYLE,
-    ICON_HABIT_HEALTH,
-    ICON_HABIT_SPORT,
-    ICON_HABIT_PRODUCTIVITY,
-    ICON_HABIT_FINANCE,
-    ICON_HABIT_RELATIONSHIPS,
-)
-
-/** Список всех доступных ключей градиентов. */
-internal val AVAILABLE_GRADIENT_KEYS = listOf(
-    GRADIENT_GRAY,
-    GRADIENT_GREEN,
-    GRADIENT_BLUE,
-    GRADIENT_INDIGO,
-    GRADIENT_PURPLE,
-    GRADIENT_PINK,
-    GRADIENT_RED,
-    GRADIENT_ORANGE,
-    GRADIENT_DARK_ORANGE,
-    GRADIENT_DARK_RED,
-    GRADIENT_BLACK,
-)

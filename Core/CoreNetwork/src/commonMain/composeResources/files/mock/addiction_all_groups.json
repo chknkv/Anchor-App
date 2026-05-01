@@ -1,0 +1,63 @@
+{
+  "success": true,
+  "body": {
+    "is_create_new_available": false,
+    "items": [
+      {
+        "category_key": "health",
+        "addictions": [
+          {
+            "id": 101,
+            "name": "Выпивать 2 л воды в день",
+            "icon_key": "ic_habit_health",
+            "gradient": "blue",
+            "control_days": 12
+          }
+        ]
+      },
+      {
+        "category_key": "finance",
+        "addictions": [
+          {
+            "id": 102,
+            "name": "Учёт расходов",
+            "icon_key": "ic_habit_finance",
+            "gradient": "purple",
+            "control_days": 30
+          },
+          {
+            "id": 103,
+            "name": "Без спонтанных покупок",
+            "icon_key": "ic_habit_finance",
+            "gradient": "indigo",
+            "control_days": 7
+          }
+        ]
+      },
+      {
+        "category_key": "productivity",
+        "addictions": [
+          {
+            "id": 104,
+            "name": "Планирование дня",
+            "icon_key": "ic_habit_productivity",
+            "gradient": "orange",
+            "control_days": 21
+          }
+        ]
+      },
+      {
+        "category_key": "other",
+        "addictions": [
+          {
+            "id": 105,
+            "name": "Хобби",
+            "icon_key": "ic_habit_lifestyle",
+            "gradient": "green",
+            "control_days": 3
+          }
+        ]
+      }
+    ]
+  }
+}

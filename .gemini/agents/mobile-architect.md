@@ -33,20 +33,19 @@ You **prevent** cyclic dependencies, "god modules", and platform leakage into `c
 
 ### Module Layout
 ```
-Anchor-App/
-├── Anchor-MobileApp/
-│   ├── androidApp/          # Android entry point (app module)
-│   └── shared/              # Shared KMP entry — NavGraph root, Koin startKoin
+YourApp/
+├── App/
+│   ├── androidApp/          # Android entry point (Application + MainActivity)
+│   └── shared/              # KMP entry — NavGraph root, Koin startKoin
 ├── Core/
-│   ├── CoreDesignSystem/    # Compose components, Typography, Colors, theme
-│   ├── CoreUtils/           # AppSettings, extensions, utilities
-│   └── CorePasscode/        # Passcode/biometric logic
+│   ├── CoreDesignSystem/    # Compose UI-компоненты, токены, типографика, тема
+│   ├── CoreUtils/           # AppSettings, утилиты, расширения
+│   ├── CoreNetwork/         # Ktor ApiClient, JWT refresh, NetworkException
+│   └── CoreXxx/             # Дополнительные core-модули (авторизация, биометрия и т.д.)
 └── Feature/
-    ├── FeatureWelcome/      # Auth/onboarding flow
-    ├── FeatureMain/         # Home tab shell
-    ├── FeatureSettings/     # Settings flow
-    ├── FeatureAddiction/    # Addiction tracking
-    └── FeatureAssistant/    # AI assistant
+    ├── FeatureAuth/         # Авторизация / онбординг
+    ├── FeatureMain/         # Главный экран / оболочка
+    └── FeatureXxx/          # Доменно-специфичные фичи
 ```
 
 ### Dependency Rules (STRICT — never violate)
@@ -68,10 +67,87 @@ Feature/X   →  Feature/Y  (only when Y exposes a navigation contract, not impl
 
 ### Конвертеры и слоевая принадлежность
 
-- `domain/converter/` — только трансформации domain↔data, никаких Compose-типов (`Brush`, `DrawableResource`, `StringResource`).
-- `presentation/Utils.kt` — UI-конвертеры (domain→UiModel). Если конвертер импортирует что-либо из `androidx.compose`, `org.jetbrains.compose.resources` или `com.chknkv.designsystem` — он должен быть в `presentation/Utils.kt`, а не в `domain/`.
-- Нарушение: конвертер в `domain/` импортирует `Brush` — это coupling между domain и UI-слоем.
-- Файл `presentation/Utils.kt` — единственный файл UI-конвертеров в модуле; для каждого экрана используется `// region ScreenName` / `// endregion`.
+| Расположение | Тип конвертеров | Правила |
+|---|---|---|
+| `domain/converter/XxxConverter.kt` | domain↔data, Response→domain, domain→Request | Top-level extension-функции; один файл на сущность; никаких Compose-типов |
+| `domain/converter/base/XxxKeyConverter.kt` | data-enum↔domain-type (ключи категорий, иконок, градиентов) | Top-level extension-функции; один файл на enum; никаких Compose-типов |
+| `presentation/Utils.kt` | domain→UiModel и обратно; конвертеры с `Brush`, `DrawableResource`, `Color` | Единственный файл UI-конвертеров; `// region ScreenName` / `// endregion` на каждый экран |
+
+Именование extension-функций:
+- `XxxBody.toDomain(): XxxDomain` — data → domain
+- `XxxDomain.toRequest(): XxxRequest` — domain → Request DTO
+- `XxxKey.toDomain(): XxxDomain` / `XxxDomain.toApiKey(): XxxKey` — enum-конвертеры
+- `XxxDomain.toXxxUi(): XxxUi` / `XxxUi.toXxxDomain(): XxxDomain` — domain ↔ UI
+
+**Нарушение:** конвертер в `domain/` импортирует `Brush`, `DrawableResource`, `Color` или `StringResource` — это запрещённый coupling между domain и UI-слоем.
+
+---
+
+### Сетевой слой — структура DTO и ApiMapper
+
+**Response DTO** — структура двойного класса:
+
+```kotlin
+@Serializable
+internal class XxxResponse : NetworkEntity<XxxBody>()   // конверт
+
+@Serializable
+internal data class XxxBody(                             // полезная нагрузка
+    @SerialName("field") val field: String,
+)
+```
+
+- `XxxResponse` наследует `NetworkEntity<XxxBody>()` — **всегда**, без исключений.
+- `XxxBody` — отдельный `data class`; никогда не `NetworkEntity<List<T>>`.
+- `List<T>` не возвращается напрямую из `ApiMapper`; всегда через `Body`-обёртку.
+
+**ApiMapper** — обязательные правила:
+- GET с телом → `.requireBody()`; POST/PATCH/DELETE без тела → `.isSuccessfulExecute()`.
+- Все строки эндпоинтов — **только** в `companion object` `ApiMapperImpl`.
+- `ApiMapper` — `single<Interface> { Impl(get<ApiClient>()) }` в Koin.
+
+**Запрещено:**
+- Эндпоинт-строки внутри методов (не в `companion object`)
+- `NetworkEntity<List<T>>` вместо `NetworkEntity<XxxBody>`
+- KDOC на `override` методах `ApiMapperImpl`
+
+---
+
+### KDOC — интерфейс vs реализация
+
+| Где | Что писать |
+|-----|------------|
+| `interface XxxInteractor / XxxRepository / XxxApiMapper` | Полный KDOC: назначение класса + каждый метод с `@param`, `@return`, `@throws` |
+| `class XxxInteractorImpl / XxxRepositoryImpl / XxxApiMapperImpl` | Только `/** Реализация [XxxInterface]. */` + `@param` на конструктор; методы не документируются |
+
+**Принцип:** контракт документируется **один раз** — в интерфейсе. Impl ссылается на него через `[XxxInterface]`.
+
+```kotlin
+// ✅ Правильно — интерфейс
+/**
+ * Контракт доменного слоя для работы с X.
+ */
+internal interface XInteractor {
+    /**
+     * Возвращает список элементов.
+     *
+     * @return Список доменных моделей [XModel].
+     */
+    suspend fun getItems(): List<XModel>
+}
+
+// ✅ Правильно — реализация
+/**
+ * Реализация [XInteractor].
+ *
+ * @param repository Источник данных для работы с X.
+ */
+internal class XInteractorImpl(
+    private val repository: XRepository,
+) : XInteractor {
+    override suspend fun getItems(): List<XModel> = repository.fetchAll()
+}
+```
 
 ---
 
@@ -123,7 +199,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "com.chknkv.feature.x"
+        namespace = "com.yourapp.feature.x"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true

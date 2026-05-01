@@ -4,6 +4,7 @@ import anchor_app.feature.featureaddiction.generated.resources.Res
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_categoryEmpty_error
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_edit_button
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_nameEmpty_error
+import anchor_app.feature.featureaddiction.generated.resources.addiction_common_error_generic
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -62,17 +63,27 @@ internal fun AddictionDetailsEditContent(
     val emptyTitleError = stringResource(Res.string.addictionDetails_nameEmpty_error)
     val emptyCategoryError = stringResource(Res.string.addictionDetails_categoryEmpty_error)
 
-    val editResult = remember(result) {
+    val editResult = remember(
+        result.editTitle,
+        result.editDescription,
+        result.editIcon,
+        result.editGradient,
+        result.editCategory,
+        result.availableIcons,
+        result.availableGradients,
+        result.isLoading,
+        result.isError,
+    ) {
         AddictionCreateUiResult(
             title = result.editTitle,
             description = result.editDescription,
-            selectedIconKey = result.editIconKey,
-            selectedGradientKey = result.editGradientKey,
+            selectedIcon = result.editIcon,
+            selectedGradient = result.editGradient,
             selectedCategory = result.editCategory,
-            availableIconKeys = result.availableIconKeys,
-            availableGradientKeys = result.availableGradientKeys,
+            availableIcons = result.availableIcons,
+            availableGradients = result.availableGradients,
             isLoading = result.isLoading,
-            errorMessage = result.errorMessage,
+            isError = result.isError,
         )
     }
 
@@ -84,9 +95,9 @@ internal fun AddictionDetailsEditContent(
                 is AddictionCreateUiAction.ChangeDescription ->
                     onAction(AddictionDetailsUiAction.ChangeDescription(createAction.value))
                 is AddictionCreateUiAction.SelectIcon ->
-                    onAction(AddictionDetailsUiAction.SelectIcon(createAction.iconKey))
+                    onAction(AddictionDetailsUiAction.SelectIcon(createAction.icon))
                 is AddictionCreateUiAction.SelectGradient ->
-                    onAction(AddictionDetailsUiAction.SelectGradient(createAction.gradientKey))
+                    onAction(AddictionDetailsUiAction.SelectGradient(createAction.gradient))
                 is AddictionCreateUiAction.SelectCategory ->
                     onAction(AddictionDetailsUiAction.SelectCategory(createAction.category))
                 is AddictionCreateUiAction.Submit ->
@@ -147,12 +158,17 @@ private fun AddictionDetailsEditSubmitSection(
     val warningColor = Tokens.Warning.getThemedColor()
 
     AnimatedVisibility(
-        visible = result.errorMessage != null,
+        visible = result.isError != null,
         enter = fadeIn() + slideInVertically { it / 2 },
         exit = fadeOut() + slideOutVertically { it / 2 },
     ) {
+        val errorMessage = when {
+            result.isError?.isNetworkError == true -> stringResource(Res.string.addiction_common_error_generic)
+            else -> result.isError?.message
+        }
+
         Footnote(
-            text = result.errorMessage ?: "",
+            text = errorMessage ?: stringResource(Res.string.addiction_common_error_generic),
             color = warningColor,
             modifier = Modifier
                 .fillMaxWidth()

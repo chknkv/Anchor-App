@@ -9,6 +9,7 @@ import anchor_app.feature.featureaddiction.generated.resources.addictionCreate_i
 import anchor_app.feature.featureaddiction.generated.resources.addictionCreate_name_hint
 import anchor_app.feature.featureaddiction.generated.resources.addictionCreate_nameEmpty_error
 import anchor_app.feature.featureaddiction.generated.resources.addictionCreate_submit_button
+import anchor_app.feature.featureaddiction.generated.resources.addiction_common_error_generic
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -65,13 +66,14 @@ import com.chknkv.designsystem.module.ModuleContent
 import com.chknkv.designsystem.textinput.TextInput
 import com.chknkv.designsystem.theme.Tokens
 import com.chknkv.designsystem.theme.getThemedColor
-import com.chknkv.feature.addiction.models.presentation.all.AddictionCategoryUi
+import com.chknkv.feature.addiction.models.presentation.AddictionGradientUi
+import com.chknkv.feature.addiction.models.presentation.AddictionIconUi
 import com.chknkv.feature.addiction.models.presentation.create.AddictionCreateUiAction
 import com.chknkv.feature.addiction.models.presentation.create.AddictionCreateUiResult
-import com.chknkv.feature.addiction.presentation.toTitleStringResource
+import com.chknkv.feature.addiction.presentation.toDrawableResource
 import com.chknkv.feature.addiction.presentation.toGradientBrush
 import com.chknkv.feature.addiction.presentation.toGradientPrimaryColor
-import com.chknkv.feature.addiction.presentation.toIconDrawableResource
+import com.chknkv.feature.addiction.presentation.toStringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -106,11 +108,17 @@ internal fun AddictionCreateSuccessfulContent(
             .pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } },
     ) {
         AddictionCreateFieldsSection(result = result, onAction = onAction, focusManager = focusManager)
+
         AddictionCreateIconSection(result = result, onAction = onAction)
+
         AddictionCreateGradientSection(result = result, onAction = onAction)
+
         AddictionCreateCategorySection(result = result, onAction = onAction)
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Spacer(modifier = Modifier.weight(1f))
+
         AddictionCreateSubmitSection(
             result = result,
             onAction = onAction,
@@ -172,7 +180,7 @@ internal fun AddictionCreateFieldsSection(
  * Секция выбора визуальной иконки для новой привычки.
  * Содержит заголовок и сетку ([FlowRow]) с доступными иконками.
  *
- * @param result Результат состояния, содержащий доступные ключи иконок и текущий выбранный ключ.
+ * @param result Результат состояния, содержащий доступные иконки и текущую выбранную.
  * @param onAction Обработчик выбора иконки.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -190,13 +198,13 @@ internal fun AddictionCreateIconSection(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            result.availableIconKeys.forEach { iconKey ->
-                val isSelected = iconKey == result.selectedIconKey
+            result.availableIcons.forEach { icon ->
+                val isSelected = icon == result.selectedIcon
                 IconPickerItem(
-                    iconKey = iconKey,
+                    icon = icon,
                     isSelected = isSelected,
-                    onSelect = remember(onAction, iconKey) {
-                        { onAction(AddictionCreateUiAction.SelectIcon(iconKey)) }
+                    onSelect = remember(onAction, icon) {
+                        { onAction(AddictionCreateUiAction.SelectIcon(icon)) }
                     }
                 )
             }
@@ -226,13 +234,13 @@ internal fun AddictionCreateGradientSection(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            result.availableGradientKeys.forEach { gradientKey ->
-                val isSelected = gradientKey == result.selectedGradientKey
+            result.availableGradients.forEach { gradient ->
+                val isSelected = gradient == result.selectedGradient
                 GradientPickerItem(
-                    gradientKey = gradientKey,
+                    gradient = gradient,
                     isSelected = isSelected,
-                    onSelect = remember(onAction, gradientKey) {
-                        { onAction(AddictionCreateUiAction.SelectGradient(gradientKey)) }
+                    onSelect = remember(onAction, gradient) {
+                        { onAction(AddictionCreateUiAction.SelectGradient(gradient)) }
                     },
                 )
             }
@@ -258,9 +266,9 @@ internal fun AddictionCreateCategorySection(
         innerPaddingValues = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
     ) {
         FlowRow(modifier = Modifier.fillMaxWidth()) {
-            AddictionCategoryUi.entries.forEach { option ->
+            result.availableCategories.forEach { option ->
                 Chip(
-                    text = stringResource(option.toTitleStringResource()),
+                    text = stringResource(option.toStringResource()),
                     isSelected = option == result.selectedCategory,
                     onActionHandler = remember(onAction, option) {
                         { onAction(AddictionCreateUiAction.SelectCategory(option)) }
@@ -289,12 +297,17 @@ internal fun AddictionCreateSubmitSection(
     val warningColor = Tokens.Warning.getThemedColor()
 
     AnimatedVisibility(
-        visible = result.errorMessage != null,
+        visible = result.isError != null,
         enter = fadeIn() + slideInVertically { it / 2 },
         exit = fadeOut() + slideOutVertically { it / 2 },
     ) {
+        val errorMessage = when {
+            result.isError?.isNetworkError == true -> stringResource(Res.string.addiction_common_error_generic)
+            else -> result.isError?.message
+        }
+
         Footnote(
-            text = result.errorMessage ?: "",
+            text = errorMessage ?: stringResource(Res.string.addiction_common_error_generic),
             color = warningColor,
             modifier = Modifier
                 .fillMaxWidth()
@@ -323,13 +336,13 @@ internal fun AddictionCreateSubmitSection(
 /**
  * Элемент выбора иконки для привычки.
  *
- * @param iconKey Строковый ключ иконки.
+ * @param icon Иконка привычки.
  * @param isSelected Флаг, указывающий, выбрана ли данная иконка в текущий момент.
  * @param onSelect Обработчик клика по элементу.
  */
 @Composable
-internal fun IconPickerItem(
-    iconKey: String,
+private fun IconPickerItem(
+    icon: AddictionIconUi,
     isSelected: Boolean,
     onSelect: () -> Unit,
 ) {
@@ -361,7 +374,7 @@ internal fun IconPickerItem(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                painter = painterResource(iconKey.toIconDrawableResource()),
+                painter = painterResource(icon.toDrawableResource()),
                 contentDescription = null,
                 modifier = Modifier.size(28.dp),
                 tint = iconTint,
@@ -380,13 +393,13 @@ internal fun IconPickerItem(
 /**
  * Элемент выбора градиента для иконки привычки.
  *
- * @param gradientKey Строковый ключ градиента (например, "blue", "green").
+ * @param gradient Градиент привычки.
  * @param isSelected Флаг, указывающий, выбран ли данный градиент в текущий момент.
  * @param onSelect Обработчик клика по элементу.
  */
 @Composable
-internal fun GradientPickerItem(
-    gradientKey: String,
+private fun GradientPickerItem(
+    gradient: AddictionGradientUi,
     isSelected: Boolean,
     onSelect: () -> Unit,
 ) {
@@ -400,8 +413,8 @@ internal fun GradientPickerItem(
         }
     }
 
-    val brush = remember(gradientKey) { gradientKey.toGradientBrush() }
-    val borderColor = gradientKey.toGradientPrimaryColor()
+    val brush = remember(gradient) { gradient.toGradientBrush() }
+    val borderColor = gradient.toGradientPrimaryColor()
 
     Box(modifier = Modifier.size(56.dp)) {
         Box(

@@ -2,8 +2,19 @@ package com.chknkv.feature.addiction.presentation.details.compose
 
 import anchor_app.feature.featureaddiction.generated.resources.Res
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_controlDays_label
+import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_deleteConfirmation_button
+import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_deleteConfirmation_subtitle
+import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_deleteConfirmation_title
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_delete_button
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_incrementDays_button
+import anchor_app.feature.featureaddiction.generated.resources.addiction_common_error_generic
+import anchor_app.feature.featureaddiction.generated.resources.ic_cross
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,16 +34,21 @@ import com.chknkv.designsystem.Body
 import com.chknkv.designsystem.Footnote
 import com.chknkv.designsystem.Title3
 import com.chknkv.designsystem.button.Button
+import com.chknkv.designsystem.button.ButtonCircle
 import com.chknkv.designsystem.button.ButtonStyle
 import com.chknkv.designsystem.cell.CellAction
 import com.chknkv.designsystem.cell.CellInfo
 import com.chknkv.designsystem.module.Module
+import com.chknkv.designsystem.sheet.Sheet
+import com.chknkv.designsystem.theme.Tokens
+import com.chknkv.designsystem.theme.getThemedColor
 import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiAction
 import com.chknkv.feature.addiction.models.presentation.details.AddictionDetailsUiResult
 import com.chknkv.feature.addiction.presentation.details.elements.AddictionDetailsActivityCalendar
+import com.chknkv.feature.addiction.presentation.toCountdownString
+import com.chknkv.feature.addiction.presentation.toDrawableResource
 import com.chknkv.feature.addiction.presentation.toGradientBrush
-import com.chknkv.feature.addiction.presentation.toIconDrawableResource
-import com.chknkv.feature.addiction.presentation.toTitleStringResource
+import com.chknkv.feature.addiction.presentation.toStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -50,100 +66,140 @@ internal fun AddictionDetailsViewContent(
     contentPadding: PaddingValues,
 ) {
     val scrollState = rememberScrollState()
-    val gradientBrush = remember(result.gradientKey) { result.gradientKey.toGradientBrush() }
+    val gradientBrush = remember(result.gradient) { result.gradient.toGradientBrush() }
     val onIncrementDays = remember(onAction) { { onAction(AddictionDetailsUiAction.IncrementDays) } }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(contentPadding),
-    ) {
-        CellInfo(
-            title = result.title,
-            subtitle = stringResource(result.category.toTitleStringResource()),
-            iconGradient = gradientBrush,
-            iconRes = result.iconKey.toIconDrawableResource(),
-            outPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(contentPadding),
+        ) {
+            CellInfo(
+                title = result.title,
+                subtitle = stringResource(result.category.toStringResource()),
+                iconGradient = gradientBrush,
+                iconRes = result.icon.toDrawableResource(),
+                outPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
+            )
 
-        AddictionDetailsActivityCalendar(
-            completedDates = result.completedDates,
-            gradientKey = result.gradientKey,
-        )
+            AddictionDetailsActivityCalendar(
+                completedDates = result.completedDates,
+                gradient = result.gradient,
+            )
 
-        if (result.description.isNotEmpty()) {
+            if (result.description.isNotEmpty()) {
+                Module(
+                    outPaddingValues = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 0.dp),
+                    innerPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    Body(
+                        text = result.description,
+                        modifier = Modifier.fillMaxWidth(),
+                        isSecondary = true,
+                        maxLines = Int.MAX_VALUE
+                    )
+                }
+            }
+
             Module(
                 outPaddingValues = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 0.dp),
                 innerPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                Body(
-                    text = result.description,
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    isSecondary = true,
-                    maxLines = Int.MAX_VALUE
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Body(
+                        text = stringResource(Res.string.addictionDetails_controlDays_label),
+                        isSecondary = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Title3(text = result.controlDays.toString())
+                }
+            }
+
+            Module(outPaddingValues = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 0.dp)) {
+                CellAction(
+                    title = stringResource(Res.string.addictionDetails_delete_button),
+                    isWarning = true,
+                    isDivider = false,
+                    onClick = remember(onAction) {
+                        { onAction(AddictionDetailsUiAction.ChangeDeleteConfirmationVisibility(isVisible = true)) }
+                    }
                 )
             }
-        }
 
-        Module(
-            outPaddingValues = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 0.dp),
-            innerPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.fillMaxWidth().height(32.dp))
+
+            if (!result.canIncrementToday && result.nextIncrementSeconds > 0) {
+                Footnote(
+                    text = result.nextIncrementSeconds.toCountdownString(),
+                    isSecondary = true,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp),
+                )
+            }
+
+            AnimatedVisibility(
+                visible = result.isError != null,
+                enter = fadeIn() + slideInVertically { it / 2 },
+                exit = fadeOut() + slideOutVertically { it / 2 },
             ) {
-                Body(
-                    text = stringResource(Res.string.addictionDetails_controlDays_label),
-                    isSecondary = true,
-                    modifier = Modifier.weight(1f),
+                val errorMessage = when {
+                    result.isError?.isNetworkError == true -> stringResource(Res.string.addiction_common_error_generic)
+                    else -> result.isError?.message
+                }
+
+                Footnote(
+                    text = errorMessage ?: stringResource(Res.string.addiction_common_error_generic),
+                    color = Tokens.Warning.getThemedColor(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 6.dp),
                 )
-                Title3(text = result.controlDays.toString())
             }
-        }
 
-        Module(outPaddingValues = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 0.dp)) {
-            CellAction(
-                title = stringResource(Res.string.addictionDetails_delete_button),
-                isWarning = true,
-                isDivider = false,
-                onClick = remember(onAction) { { onAction(AddictionDetailsUiAction.DeleteHabit) } }
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.fillMaxWidth().height(32.dp))
-
-        if (!result.canIncrementToday && result.nextIncrementSeconds > 0) {
-            Footnote(
-                text = result.nextIncrementSeconds.toCountdownString(),
-                isSecondary = true,
+            Button(
+                text = stringResource(Res.string.addictionDetails_incrementDays_button),
+                style = ButtonStyle.Action,
+                enabled = !result.isLoading && result.canIncrementToday,
+                onClick = onIncrementDays,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 8.dp),
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             )
         }
 
-        Button(
-            text = stringResource(Res.string.addictionDetails_incrementDays_button),
-            style = ButtonStyle.Action,
-            enabled = !result.isLoading && result.canIncrementToday,
-            onClick = onIncrementDays,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        Sheet(
+            isVisible = result.isDeleteConfirmationVisible,
+            onDismissRequest = { onAction(AddictionDetailsUiAction.ChangeDeleteConfirmationVisibility(isVisible = false)) },
+            title = stringResource(Res.string.addictionDetails_deleteConfirmation_title),
+            subtitle = stringResource(Res.string.addictionDetails_deleteConfirmation_subtitle),
+            isDragable = true,
+            onDragDismissAction = { onAction(AddictionDetailsUiAction.ChangeDeleteConfirmationVisibility(isVisible = false)) },
+            isOutsideClickEnabled = true,
+            onOutsideClickAction = { onAction(AddictionDetailsUiAction.ChangeDeleteConfirmationVisibility(isVisible = false)) },
+            actionButton = {
+                ButtonCircle(
+                    onClick = { onAction(AddictionDetailsUiAction.ChangeDeleteConfirmationVisibility(isVisible = false)) },
+                    iconRes = Res.drawable.ic_cross
+                )
+            }
+        ) {
+            Button(
+                text = stringResource(Res.string.addictionDetails_deleteConfirmation_button),
+                style = ButtonStyle.Warning,
+                enabled = !result.isLoading,
+                onClick = remember(onAction) { { onAction(AddictionDetailsUiAction.DeleteHabit) } },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 8.dp, end = 16.dp)
+            )
+        }
     }
-}
-
-/**
- * Преобразует количество секунд в строку обратного отсчета формата ЧЧ:ММ:СС.
- */
-private fun Int.toCountdownString(): String {
-    val h = this / 3600
-    val m = (this % 3600) / 60
-    val s = this % 60
-    return "${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}"
 }

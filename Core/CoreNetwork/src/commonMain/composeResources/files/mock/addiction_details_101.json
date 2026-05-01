@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "body": {
+    "id": 101,
+    "name": "Выпивать 2 л воды в день",
+    "category_key": "health",
+    "icon_key": "ic_habit_health",
+    "gradient_key": "blue",
+    "control_days": 12,
+    "completed_dates": ["2026-04-18", "2026-04-19", "2026-04-21", "2026-04-22", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-27", "2026-04-28", "2026-04-29"],
+    "can_increment_today": true,
+    "next_increment_available_in_seconds": 0
+  }
+}

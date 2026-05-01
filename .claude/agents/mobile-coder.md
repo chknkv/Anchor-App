@@ -30,7 +30,7 @@ You own the implementation layer: ViewModels, Interactors, Repositories, domain 
 - **SQLDelight** 2.3.2 — when persistence is needed
 - **Multiplatform Settings** 1.3.0 — via `AppSettings` from `CoreUtils`
 - **Napier** 2.7.1 — logging (`Napier.d`, `Napier.e`)
-- Package root: `com.chknkv`
+- Package root: `com.yourapp` (замени на реальный пакет проекта)
 
 ### ViewModel base: `androidx.lifecycle.ViewModel` (JetBrains multiplatform variant)
 - `viewModelScope` is available and correct on both platforms
@@ -47,7 +47,7 @@ The project uses **two variants** depending on whether the screen has async load
 ### Pattern A — Flat UiResult (no loading skeleton)
 Use when: the screen renders immediately with default values and async ops only show inline loading flags (e.g. `isLoading: Boolean`).
 
-**Reference:** `AuthorizationViewModel` + `AuthorizationUiResult`
+**Когда использовать:** форма/настройки — экран рендерится сразу с default-значениями.
 
 ```kotlin
 // models/presentation/x/XUiAction.kt
@@ -130,7 +130,7 @@ internal class XViewModel(
 ### Pattern B — Sealed UiState (with loading/error skeleton)
 Use when: the screen starts with a full-screen loader and transitions through `Init → Loading → Successful | Error`.
 
-**Reference:** `AddictionSelectionViewModel` + `AddictionSelectionUiState`
+**Когда использовать:** список, детали — экран требует загрузки данных до первого рендера.
 
 ```kotlin
 // models/presentation/x/XUiState.kt
@@ -349,7 +349,31 @@ internal class XRepositoryImpl(
 }
 ```
 
-**ApiMapper:**
+**ApiMapper — полный паттерн:**
+
+Все Response DTO наследуют `NetworkEntity<XxxBody>()`. Body — отдельный `@Serializable data class`. Метод интерфейса возвращает `XxxBody`, а не `List<T>` напрямую.
+
+```kotlin
+// models/data/XModels.kt
+@Serializable
+internal class XResponse : NetworkEntity<XBody>()
+
+@Serializable
+internal data class XBody(
+    @SerialName("items") val items: List<XItemBody>,
+)
+
+@Serializable
+internal data class XItemBody(
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String,
+)
+
+@Serializable
+internal data class XCreateRequest(
+    @SerialName("name") val name: String,
+)
+```
 
 ```kotlin
 // data/mapper/XApiMapper.kt
@@ -363,9 +387,12 @@ internal interface XApiMapper {
      *
      * `GET /x`
      *
-     * @return Список DTO-ответов от сервера.
+     * @return Body-объект [XBody] с результатами.
+     * @throws NetworkException.Unauthorized При истёкшем / невалидном токене.
+     * @throws NetworkException.NoConnection При отсутствии сети.
+     * @throws NetworkException.HttpError При ошибке на стороне сервера.
      */
-    suspend fun getAll(): List<XResponse>
+    suspend fun getAll(): XBody
 
     /**
      * Создаёт новый элемент X.
@@ -373,8 +400,11 @@ internal interface XApiMapper {
      * `POST /x`
      *
      * @param request Тело запроса.
+     * @throws NetworkException.Unauthorized При истёкшем / невалидном токене.
+     * @throws NetworkException.NoConnection При отсутствии сети.
+     * @throws NetworkException.HttpError При ошибке на стороне сервера.
      */
-    suspend fun save(request: XRequest)
+    suspend fun create(request: XCreateRequest)
 }
 
 // data/mapper/XApiMapperImpl.kt
@@ -387,37 +417,67 @@ internal class XApiMapperImpl(
     private val apiClient: ApiClient,
 ) : XApiMapper {
 
-    override suspend fun getAll(): List<XResponse> =
-        apiClient.request {
-            endpoint = "x"
+    override suspend fun getAll(): XBody =
+        apiClient.request<XResponse> {
+            endpoint = ENDPOINT_ALL
             method = HttpMethod.Get
-        }
+        }.requireBody()
 
-    override suspend fun save(request: XRequest) {
-        apiClient.request<Unit> {
-            endpoint = "x"
+    override suspend fun create(request: XCreateRequest) {
+        apiClient.request<NetworkEntity<Unit>> {
+            endpoint = ENDPOINT_CREATE
             method = HttpMethod.Post
             body = request
-        }
+        }.isSuccessfulExecute()
+    }
+
+    companion object {
+        private const val ENDPOINT_ALL = "x/all"
+        private const val ENDPOINT_CREATE = "x/create"
     }
 }
 ```
 
+**Правила ApiMapper:**
+- Все строки эндпоинтов — **только** в `companion object` реализации; нигде больше.
+- GET с телом → `.requireBody()`; POST/PATCH/DELETE без тела → `.isSuccessfulExecute()`.
+- `ApiMapper` — `single<>` в Koin.
+
 **domain/converter/ — extension-функции (не классы):**
+
+Один файл на сущность: `domain/converter/XConverter.kt`. KDOC — только указание source→target.
 
 ```kotlin
 // domain/converter/XConverter.kt
-/** Конвертирует ответ сервера в доменную модель. */
-internal fun XResponse.toDomain(): XDomainModel = XDomainModel(
+/** Конвертирует data-model [XBody] в domain-model [XDomainModel]. */
+internal fun XItemBody.toDomain(): XDomainModel = XDomainModel(
     id = id,
     name = name,
 )
 
-// domain/converter/XRequestConverter.kt
-/** Конвертирует доменную модель в тело HTTP-запроса. */
-internal fun XDomainModel.toRequest(): XRequest = XRequest(
+/** Конвертирует domain-model [XDomainModel] в data-model [XCreateRequest]. */
+internal fun XDomainModel.toRequest(): XCreateRequest = XCreateRequest(
     name = name,
 )
+```
+
+**domain/converter/base/ — data-enum↔domain-type:**
+
+Один файл на enum: `domain/converter/base/XKeyConverter.kt`. Без Compose-типов.
+
+```kotlin
+// domain/converter/base/XKeyConverter.kt
+/** Конвертирует data-enum [XKey] в domain-sealed [XDomain]. */
+internal fun XKey.toDomain(): XDomain = when (this) {
+    XKey.ALPHA -> XDomain.Alpha
+    XKey.BETA  -> XDomain.Beta
+}
+
+/** Конвертирует domain-sealed [XDomain] в data-enum [XKey]. */
+internal fun XDomain.toApiKey(): XKey = when (this) {
+    XDomain.Alpha -> XKey.ALPHA
+    XDomain.Beta  -> XKey.BETA
+}
 ```
 
 ---
@@ -550,3 +610,8 @@ List issues as: `[CRITICAL | WARNING | SUGGESTION]` file:line — description �
 - **Always** make ViewModel, Interactor, InteractorImpl, Repository, RepositoryImpl `internal`.
 - **Always** check if the needed DI binding already exists in an `includes()`-d module before adding a duplicate.
 - If asked to use a library not in `libs.versions.toml`: flag it and ask before adding.
+- **Never** write a `Response` DTO that does not extend `NetworkEntity<XxxBody>()` — the `Body` is always a separate `@Serializable data class`.
+- **Never** return `List<T>` directly from an `ApiMapper` method — always return the `Body` wrapper.
+- **Never** hardcode an endpoint string inside a method body of `ApiMapperImpl` — all endpoints go in `companion object` constants.
+- **Never** write KDOC on `override` methods in `ApiMapperImpl`, `RepositoryImpl`, or `InteractorImpl` — the contract is documented once in the interface.
+- **Never** put `Brush`, `DrawableResource`, `Color`, or `StringResource` in `domain/converter/` — these types belong exclusively in `presentation/Utils.kt`.

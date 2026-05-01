@@ -1,6 +1,7 @@
 package com.chknkv.feature.addiction.presentation.details
 
 import anchor_app.feature.featureaddiction.generated.resources.Res
+import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_header_edit_title
 import anchor_app.feature.featureaddiction.generated.resources.addictionDetails_header_title
 import anchor_app.feature.featureaddiction.generated.resources.ic_edit
 import androidx.compose.foundation.background
@@ -67,8 +68,11 @@ fun AddictionDetailsScreen(addictionId: Int, onBack: () -> Unit) {
 
     val scaffoldTitle = when (val state = uiState) {
         is AddictionDetailsUiState.Successful ->
-            if (state.result.mode is DetailsMode.ViewMode) state.result.title
-            else stringResource(Res.string.addictionDetails_header_title)
+            when {
+                state.result.mode is DetailsMode.ViewMode -> state.result.title
+                state.result.mode is DetailsMode.EditMode -> stringResource(Res.string.addictionDetails_header_edit_title)
+                else -> stringResource(Res.string.addictionDetails_header_title)
+            }
         else -> stringResource(Res.string.addictionDetails_header_title)
     }
 

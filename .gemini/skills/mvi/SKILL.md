@@ -39,7 +39,7 @@ UI (Composable) → UiAction → ViewModel → UiState / UiResult → UI
 | Init-экшен           | `onStart { emit(UiAction.Init) }` внутри `subscribeToActions()` |
 | Старт коллектора     | `initScreen()` — однократно, защищён флагом               |
 | Обработка ошибок     | `CoroutineExceptionHandler` на каждом `handle*`-launch    |
-| KDOC                 | Русский язык                                              |
+| KDOC                 | Русский язык; Interface — полный KDOC; Impl — только `/** Реализация [XxxInterface]. */` |
 
 ---
 
@@ -499,6 +499,41 @@ Compose-типах. Если конвертер порождает Compose-ти�
 **`domain/converter/`** — только конвертеры domain↔data (без Compose-зависимостей).
 
 ---
+
+## Сетевой слой — краткий справочник для MVI-экранов с загрузкой данных
+
+При генерации ViewModel для экранов, загружающих данные из API, применяй эти правила совместно с MVI-паттерном.
+
+**handleInit() и handleXxx() — паттерн с сетью:**
+
+```kotlin
+private fun handleInit() {
+    viewModelScope.launch(screenNameCoroutineExceptionHandler) {
+        _uiState.value = ScreenNameUiState.Loading
+        // interactor вызывает repository, который вызывает ApiMapper.requireBody()
+        val data = interactor.getItems()
+        _uiState.value = ScreenNameUiState.Successful(
+            result = data.toUiResult(),   // конвертер в presentation/Utils.kt
+        )
+    }
+}
+```
+
+**presentation/Utils.kt** — конвертеры domain→UI вызываются в ViewModel через extension:
+```kotlin
+// В Utils.kt (presentation-слой модуля):
+// region ScreenName
+internal fun List<XxxDomain>.toUiResult(): ScreenNameUiResult = ScreenNameUiResult(
+    items = map { it.toUi() },
+)
+internal fun XxxDomain.toUi(): XxxUi = XxxUi(id = id, name = name)
+// endregion
+```
+
+**Converter файлы для новой сущности:**
+- `domain/converter/XxxConverter.kt` — `XxxBody.toDomain()` и `XxxDomain.toRequest()`
+- `domain/converter/base/XxxKeyConverter.kt` — если есть enum-ключи (категории, типы)
+- `presentation/Utils.kt` — `XxxDomain.toXxxUi()`, конвертеры с Compose-типами
 
 ## Reference files
 

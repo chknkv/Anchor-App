@@ -31,16 +31,20 @@ internal class AddictionSelectionViewModel(
     private val interactor: AddictionInteractor,
 ) : ViewModel() {
 
+    /** Обработчик необработанных исключений из корутин: логирует ошибку и переводит UI в [AddictionSelectionUiState.Error]. */
     private val addictionSelectionCoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
         _uiState.value = AddictionSelectionUiState.Error()
     }
 
+    /** Входящий поток действий пользователя; буферизует до 64 элементов. */
     private val _actionFlow = MutableSharedFlow<AddictionSelectionUiAction>(extraBufferCapacity = 64)
 
+    /** Изменяемое состояние экрана. Доступно снаружи через [uiState]. */
     private val _uiState = MutableStateFlow<AddictionSelectionUiState>(AddictionSelectionUiState.Init)
     val uiState: StateFlow<AddictionSelectionUiState> = _uiState.asStateFlow()
 
+    /** Поток одноразовых событий (хаптик при превышении лимита, завершение выбора). */
     private val _uiEvent = MutableSharedFlow<AddictionSelectionUiEvent>(extraBufferCapacity = 16)
     val uiEvent: SharedFlow<AddictionSelectionUiEvent> = _uiEvent.asSharedFlow()
 
@@ -115,13 +119,21 @@ internal class AddictionSelectionViewModel(
 
     /**
      * Обрабатывает переход к следующему шагу после выбора привычек.
-     * Запускает процесс сохранения.
+     * Запускает процесс сохранения. При ошибке сбрасывает [AddictionSelectionUiResult.isSaving]
+     * и выставляет [AddictionSelectionUiResult.isFailed] в `true`, не переводя экран в Error-state.
      */
     private fun handleNext() {
         val current = successfulResult ?: return
         if (current.isSaving || current.selectedIds.isEmpty()) return
-        viewModelScope.launch(addictionSelectionCoroutineExceptionHandler) {
-            updateResult(current.copy(isSaving = true))
+
+        val saveExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
+            val latest = successfulResult ?: return@CoroutineExceptionHandler
+            updateResult(latest.copy(isSaving = false, isFailed = true))
+        }
+
+        viewModelScope.launch(saveExceptionHandler) {
+            updateResult(current.copy(isSaving = true, isFailed = false))
             interactor.saveSelectedAddictions(current.selectedIds)
             _uiEvent.emit(AddictionSelectionUiEvent.OnFinished)
         }
@@ -141,7 +153,6 @@ internal class AddictionSelectionViewModel(
     private fun updateResult(result: AddictionSelectionUiResult) {
         _uiState.value = AddictionSelectionUiState.Successful(result)
     }
-
 
     companion object {
         private const val TAG = "AddictionSelectionViewModel"

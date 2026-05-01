@@ -1,14 +1,14 @@
 package com.chknkv.feature.addiction.data.repository
 
 import com.chknkv.feature.addiction.data.mapper.AddictionApiMapper
-import com.chknkv.feature.addiction.domain.converter.toAddictionSelectedRequest
-import com.chknkv.feature.addiction.domain.converter.toDomain
+import com.chknkv.feature.addiction.data.converter.toDomain
 import com.chknkv.feature.addiction.domain.converter.toRequest
-import com.chknkv.feature.addiction.models.domain.create.AddictionCreate
-import com.chknkv.feature.addiction.models.domain.select.AddictionGroup
-import com.chknkv.feature.addiction.models.domain.UserAddiction
-import com.chknkv.feature.addiction.models.domain.UserAddictionGroup
-import com.chknkv.feature.addiction.models.domain.update.AddictionUpdate
+import com.chknkv.feature.addiction.models.data.AddictionSelectedRequest
+import com.chknkv.feature.addiction.models.domain.AddictionCreate
+import com.chknkv.feature.addiction.models.domain.AddictionsSelectionGroups
+import com.chknkv.feature.addiction.models.domain.AddictionAllGroups
+import com.chknkv.feature.addiction.models.domain.AddictionDetails
+import com.chknkv.feature.addiction.models.domain.AddictionUpdate
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -25,23 +25,23 @@ internal class AddictionRepositoryImpl(
     private val _updates = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     override val updates: SharedFlow<Unit> = _updates.asSharedFlow()
 
-    override suspend fun getAddictionGroupsForSelection(): List<AddictionGroup> =
-        apiMapper.getAddictionGroupsForSelection().map { it.toDomain() }
+    override suspend fun getAddictionGroupsForSelection(): List<AddictionsSelectionGroups> =
+        apiMapper.getAddictionGroupsForSelection().toDomain()
 
     override suspend fun saveSelectedAddictions(ids: Set<Int>) {
-        apiMapper.saveSelectedAddictions(ids.toAddictionSelectedRequest())
+        apiMapper.saveSelectedAddictions(AddictionSelectedRequest(ids.toList()))
         _updates.emit(Unit)
     }
 
-    override suspend fun getAllClientAddictions(): List<UserAddictionGroup> =
-        apiMapper.getAllClientAddictions().map { it.toDomain() }
+    override suspend fun getAllClientAddictions(): List<AddictionAllGroups> =
+        apiMapper.getAllClientAddictions().toDomain()
 
     override suspend fun createNewClientAddiction(request: AddictionCreate) {
         apiMapper.createNewClientAddiction(request.toRequest())
         _updates.emit(Unit)
     }
 
-    override suspend fun getClientDetailsAddiction(id: Int): UserAddiction =
+    override suspend fun getClientDetailsAddiction(id: Int): AddictionDetails =
         apiMapper.getClientDetailsAddiction(id).toDomain()
 
     override suspend fun incrementAddictionControlDays(id: Int) {

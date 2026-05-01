@@ -5,3 +5,8 @@ PRODUCT_BUNDLE_IDENTIFIER=com.chknkv.anchor.Anchor-App$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0
+
+// Базовый URL API — замените на реальный адрес сервера.
+// Аналог anchor.base.url в local.properties на Android.
+// Пример: BASE_URL = https://api.your-server.com/v1/
+BASE_URL =

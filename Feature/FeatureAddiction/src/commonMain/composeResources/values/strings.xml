@@ -1,10 +1,15 @@
 <resources>
+    <!-- Common Addiction Strings -->
+    <string name="addiction_common_error_generic">An error occurred, please try again later</string>
+
     <!-- Addiction Selection Screen -->
     <string name="addiction_selection_header_title">Choose your habits</string>
     <string name="addiction_selection_body_subtitle">Select the habits you\'d like to track.\nYou can skip this step</string>
     <string name="addiction_selection_counter">Selected %1$d of %2$d</string>
+    <string name="addiction_selection_errorState_description">Failed to load addictions. Please try again later or skip this step</string>
     <string name="addiction_selection_button_skip">Skip</string>
     <string name="addiction_selection_button_next">Continue</string>
+    <string name="addiction_selection_saveFailed_warning">Failed to save addictions. Please try again</string>
 
     <!-- Habit Groups -->
     <string name="habit_group_lifestyle_title">Lifestyle</string>
@@ -93,9 +98,13 @@
 
     <!-- Addiction Details Screen -->
     <string name="addictionDetails_header_title">Habit details</string>
+    <string name="addictionDetails_header_edit_title">Edit habit</string>
     <string name="addictionDetails_activity_section_title">Activity</string>
     <string name="addictionDetails_edit_button">Edit</string>
     <string name="addictionDetails_delete_button">Delete habit</string>
+    <string name="addictionDetails_deleteConfirmation_title">Delete habit</string>
+    <string name="addictionDetails_deleteConfirmation_subtitle">Are you sure you want to delete this habit? All data and progress will be permanently lost</string>
+    <string name="addictionDetails_deleteConfirmation_button">Delete</string>
     <string name="addictionDetails_incrementDays_button">Mark today</string>
     <string name="addictionDetails_controlDays_label">Days under control</string>
     <string name="addictionDetails_nameEmpty_error">Enter a habit name</string>
@@ -111,6 +120,9 @@
     <string name="addictionAll_emptyState_description">You haven\'t added any habits yet</string>
     <string name="addictionAll_errorState_description">Failed to load habits</string>
     <string name="addictionAll_errorState_retry_button">Retry</string>
+    <string name="addictionAll_limitSheet_title">Limit reached</string>
+    <string name="addictionAll_limitSheet_subtitle">You've reached the maximum number of habits. Subscribe to AnchorPremium to add more</string>
+    <string name="addictionAll_limitSheet_button">Subscribe</string>
     <plurals name="addictionAll_controlDays_label">
         <item quantity="one">%1$d day</item>
         <item quantity="other">%1$d days</item>

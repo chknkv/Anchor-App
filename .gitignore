@@ -23,13 +23,13 @@ build/
 
 ### iOS Xcode generated ###
 # Xcode user data
-SubTrack-MobileApp/iosApp-SubTrack/iosApp.xcodeproj/xcuserdata/
-SubTrack-MobileApp/iosApp-SubTrack/iosApp.xcodeproj/project.xcworkspace/xcuserdata/
+Anchor-MobileApp/iosApp/iosApp.xcodeproj/xcuserdata/
+Anchor-MobileApp/iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/
 *.xcuserstate
 *.xcuserdatad
 
 # Xcode build artifacts
-SubTrack-MobileApp/iosApp-SubTrack/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+Anchor-MobileApp/iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 DerivedData/
 build/ios/
 *.xccheckout
@@ -84,5 +84,5 @@ obj/
 
 ### Firebase ###
 /androidApp/google-services.json
-SubTrack-MobileApp/iosApp-SubTrack/iosApp/GoogleService-Info.plist
+Anchor-MobileAppiosApp/iosApp/GoogleService-Info.plist
 iOSDemoApp/iOSDemoApp/GoogleService-Info.plist

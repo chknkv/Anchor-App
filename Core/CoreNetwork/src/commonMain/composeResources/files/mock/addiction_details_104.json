@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "body": {
+    "id": 104,
+    "name": "Планирование дня",
+    "category_key": "productivity",
+    "icon_key": "ic_habit_productivity",
+    "gradient_key": "orange",
+    "control_days": 21,
+    "description": "Составлять список задач на завтра каждый вечер. Не более 3 приоритетных дел.",
+    "completed_dates": ["2026-04-09", "2026-04-10", "2026-04-11", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-28", "2026-04-29"],
+    "can_increment_today": true,
+    "next_increment_available_in_seconds": 0
+  }
+}

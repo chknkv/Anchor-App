@@ -364,6 +364,62 @@ LaunchedEffect(Unit) { viewModel.initScreen() }
 
 ---
 
+### [NETWORK_BODY_NULL] NetworkEntity.requireBody() — NullPointerException
+
+**Pattern:** `requireBody()` throws `IllegalStateException` if the server returns `success=true` but `body=null`. This happens when the Response DTO is structured incorrectly or the server sends an unexpected null body.
+
+**Common cause — wrong DTO structure:**
+```kotlin
+// WRONG — body is List<T>, null on empty response
+@Serializable
+internal class XxxResponse : NetworkEntity<List<XxxBody>>()
+
+// CORRECT — body is always a wrapper object, never null on success
+@Serializable
+internal class XxxResponse : NetworkEntity<XxxBody>()
+
+@Serializable
+internal data class XxxBody(@SerialName("items") val items: List<XxxItemBody>)
+```
+
+**Diagnostic question:** "Does the crash happen on empty-list responses?" → `body` is `null` when using `NetworkEntity<List<T>>` and the list is empty or absent.
+
+**Fix:** Change `NetworkEntity<List<T>>` to `NetworkEntity<XxxBody>` where `XxxBody` wraps the list with a default empty value.
+
+---
+
+### [NETWORK_ENDPOINT_HARDCODE] Endpoint String Inconsistency
+
+**Pattern:** Endpoint strings defined inline inside `ApiMapperImpl` methods instead of `companion object` constants. Different methods accidentally reference slightly different endpoint strings (e.g., `"user/addictions"` vs `"user/addiction"`).
+
+**Diagnostic:** "One method 404s but others work for the same resource" → compare endpoint strings across methods manually.
+
+**Fix:** Move all endpoint strings to `companion object` constants and reference them consistently.
+
+---
+
+### [NETWORK_VOID_CHECK] Missing isSuccessfulExecute on void requests
+
+**Pattern:** POST/PATCH/DELETE requests that return no body use `apiClient.request<Unit>` without calling `.isSuccessfulExecute()`. Server-side errors (e.g., `success=false, message="Not found"`) are **silently ignored** — the coroutine completes without throwing.
+
+```kotlin
+// WRONG — server error silently swallowed
+apiClient.request<Unit> {
+    endpoint = ENDPOINT_DELETE
+    method = HttpMethod.Delete
+}
+
+// CORRECT — throws IllegalStateException on server error
+apiClient.request<NetworkEntity<Unit>> {
+    endpoint = ENDPOINT_DELETE
+    method = HttpMethod.Delete
+}.isSuccessfulExecute()
+```
+
+**Diagnostic question:** "Does the UI show success even though the server returned an error?" → missing `.isSuccessfulExecute()`.
+
+---
+
 ### [FAST_TAP] Fast-Tap State Inconsistency
 
 **Pattern:** Pattern A ViewModels use `tryEmit()` which can **drop actions if the buffer is full** (64 capacity). Under normal usage this never triggers. But:
@@ -406,9 +462,14 @@ BUG REPORTED
     │   ├─ Cold start issue → [IOS_KOIN]
     │   └─ Memory/object lifecycle → [IOS_RETAIN]
     │
-    └─ Intermittent persistence issue?
-        ├─ After force-kill → [SETTINGS_RACE]
-        └─ After upgrade → check Settings key changes in PasscodeRepository
+    ├─ Intermittent persistence issue?
+    │   ├─ After force-kill → [SETTINGS_RACE]
+    │   └─ After upgrade → check Settings key changes in PasscodeRepository
+    │
+    └─ Network / API issue?
+        ├─ `IllegalStateException: success=true but body is null` → [NETWORK_BODY_NULL]
+        ├─ Server returns error but UI shows success → [NETWORK_VOID_CHECK]
+        └─ One endpoint 404s while others work → [NETWORK_ENDPOINT_HARDCODE]
 ```
 
 ---

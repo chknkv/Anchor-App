@@ -1,11 +1,11 @@
-# Graph Report - /Users/chekunkov.a.v/AndroidStudioProjects/Anchor-App  (2026-04-29)
+# Graph Report - /Users/chekunkov.a.v/AndroidStudioProjects/Anchor-App  (2026-05-01)
 
 ## Corpus Check
-- 240 files · ~120,829 words
+- 254 files · ~117,861 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 908 nodes · 669 edges · 239 communities detected
+- 949 nodes · 696 edges · 253 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -249,9 +249,23 @@
 - [[_COMMUNITY_Community 236|Community 236]]
 - [[_COMMUNITY_Community 237|Community 237]]
 - [[_COMMUNITY_Community 238|Community 238]]
+- [[_COMMUNITY_Community 239|Community 239]]
+- [[_COMMUNITY_Community 240|Community 240]]
+- [[_COMMUNITY_Community 241|Community 241]]
+- [[_COMMUNITY_Community 242|Community 242]]
+- [[_COMMUNITY_Community 243|Community 243]]
+- [[_COMMUNITY_Community 244|Community 244]]
+- [[_COMMUNITY_Community 245|Community 245]]
+- [[_COMMUNITY_Community 246|Community 246]]
+- [[_COMMUNITY_Community 247|Community 247]]
+- [[_COMMUNITY_Community 248|Community 248]]
+- [[_COMMUNITY_Community 249|Community 249]]
+- [[_COMMUNITY_Community 250|Community 250]]
+- [[_COMMUNITY_Community 251|Community 251]]
+- [[_COMMUNITY_Community 252|Community 252]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `AddictionDetailsViewModel` - 16 edges
+1. `AddictionDetailsViewModel` - 17 edges
 2. `AddictionCreateViewModel` - 12 edges
 3. `EnterPasscodeViewModel` - 11 edges
 4. `AuthorizationViewModel` - 11 edges
@@ -268,16 +282,16 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (1): AddictionDetailsViewModel
 
 ### Community 1 - "Community 1"
-Cohesion: 0.15
-Nodes (2): BiometricStrings, EnterPasscodeViewModel
+Cohesion: 0.14
+Nodes (13): AddictionDetailsUiAction, ChangeDeleteConfirmationVisibility, ChangeDescription, ChangeTitle, DeleteHabit, IncrementDays, Init, NavigateBack (+5 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.15
-Nodes (12): AddictionDetailsUiAction, ChangeDescription, ChangeTitle, DeleteHabit, IncrementDays, Init, NavigateBack, SelectCategory (+4 more)
+Nodes (2): BiometricStrings, EnterPasscodeViewModel
 
 ### Community 3 - "Community 3"
 Cohesion: 0.15
@@ -373,31 +387,31 @@ Nodes (1): AssistanceWidgetViewModel
 
 ### Community 26 - "Community 26"
 Cohesion: 0.22
-Nodes (1): AddictionAllViewModel
+Nodes (0): 
 
 ### Community 27 - "Community 27"
 Cohesion: 0.22
-Nodes (1): AddictionSelectionViewModel
+Nodes (1): AddictionAllViewModel
 
 ### Community 28 - "Community 28"
 Cohesion: 0.22
-Nodes (0): 
+Nodes (1): AddictionSelectionViewModel
 
 ### Community 29 - "Community 29"
-Cohesion: 0.25
-Nodes (7): CreatePasscodeUiAction, DeleteClick, DismissSkipAlert, Init, NumberClick, ShowSkipAlert, Skip
+Cohesion: 0.22
+Nodes (0): 
 
 ### Community 30 - "Community 30"
 Cohesion: 0.25
-Nodes (2): BiometricStrings, BiometrySetupViewModel
+Nodes (7): CreatePasscodeUiAction, DeleteClick, DismissSkipAlert, Init, NumberClick, ShowSkipAlert, Skip
 
 ### Community 31 - "Community 31"
 Cohesion: 0.25
-Nodes (5): Action, Clear, None, ShowPassword, TrailingIconMode
+Nodes (2): BiometricStrings, BiometrySetupViewModel
 
 ### Community 32 - "Community 32"
 Cohesion: 0.25
-Nodes (0): 
+Nodes (5): Action, Clear, None, ShowPassword, TrailingIconMode
 
 ### Community 33 - "Community 33"
 Cohesion: 0.29
@@ -429,55 +443,55 @@ Nodes (5): AssistanceWidgetUiAction, HideQuoteSheet, Init, Refresh, ShowQuoteShe
 
 ### Community 40 - "Community 40"
 Cohesion: 0.33
-Nodes (5): AddictionDetailsUiState, Error, Init, Loading, Successful
+Nodes (5): AddictionSelectedRequest, AddictionSelectionGroups, AddictionSelectionGroupsBody, AddictionSelectionGroupsResponse, AddictionSelectionItem
 
 ### Community 41 - "Community 41"
 Cohesion: 0.33
-Nodes (5): AddictionSelectionUiAction, Init, OnAddictionToggled, OnNextClicked, OnSkipClicked
+Nodes (5): AddictionDetailsUiState, Error, Init, Loading, Successful
 
 ### Community 42 - "Community 42"
 Cohesion: 0.33
-Nodes (5): AddictionSelectionUiState, Error, Init, Loading, Successful
+Nodes (5): AddictionSelectionUiAction, Init, OnAddictionToggled, OnNextClicked, OnSkipClicked
 
 ### Community 43 - "Community 43"
 Cohesion: 0.33
-Nodes (5): AddictionCreateUiState, Error, Init, Loading, Successful
+Nodes (5): AddictionSelectionUiState, Error, Init, Loading, Successful
 
 ### Community 44 - "Community 44"
 Cohesion: 0.33
-Nodes (5): Appearance, Language, Main, PasscodeFlow, SettingsNavRoute
+Nodes (5): AddictionCreateUiState, Error, Init, Loading, Successful
 
 ### Community 45 - "Community 45"
-Cohesion: 0.4
-Nodes (1): ApplicationAuth
+Cohesion: 0.33
+Nodes (5): Appearance, Language, Main, PasscodeFlow, SettingsNavRoute
 
 ### Community 46 - "Community 46"
 Cohesion: 0.4
-Nodes (4): Biometry, Create, Enter, PasscodeNavRoute
+Nodes (1): ApplicationAuth
 
 ### Community 47 - "Community 47"
 Cohesion: 0.4
-Nodes (4): BiometricResult, Cancelled, Error, Success
+Nodes (4): Biometry, Create, Enter, PasscodeNavRoute
 
 ### Community 48 - "Community 48"
 Cohesion: 0.4
-Nodes (4): BiometrySetupUiAction, Enable, Init, Skip
+Nodes (4): BiometricResult, Cancelled, Error, Success
 
 ### Community 49 - "Community 49"
 Cohesion: 0.4
-Nodes (4): BiometricEnabled, BiometricFailed, BiometrySetupUiEvent, SetupFinished
+Nodes (4): BiometrySetupUiAction, Enable, Init, Skip
 
 ### Community 50 - "Community 50"
 Cohesion: 0.4
-Nodes (4): CreatePasscodeUiEvent, PasscodeCreated, PasscodesDoNotMatch, SkipRequested
+Nodes (4): BiometricEnabled, BiometricFailed, BiometrySetupUiEvent, SetupFinished
 
 ### Community 51 - "Community 51"
 Cohesion: 0.4
-Nodes (4): EnterPasscodeUiEvent, EnterSuccess, ForgotPasscodeRequested, InvalidPasscode
+Nodes (4): CreatePasscodeUiEvent, PasscodeCreated, PasscodesDoNotMatch, SkipRequested
 
 ### Community 52 - "Community 52"
 Cohesion: 0.4
-Nodes (1): BiometricAuthenticator
+Nodes (4): EnterPasscodeUiEvent, EnterSuccess, ForgotPasscodeRequested, InvalidPasscode
 
 ### Community 53 - "Community 53"
 Cohesion: 0.4
@@ -485,67 +499,67 @@ Nodes (1): BiometricAuthenticator
 
 ### Community 54 - "Community 54"
 Cohesion: 0.4
-Nodes (2): ChipConfiguration, ChipDefaults
+Nodes (1): BiometricAuthenticator
 
 ### Community 55 - "Community 55"
 Cohesion: 0.4
-Nodes (1): Theme
+Nodes (2): ChipConfiguration, ChipDefaults
 
 ### Community 56 - "Community 56"
 Cohesion: 0.4
-Nodes (3): Fraction, SheetHeightBehavior, WrapContent
+Nodes (1): Theme
 
 ### Community 57 - "Community 57"
 Cohesion: 0.4
-Nodes (2): RefreshRequest, RefreshResponse
+Nodes (3): Fraction, SheetHeightBehavior, WrapContent
 
 ### Community 58 - "Community 58"
 Cohesion: 0.4
-Nodes (4): AssistanceWidgetUiState, Error, Loading, Successful
+Nodes (2): RefreshRequest, RefreshResponse
 
 ### Community 59 - "Community 59"
 Cohesion: 0.4
-Nodes (4): Authorization, HabitSelection, Passcode, WelcomeNavRoute
+Nodes (4): AssistanceWidgetUiState, Error, Loading, Successful
 
 ### Community 60 - "Community 60"
 Cohesion: 0.4
-Nodes (4): AddictionCreate, AddictionDetails, Main, MainNavRoute
+Nodes (4): AddictionAllGroup, AddictionAllGroupsBody, AddictionAllGroupsResponse, AddictionsAllGroup
 
 ### Community 61 - "Community 61"
 Cohesion: 0.4
-Nodes (0): 
+Nodes (4): Authorization, HabitSelection, Passcode, WelcomeNavRoute
 
 ### Community 62 - "Community 62"
-Cohesion: 0.5
-Nodes (0): 
+Cohesion: 0.4
+Nodes (4): AddictionCreate, AddictionDetails, Main, MainNavRoute
 
 ### Community 63 - "Community 63"
-Cohesion: 0.5
+Cohesion: 0.4
 Nodes (0): 
 
 ### Community 64 - "Community 64"
 Cohesion: 0.5
-Nodes (3): Change, Enter, PasscodeFlowMode
+Nodes (0): 
 
 ### Community 65 - "Community 65"
 Cohesion: 0.5
-Nodes (3): BiometrySetupUiState, Init, Successful
+Nodes (0): 
 
 ### Community 66 - "Community 66"
 Cohesion: 0.5
-Nodes (3): CreatePasscodeUiState, Init, Successful
+Nodes (3): Change, Enter, PasscodeFlowMode
 
 ### Community 67 - "Community 67"
 Cohesion: 0.5
-Nodes (3): EnterPasscodeUiState, Init, Successful
+Nodes (3): BiometrySetupUiState, Init, Successful
 
 ### Community 68 - "Community 68"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (3): CreatePasscodeUiState, Init, Successful
 
 ### Community 69 - "Community 69"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (3): EnterPasscodeUiState, Init, Successful
 
 ### Community 70 - "Community 70"
 Cohesion: 0.5
@@ -561,63 +575,63 @@ Nodes (0):
 
 ### Community 73 - "Community 73"
 Cohesion: 0.5
-Nodes (3): AnchorNavRoute, Main, Welcome
+Nodes (0): 
 
 ### Community 74 - "Community 74"
 Cohesion: 0.5
-Nodes (3): AddictionAllUiResult, UserAddictionGroupUi, UserAddictionUi
+Nodes (0): 
 
 ### Community 75 - "Community 75"
 Cohesion: 0.5
-Nodes (3): AddictionAllUiAction, Init, Refresh
+Nodes (1): NetworkEntity
 
 ### Community 76 - "Community 76"
 Cohesion: 0.5
-Nodes (3): DetailsMode, EditMode, ViewMode
+Nodes (1): MockApiResponses
 
 ### Community 77 - "Community 77"
 Cohesion: 0.5
-Nodes (3): AddictionDetailsUiEvent, HabitDeleted, NavigateBack
+Nodes (3): AnchorNavRoute, Main, Welcome
 
 ### Community 78 - "Community 78"
 Cohesion: 0.5
-Nodes (3): AddictionSelectionUiEvent, OnFinished, OnSelectionLimitReached
+Nodes (3): AddictionAllUiResult, UserAddictionGroupUi, UserAddictionUi
 
 ### Community 79 - "Community 79"
 Cohesion: 0.5
-Nodes (3): AddictionGroupUi, AddictionSelectionUiResult, AddictionUi
+Nodes (3): AddictionAllUiAction, Init, Refresh
 
 ### Community 80 - "Community 80"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (3): DetailsMode, EditMode, ViewMode
 
 ### Community 81 - "Community 81"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (3): AddictionDetailsUiEvent, HabitDeleted, NavigateBack
 
 ### Community 82 - "Community 82"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (3): AddictionSelectionUiEvent, OnFinished, OnSelectionLimitReached
 
 ### Community 83 - "Community 83"
 Cohesion: 0.5
-Nodes (3): SettingCellModel, SettingsModuleModel, SettingsUiResult
+Nodes (3): AddictionGroupUi, AddictionSelectionUiResult, AddictionUi
 
 ### Community 84 - "Community 84"
 Cohesion: 0.5
-Nodes (1): MainSettingsViewModel
+Nodes (0): 
 
 ### Community 85 - "Community 85"
-Cohesion: 0.67
+Cohesion: 0.5
 Nodes (0): 
 
 ### Community 86 - "Community 86"
-Cohesion: 0.67
-Nodes (0): 
+Cohesion: 0.5
+Nodes (3): SettingCellModel, SettingsModuleModel, SettingsUiResult
 
 ### Community 87 - "Community 87"
-Cohesion: 0.67
-Nodes (1): PasscodeAlertKind
+Cohesion: 0.5
+Nodes (1): MainSettingsViewModel
 
 ### Community 88 - "Community 88"
 Cohesion: 0.67
@@ -629,95 +643,95 @@ Nodes (0):
 
 ### Community 90 - "Community 90"
 Cohesion: 0.67
-Nodes (1): LocalAppLocale
+Nodes (1): PasscodeAlertKind
 
 ### Community 91 - "Community 91"
 Cohesion: 0.67
-Nodes (1): LocalAppLocale
+Nodes (0): 
 
 ### Community 92 - "Community 92"
 Cohesion: 0.67
-Nodes (1): ActivityIndicatorSize
+Nodes (0): 
 
 ### Community 93 - "Community 93"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (1): LocalAppLocale
 
 ### Community 94 - "Community 94"
 Cohesion: 0.67
-Nodes (1): ButtonConfig
+Nodes (1): LocalAppLocale
 
 ### Community 95 - "Community 95"
 Cohesion: 0.67
-Nodes (1): LocalAppLocale
+Nodes (1): ActivityIndicatorSize
 
 ### Community 96 - "Community 96"
 Cohesion: 0.67
-Nodes (1): ApiRequestBuilder
+Nodes (0): 
 
 ### Community 97 - "Community 97"
 Cohesion: 0.67
-Nodes (1): ApiClient
+Nodes (1): ButtonConfig
 
 ### Community 98 - "Community 98"
 Cohesion: 0.67
-Nodes (2): App, iOSApp
+Nodes (1): LocalAppLocale
 
 ### Community 99 - "Community 99"
 Cohesion: 0.67
-Nodes (1): AnchorMainActivity
+Nodes (1): ApiRequestBuilder
 
 ### Community 100 - "Community 100"
 Cohesion: 0.67
-Nodes (1): AnchorApplication
+Nodes (1): ApiClient
 
 ### Community 101 - "Community 101"
 Cohesion: 0.67
-Nodes (1): AssistanceRepositoryImpl
+Nodes (2): App, iOSApp
 
 ### Community 102 - "Community 102"
 Cohesion: 0.67
-Nodes (1): AssistanceRepository
+Nodes (1): AnchorMainActivity
 
 ### Community 103 - "Community 103"
 Cohesion: 0.67
-Nodes (1): AssistanceInteractorImpl
+Nodes (1): AnchorApplication
 
 ### Community 104 - "Community 104"
 Cohesion: 0.67
-Nodes (1): AssistanceInteractor
+Nodes (1): AssistanceRepositoryImpl
 
 ### Community 105 - "Community 105"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (1): AssistanceRepository
 
 ### Community 106 - "Community 106"
 Cohesion: 0.67
-Nodes (2): AddictionSelectionGroupResponse, AddictionSelectionItemResponse
+Nodes (1): AssistanceInteractorImpl
 
 ### Community 107 - "Community 107"
 Cohesion: 0.67
-Nodes (2): Addiction, AddictionGroup
+Nodes (1): AssistanceInteractor
 
 ### Community 108 - "Community 108"
 Cohesion: 0.67
-Nodes (2): AddictionCreateUiEvent, OnCreated
+Nodes (0): 
 
 ### Community 109 - "Community 109"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (2): AddictionDetailsBody, AddictionDetailsResponse
 
 ### Community 110 - "Community 110"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (2): AddictionAllGroup, AddictionAllGroups
 
 ### Community 111 - "Community 111"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (2): AddictionSelectionInGroup, AddictionsSelectionGroups
 
 ### Community 112 - "Community 112"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (2): AddictionCreateUiEvent, OnCreated
 
 ### Community 113 - "Community 113"
 Cohesion: 0.67
@@ -725,43 +739,43 @@ Nodes (0):
 
 ### Community 114 - "Community 114"
 Cohesion: 0.67
-Nodes (2): AuthorizationUiResult, OtpUiResult
+Nodes (0): 
 
 ### Community 115 - "Community 115"
 Cohesion: 0.67
-Nodes (2): AuthorizationUiEvent, OnAuthorized
+Nodes (0): 
 
 ### Community 116 - "Community 116"
 Cohesion: 0.67
-Nodes (2): MainSettingsUiState, Successful
+Nodes (0): 
 
 ### Community 117 - "Community 117"
 Cohesion: 0.67
-Nodes (1): AppearanceViewModel
+Nodes (0): 
 
 ### Community 118 - "Community 118"
 Cohesion: 0.67
-Nodes (1): LanguageViewModel
+Nodes (0): 
 
 ### Community 119 - "Community 119"
-Cohesion: 1.0
-Nodes (0): 
+Cohesion: 0.67
+Nodes (2): AuthorizationUiResult, OtpUiResult
 
 ### Community 120 - "Community 120"
-Cohesion: 1.0
-Nodes (0): 
+Cohesion: 0.67
+Nodes (2): AuthorizationUiEvent, OnAuthorized
 
 ### Community 121 - "Community 121"
-Cohesion: 1.0
-Nodes (0): 
+Cohesion: 0.67
+Nodes (2): MainSettingsUiState, Successful
 
 ### Community 122 - "Community 122"
-Cohesion: 1.0
-Nodes (0): 
+Cohesion: 0.67
+Nodes (1): AppearanceViewModel
 
 ### Community 123 - "Community 123"
-Cohesion: 1.0
-Nodes (1): BiometricContext
+Cohesion: 0.67
+Nodes (1): LanguageViewModel
 
 ### Community 124 - "Community 124"
 Cohesion: 1.0
@@ -785,39 +799,39 @@ Nodes (1): BiometricContext
 
 ### Community 129 - "Community 129"
 Cohesion: 1.0
-Nodes (1): BiometricType
+Nodes (0): 
 
 ### Community 130 - "Community 130"
 Cohesion: 1.0
-Nodes (1): BiometrySetupUiResult
+Nodes (0): 
 
 ### Community 131 - "Community 131"
 Cohesion: 1.0
-Nodes (1): CreatePasscodeUiResult
+Nodes (0): 
 
 ### Community 132 - "Community 132"
 Cohesion: 1.0
-Nodes (1): EnterPasscodeUiResult
+Nodes (0): 
 
 ### Community 133 - "Community 133"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): BiometricContext
 
 ### Community 134 - "Community 134"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): BiometricType
 
 ### Community 135 - "Community 135"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): BiometrySetupUiResult
 
 ### Community 136 - "Community 136"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): CreatePasscodeUiResult
 
 ### Community 137 - "Community 137"
 Cohesion: 1.0
-Nodes (1): BiometricContext
+Nodes (1): EnterPasscodeUiResult
 
 ### Community 138 - "Community 138"
 Cohesion: 1.0
@@ -837,7 +851,7 @@ Nodes (0):
 
 ### Community 142 - "Community 142"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): BiometricContext
 
 ### Community 143 - "Community 143"
 Cohesion: 1.0
@@ -909,7 +923,7 @@ Nodes (0):
 
 ### Community 160 - "Community 160"
 Cohesion: 1.0
-Nodes (1): NetworkConstants
+Nodes (0): 
 
 ### Community 161 - "Community 161"
 Cohesion: 1.0
@@ -925,15 +939,15 @@ Nodes (0):
 
 ### Community 164 - "Community 164"
 Cohesion: 1.0
-Nodes (1): AnchorViewModel
+Nodes (0): 
 
 ### Community 165 - "Community 165"
 Cohesion: 1.0
-Nodes (1): MotivationalQuote
+Nodes (0): 
 
 ### Community 166 - "Community 166"
 Cohesion: 1.0
-Nodes (1): AssistanceWidgetUiResult
+Nodes (1): NetworkConstants
 
 ### Community 167 - "Community 167"
 Cohesion: 1.0
@@ -949,95 +963,95 @@ Nodes (0):
 
 ### Community 170 - "Community 170"
 Cohesion: 1.0
-Nodes (1): AddictionCreateRequest
+Nodes (1): AnchorViewModel
 
 ### Community 171 - "Community 171"
 Cohesion: 1.0
-Nodes (1): AddictionSelectedRequest
+Nodes (1): MotivationalQuote
 
 ### Community 172 - "Community 172"
 Cohesion: 1.0
-Nodes (1): AddictionAllGroupResponse
+Nodes (1): AssistanceWidgetUiResult
 
 ### Community 173 - "Community 173"
 Cohesion: 1.0
-Nodes (1): AddictionUpdateRequest
+Nodes (0): 
 
 ### Community 174 - "Community 174"
 Cohesion: 1.0
-Nodes (1): AddictionDetailResponse
+Nodes (0): 
 
 ### Community 175 - "Community 175"
 Cohesion: 1.0
-Nodes (1): UserAddiction
+Nodes (0): 
 
 ### Community 176 - "Community 176"
 Cohesion: 1.0
-Nodes (1): UserAddictionGroup
+Nodes (1): AddictionCreateRequest
 
 ### Community 177 - "Community 177"
 Cohesion: 1.0
-Nodes (1): AddictionCategory
+Nodes (1): AddictionUpdateRequest
 
 ### Community 178 - "Community 178"
 Cohesion: 1.0
-Nodes (1): AddictionUpdate
+Nodes (1): AddictionIconKey
 
 ### Community 179 - "Community 179"
 Cohesion: 1.0
-Nodes (1): AddictionCreate
+Nodes (1): AddictionGradientKey
 
 ### Community 180 - "Community 180"
 Cohesion: 1.0
-Nodes (1): AddictionCategoryUi
+Nodes (1): AddictionCategoryKey
 
 ### Community 181 - "Community 181"
 Cohesion: 1.0
-Nodes (1): AddictionDetailsUiResult
+Nodes (1): AddictionCreate
 
 ### Community 182 - "Community 182"
 Cohesion: 1.0
-Nodes (1): AddictionCreateUiResult
+Nodes (1): AddictionUpdate
 
 ### Community 183 - "Community 183"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionDetails
 
 ### Community 184 - "Community 184"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionGradient
 
 ### Community 185 - "Community 185"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionIcon
 
 ### Community 186 - "Community 186"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionCategory
 
 ### Community 187 - "Community 187"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionIconUi
 
 ### Community 188 - "Community 188"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ErrorMessageUiResult
 
 ### Community 189 - "Community 189"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionCategoryUi
 
 ### Community 190 - "Community 190"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionGradientUi
 
 ### Community 191 - "Community 191"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionDetailsUiResult
 
 ### Community 192 - "Community 192"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AddictionCreateUiResult
 
 ### Community 193 - "Community 193"
 Cohesion: 1.0
@@ -1077,7 +1091,7 @@ Nodes (0):
 
 ### Community 202 - "Community 202"
 Cohesion: 1.0
-Nodes (1): WelcomeViewModel
+Nodes (0): 
 
 ### Community 203 - "Community 203"
 Cohesion: 1.0
@@ -1129,7 +1143,7 @@ Nodes (0):
 
 ### Community 215 - "Community 215"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): WelcomeViewModel
 
 ### Community 216 - "Community 216"
 Cohesion: 1.0
@@ -1223,254 +1237,330 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
+### Community 239 - "Community 239"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 240 - "Community 240"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 241 - "Community 241"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 242 - "Community 242"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 243 - "Community 243"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 244 - "Community 244"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 245 - "Community 245"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 246 - "Community 246"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 247 - "Community 247"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 248 - "Community 248"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 249 - "Community 249"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 250 - "Community 250"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 251 - "Community 251"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 252 - "Community 252"
+Cohesion: 1.0
+Nodes (0): 
+
 ## Knowledge Gaps
-- **236 isolated node(s):** `AppTheme`, `AppIdentifier`, `AppLanguage`, `BiometricContext`, `PasscodeFlowMode` (+231 more)
+- **253 isolated node(s):** `AppTheme`, `AppIdentifier`, `AppLanguage`, `BiometricContext`, `PasscodeFlowMode` (+248 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 119`** (2 nodes): `getAppVersion()`, `ApplicationVersion.ios.kt`
+- **Thin community `Community 124`** (2 nodes): `getAppVersion()`, `ApplicationVersion.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 120`** (2 nodes): `coreUtilsModule()`, `CoreUtilsModule.kt`
+- **Thin community `Community 125`** (2 nodes): `coreUtilsModule()`, `CoreUtilsModule.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 121`** (2 nodes): `getAppVersion()`, `ApplicationVersion.kt`
+- **Thin community `Community 126`** (2 nodes): `getAppVersion()`, `ApplicationVersion.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 122`** (2 nodes): `getAppVersion()`, `ApplicationVersion.android.kt`
+- **Thin community `Community 127`** (2 nodes): `getAppVersion()`, `ApplicationVersion.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 123`** (2 nodes): `BiometricContext`, `BiometricContext.ios.kt`
+- **Thin community `Community 128`** (2 nodes): `BiometricContext`, `BiometricContext.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 124`** (2 nodes): `hashPasscode()`, `HashPasscode.ios.kt`
+- **Thin community `Community 129`** (2 nodes): `hashPasscode()`, `HashPasscode.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 125`** (2 nodes): `PasscodeBackHandler()`, `PasscodeBackHandler.ios.kt`
+- **Thin community `Community 130`** (2 nodes): `PasscodeBackHandler()`, `PasscodeBackHandler.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 126`** (2 nodes): `rememberBiometricContext()`, `BiometricContextComposable.ios.kt`
+- **Thin community `Community 131`** (2 nodes): `rememberBiometricContext()`, `BiometricContextComposable.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 127`** (2 nodes): `PasscodeFlow()`, `PasscodeFlow.kt`
+- **Thin community `Community 132`** (2 nodes): `PasscodeFlow()`, `PasscodeFlow.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 128`** (2 nodes): `BiometricContext`, `BiometricContext.kt`
+- **Thin community `Community 133`** (2 nodes): `BiometricContext`, `BiometricContext.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 129`** (2 nodes): `BiometricType`, `BiometricType.kt`
+- **Thin community `Community 134`** (2 nodes): `BiometricType`, `BiometricType.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 130`** (2 nodes): `BiometrySetupUiResult`, `BiometrySetupUiResult.kt`
+- **Thin community `Community 135`** (2 nodes): `BiometrySetupUiResult`, `BiometrySetupUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 131`** (2 nodes): `CreatePasscodeUiResult`, `CreatePasscodeUiResult.kt`
+- **Thin community `Community 136`** (2 nodes): `CreatePasscodeUiResult`, `CreatePasscodeUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 132`** (2 nodes): `EnterPasscodeUiResult`, `EnterPasscodeUiResult.kt`
+- **Thin community `Community 137`** (2 nodes): `EnterPasscodeUiResult`, `EnterPasscodeUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 133`** (2 nodes): `hashPasscode()`, `HashPasscode.kt`
+- **Thin community `Community 138`** (2 nodes): `hashPasscode()`, `HashPasscode.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 134`** (2 nodes): `rememberBiometricContext()`, `BiometricContextComposable.kt`
+- **Thin community `Community 139`** (2 nodes): `rememberBiometricContext()`, `BiometricContextComposable.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 135`** (2 nodes): `PasscodeBackHandler()`, `PasscodeBackHandler.kt`
+- **Thin community `Community 140`** (2 nodes): `PasscodeBackHandler()`, `PasscodeBackHandler.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 136`** (2 nodes): `PasscodeIndicatorWithShake()`, `PasscodeIndicatorWithShake.kt`
+- **Thin community `Community 141`** (2 nodes): `PasscodeIndicatorWithShake()`, `PasscodeIndicatorWithShake.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 137`** (2 nodes): `BiometricContext`, `BiometricContext.android.kt`
+- **Thin community `Community 142`** (2 nodes): `BiometricContext`, `BiometricContext.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 138`** (2 nodes): `hashPasscode()`, `HashPasscode.android.kt`
+- **Thin community `Community 143`** (2 nodes): `hashPasscode()`, `HashPasscode.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 139`** (2 nodes): `PasscodeBackHandler()`, `PasscodeBackHandler.android.kt`
+- **Thin community `Community 144`** (2 nodes): `PasscodeBackHandler()`, `PasscodeBackHandler.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 140`** (2 nodes): `SystemBarsAppearance()`, `SystemBarsAppearance.ios.kt`
+- **Thin community `Community 145`** (2 nodes): `SystemBarsAppearance()`, `SystemBarsAppearance.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 141`** (2 nodes): `rememberKeyClickPlayer()`, `KeyClickSound.ios.kt`
+- **Thin community `Community 146`** (2 nodes): `rememberKeyClickPlayer()`, `KeyClickSound.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 142`** (2 nodes): `SquareIcon()`, `SquareIcon.kt`
+- **Thin community `Community 147`** (2 nodes): `SquareIcon()`, `SquareIcon.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 143`** (2 nodes): `Separator()`, `Separator.kt`
+- **Thin community `Community 148`** (2 nodes): `Separator()`, `Separator.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 144`** (2 nodes): `LoadingHUD()`, `LoadingHUD.kt`
+- **Thin community `Community 149`** (2 nodes): `LoadingHUD()`, `LoadingHUD.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 145`** (2 nodes): `shimmer()`, `ShimmerModifier.kt`
+- **Thin community `Community 150`** (2 nodes): `shimmer()`, `ShimmerModifier.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 146`** (2 nodes): `link()`, `LinkModifier.kt`
+- **Thin community `Community 151`** (2 nodes): `link()`, `LinkModifier.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 147`** (2 nodes): `Switcher()`, `Switcher.kt`
+- **Thin community `Community 152`** (2 nodes): `Switcher()`, `Switcher.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 148`** (2 nodes): `Module()`, `Module.kt`
+- **Thin community `Community 153`** (2 nodes): `Module()`, `Module.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 149`** (2 nodes): `ModuleContent()`, `ModuleContent.kt`
+- **Thin community `Community 154`** (2 nodes): `ModuleContent()`, `ModuleContent.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 150`** (2 nodes): `CellInfo()`, `CellInfo.kt`
+- **Thin community `Community 155`** (2 nodes): `CellInfo()`, `CellInfo.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 151`** (2 nodes): `CellAction()`, `CellAction.kt`
+- **Thin community `Community 156`** (2 nodes): `CellAction()`, `CellAction.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 152`** (2 nodes): `Cell()`, `Cell.kt`
+- **Thin community `Community 157`** (2 nodes): `Cell()`, `Cell.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 153`** (2 nodes): `ButtonCircle()`, `ButtonCircle.kt`
+- **Thin community `Community 158`** (2 nodes): `ButtonCircle()`, `ButtonCircle.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 154`** (2 nodes): `SystemBarsAppearance()`, `SystemBarsAppearance.kt`
+- **Thin community `Community 159`** (2 nodes): `SystemBarsAppearance()`, `SystemBarsAppearance.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 155`** (2 nodes): `rememberKeyClickPlayer()`, `KeyClickSound.kt`
+- **Thin community `Community 160`** (2 nodes): `rememberKeyClickPlayer()`, `KeyClickSound.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 156`** (2 nodes): `PasscodeIndicator()`, `PasscodeIndicator.kt`
+- **Thin community `Community 161`** (2 nodes): `PasscodeIndicator()`, `PasscodeIndicator.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 157`** (2 nodes): `SystemBarsAppearance()`, `SystemBarsAppearance.android.kt`
+- **Thin community `Community 162`** (2 nodes): `SystemBarsAppearance()`, `SystemBarsAppearance.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 158`** (2 nodes): `rememberKeyClickPlayer()`, `KeyClickSound.android.kt`
+- **Thin community `Community 163`** (2 nodes): `rememberKeyClickPlayer()`, `KeyClickSound.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 159`** (2 nodes): `createAnchorHttpClient()`, `HttpClientFactory.ios.kt`
+- **Thin community `Community 164`** (2 nodes): `createAnchorHttpClient()`, `HttpClientFactory.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 160`** (2 nodes): `NetworkConstants`, `NetworkConstants.kt`
+- **Thin community `Community 165`** (2 nodes): `createMockHttpClient()`, `MockHttpClientFactory.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 161`** (2 nodes): `createAnchorHttpClient()`, `HttpClientFactory.android.kt`
+- **Thin community `Community 166`** (2 nodes): `NetworkConstants`, `NetworkConstants.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 162`** (2 nodes): `initKoin()`, `SharedModule.kt`
+- **Thin community `Community 167`** (2 nodes): `createAnchorHttpClient()`, `HttpClientFactory.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 163`** (2 nodes): `AnchorApp()`, `AnchorApp.kt`
+- **Thin community `Community 168`** (2 nodes): `initKoin()`, `SharedModule.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 164`** (2 nodes): `AnchorViewModel`, `AnchorViewModel.kt`
+- **Thin community `Community 169`** (2 nodes): `AnchorApp()`, `AnchorApp.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 165`** (2 nodes): `MotivationalQuote`, `MotivationalQuote.kt`
+- **Thin community `Community 170`** (2 nodes): `AnchorViewModel`, `AnchorViewModel.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 166`** (2 nodes): `AssistanceWidgetUiResult`, `AssistanceWidgetUiResult.kt`
+- **Thin community `Community 171`** (2 nodes): `MotivationalQuote`, `MotivationalQuote.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 167`** (2 nodes): `AssistanceWidget()`, `AssistanceWidget.kt`
+- **Thin community `Community 172`** (2 nodes): `AssistanceWidgetUiResult`, `AssistanceWidgetUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 168`** (2 nodes): `AssistanceWidgetLoadingContent()`, `AssistanceWidgetLoadingContent.kt`
+- **Thin community `Community 173`** (2 nodes): `AssistanceWidget()`, `AssistanceWidget.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 169`** (2 nodes): `AddictionBackHandler()`, `AddictionBackHandler.ios.kt`
+- **Thin community `Community 174`** (2 nodes): `AssistanceWidgetLoadingContent()`, `AssistanceWidgetLoadingContent.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 170`** (2 nodes): `AddictionCreateRequest`, `AddictionCreateRequest.kt`
+- **Thin community `Community 175`** (2 nodes): `AddictionBackHandler()`, `AddictionBackHandler.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 171`** (2 nodes): `AddictionSelectedRequest`, `AddictionSelectedRequest.kt`
+- **Thin community `Community 176`** (2 nodes): `AddictionCreateRequest`, `AddictionCreateRequest.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 172`** (2 nodes): `AddictionAllGroupResponse`, `AddictionAllGroupResponse.kt`
+- **Thin community `Community 177`** (2 nodes): `AddictionUpdateRequest`, `AddictionUpdateRequest.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 173`** (2 nodes): `AddictionUpdateRequest`, `AddictionUpdateRequest.kt`
+- **Thin community `Community 178`** (2 nodes): `AddictionIconKey`, `AddictionIconKey.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 174`** (2 nodes): `AddictionDetailResponse`, `AddictionDetailResponse.kt`
+- **Thin community `Community 179`** (2 nodes): `AddictionGradientKey`, `AddictionGradientKey.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 175`** (2 nodes): `UserAddiction`, `UserAddiction.kt`
+- **Thin community `Community 180`** (2 nodes): `AddictionCategoryKey`, `AddictionCategoryKey.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 176`** (2 nodes): `UserAddictionGroup`, `UserAddictionGroup.kt`
+- **Thin community `Community 181`** (2 nodes): `AddictionCreate`, `AddictionCreate.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 177`** (2 nodes): `AddictionCategory`, `AddictionCategory.kt`
+- **Thin community `Community 182`** (2 nodes): `AddictionUpdate`, `AddictionUpdate.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 178`** (2 nodes): `AddictionUpdate`, `AddictionUpdate.kt`
+- **Thin community `Community 183`** (2 nodes): `AddictionDetails`, `AddictionDetails.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 179`** (2 nodes): `AddictionCreate`, `AddictionCreate.kt`
+- **Thin community `Community 184`** (2 nodes): `AddictionGradient`, `AddictionGradient.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 180`** (2 nodes): `AddictionCategoryUi`, `AddictionCategoryUi.kt`
+- **Thin community `Community 185`** (2 nodes): `AddictionIcon`, `AddictionIcon.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 181`** (2 nodes): `AddictionDetailsUiResult`, `AddictionDetailsUiResult.kt`
+- **Thin community `Community 186`** (2 nodes): `AddictionCategory`, `AddictionCategory.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 182`** (2 nodes): `AddictionCreateUiResult`, `AddictionCreateUiResult.kt`
+- **Thin community `Community 187`** (2 nodes): `AddictionIconUi`, `AddictionIconUi.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 183`** (2 nodes): `toDomain()`, `AddictionSelectionGroupConverter.kt`
+- **Thin community `Community 188`** (2 nodes): `ErrorMessageUiResult`, `ErrorMessageUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 184`** (2 nodes): `toRequest()`, `AddictionCreateConverter.kt`
+- **Thin community `Community 189`** (2 nodes): `AddictionCategoryUi`, `AddictionCategoryUi.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 185`** (2 nodes): `toDomain()`, `AddictionDetailConverter.kt`
+- **Thin community `Community 190`** (2 nodes): `AddictionGradientUi`, `AddictionGradientUi.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 186`** (2 nodes): `toRequest()`, `AddictionUpdateConverter.kt`
+- **Thin community `Community 191`** (2 nodes): `AddictionDetailsUiResult`, `AddictionDetailsUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 187`** (2 nodes): `toAddictionSelectedRequest()`, `AddictionSelectedConverter.kt`
+- **Thin community `Community 192`** (2 nodes): `AddictionCreateUiResult`, `AddictionCreateUiResult.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 188`** (2 nodes): `toDomain()`, `AddictionAllGroupConverter.kt`
+- **Thin community `Community 193`** (2 nodes): `toDomain()`, `AddictionSelectionGroupConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 189`** (2 nodes): `toDomain()`, `AddictionSelectionItemConverter.kt`
+- **Thin community `Community 194`** (2 nodes): `toDomain()`, `AddictionDetailConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 190`** (2 nodes): `AddictionAllScreen()`, `AddictionAllScreen.kt`
+- **Thin community `Community 195`** (2 nodes): `toDomain()`, `AddictionAllGroupConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 191`** (2 nodes): `AddictionAllErrorContent()`, `AddictionAllErrorContent.kt`
+- **Thin community `Community 196`** (2 nodes): `toDomain()`, `AddictionGradientKeyConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 192`** (2 nodes): `AddictionAllEmptyContent()`, `AddictionAllEmptyContent.kt`
+- **Thin community `Community 197`** (2 nodes): `toDomain()`, `AddictionCategoryKeyConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 193`** (2 nodes): `AddictionDetailsScreen()`, `AddictionDetailsScreen.kt`
+- **Thin community `Community 198`** (2 nodes): `toDomain()`, `AddictionIconKeyConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 194`** (2 nodes): `AddictionDetailsLoadingContent()`, `AddictionDetailsLoadingContent.kt`
+- **Thin community `Community 199`** (2 nodes): `toRequest()`, `AddictionCreateConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 195`** (2 nodes): `AddictionDetailsErrorContent()`, `AddictionDetailsErrorContent.kt`
+- **Thin community `Community 200`** (2 nodes): `toRequest()`, `AddictionUpdateConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 196`** (2 nodes): `AddictionBackHandler()`, `AddictionBackHandler.kt`
+- **Thin community `Community 201`** (2 nodes): `toApiGradientKey()`, `AddictionGradientKeyConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 197`** (2 nodes): `AddictionSelectionScreen()`, `AddictionSelectionScreen.kt`
+- **Thin community `Community 202`** (2 nodes): `toApiKey()`, `AddictionCategoryKeyConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 198`** (2 nodes): `AddictionSelectionErrorContent()`, `AddictionSelectionErrorContent.kt`
+- **Thin community `Community 203`** (2 nodes): `toApiIconKey()`, `AddictionIconKeyConverter.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 199`** (2 nodes): `SelectionHeader()`, `SelectionHeader.kt`
+- **Thin community `Community 204`** (2 nodes): `AddictionAllScreen()`, `AddictionAllScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 200`** (2 nodes): `AddictionCreateScreen()`, `AddictionCreateScreen.kt`
+- **Thin community `Community 205`** (2 nodes): `AddictionAllErrorContent()`, `AddictionAllErrorContent.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 201`** (2 nodes): `AddictionBackHandler()`, `AddictionBackHandler.android.kt`
+- **Thin community `Community 206`** (2 nodes): `AddictionAllEmptyContent()`, `AddictionAllEmptyContent.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 202`** (2 nodes): `WelcomeViewModel.kt`, `WelcomeViewModel`
+- **Thin community `Community 207`** (2 nodes): `AddictionDetailsScreen()`, `AddictionDetailsScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 203`** (2 nodes): `Utils.kt`, `isEmailValid()`
+- **Thin community `Community 208`** (2 nodes): `AddictionDetailsLoadingContent()`, `AddictionDetailsLoadingContent.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 204`** (2 nodes): `WelcomeFlow.kt`, `WelcomeFlow()`
+- **Thin community `Community 209`** (2 nodes): `AddictionDetailsErrorContent()`, `AddictionDetailsErrorContent.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 205`** (2 nodes): `MainFlow()`, `MainFlow.kt`
+- **Thin community `Community 210`** (2 nodes): `AddictionBackHandler()`, `AddictionBackHandler.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 206`** (2 nodes): `MainScreen()`, `MainScreen.kt`
+- **Thin community `Community 211`** (2 nodes): `AddictionSelectionScreen()`, `AddictionSelectionScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 207`** (2 nodes): `settingsGraph()`, `SettingsFlow.kt`
+- **Thin community `Community 212`** (2 nodes): `SelectionHeader()`, `SelectionHeader.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 208`** (2 nodes): `AppearanceScreen()`, `AppearanceScreen.kt`
+- **Thin community `Community 213`** (2 nodes): `AddictionCreateScreen()`, `AddictionCreateScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 209`** (2 nodes): `LanguageScreen()`, `LanguageScreen.kt`
+- **Thin community `Community 214`** (2 nodes): `AddictionBackHandler()`, `AddictionBackHandler.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 210`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 215`** (2 nodes): `WelcomeViewModel.kt`, `WelcomeViewModel`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 211`** (1 nodes): `settings.gradle.kts`
+- **Thin community `Community 216`** (2 nodes): `Utils.kt`, `isEmailValid()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 212`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 217`** (2 nodes): `WelcomeFlow.kt`, `WelcomeFlow()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 213`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 218`** (2 nodes): `MainFlow()`, `MainFlow.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 214`** (1 nodes): `PasscodeModule.ios.kt`
+- **Thin community `Community 219`** (2 nodes): `MainScreen()`, `MainScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 215`** (1 nodes): `PasscodeModule.kt`
+- **Thin community `Community 220`** (2 nodes): `settingsGraph()`, `SettingsFlow.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 216`** (1 nodes): `PasscodeLengths.kt`
+- **Thin community `Community 221`** (2 nodes): `AppearanceScreen()`, `AppearanceScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 217`** (1 nodes): `PasscodeModule.android.kt`
+- **Thin community `Community 222`** (2 nodes): `LanguageScreen()`, `LanguageScreen.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 218`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 223`** (1 nodes): `build.gradle.kts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 219`** (1 nodes): `Colors.kt`
+- **Thin community `Community 224`** (1 nodes): `settings.gradle.kts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 220`** (1 nodes): `SlideToAct.kt`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 221`** (1 nodes): `build.gradle.kts`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 222`** (1 nodes): `KtorConfig.ios.kt`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 223`** (1 nodes): `CoreNetworkModule.kt`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 224`** (1 nodes): `KtorConfig.kt`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 225`** (1 nodes): `KtorConfig.android.kt`
+- **Thin community `Community 225`** (1 nodes): `build.gradle.kts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 226`** (1 nodes): `build.gradle.kts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 227`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 227`** (1 nodes): `PasscodeModule.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 228`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 228`** (1 nodes): `PasscodeModule.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 229`** (1 nodes): `FeatureAssistantModule.kt`
+- **Thin community `Community 229`** (1 nodes): `PasscodeLengths.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 230`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 230`** (1 nodes): `PasscodeModule.android.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 231`** (1 nodes): `FeatureAddictionModule.kt`
+- **Thin community `Community 231`** (1 nodes): `build.gradle.kts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 232`** (1 nodes): `SelectionBottomBar.kt`
+- **Thin community `Community 232`** (1 nodes): `Colors.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 233`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 233`** (1 nodes): `SlideToAct.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 234`** (1 nodes): `FeatureWelcomeModule.kt`
+- **Thin community `Community 234`** (1 nodes): `build.gradle.kts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 235`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 235`** (1 nodes): `KtorConfig.ios.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 236`** (1 nodes): `FeatureMainModule.kt`
+- **Thin community `Community 236`** (1 nodes): `CoreNetworkModule.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 237`** (1 nodes): `build.gradle.kts`
+- **Thin community `Community 237`** (1 nodes): `CoreMockNetworkModule.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 238`** (1 nodes): `FeatureSettingsModule.kt`
+- **Thin community `Community 238`** (1 nodes): `KtorConfig.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 239`** (1 nodes): `KtorConfig.android.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 240`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 241`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 242`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 243`** (1 nodes): `FeatureAssistantModule.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 244`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 245`** (1 nodes): `FeatureAddictionModule.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 246`** (1 nodes): `SelectionBottomBar.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 247`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 248`** (1 nodes): `FeatureWelcomeModule.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 249`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 250`** (1 nodes): `FeatureMainModule.kt`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 251`** (1 nodes): `build.gradle.kts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 252`** (1 nodes): `FeatureSettingsModule.kt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `AppTheme`, `AppIdentifier`, `AppLanguage` to the rest of the system?**
-  _236 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _253 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.12 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11 - nodes in this community are weakly interconnected._
+- **Should `Community 1` be split into smaller, more focused modules?**
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._

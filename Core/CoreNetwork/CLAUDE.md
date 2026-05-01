@@ -5,15 +5,62 @@ KMP-библиотечный модуль. Единственный источн
 
 ## Публичный API модуля
 
-Только три типа предназначены для использования снаружи:
-
 | Тип | Назначение |
 |-----|-----------|
 | `ApiClient` | DSL-фасад для выполнения запросов |
 | `NetworkException` | sealed class сетевых ошибок |
-| `coreNetworkModule` | Koin-модуль, подключается в SharedModule |
+| `NetworkEntity<T>` | универсальный конверт ответа Anchor API |
+| `NetworkEntity<T>.requireBody()` | извлечь тело или бросить `IllegalStateException` |
+| `NetworkEntity<*>.isSuccessfulExecute()` | проверить успешность void-запроса |
+| `coreNetworkModule` | Koin-модуль с реальным HTTP-клиентом |
+| `coreMockNetworkModule` | Koin-модуль с `MockEngine` — **только разработка/тестирование** |
 
 Всё остальное — `internal`. `TokenRepository`, `HttpClient`, `KtorConfig` — детали реализации.
+
+## NetworkEntity<T>: конверт ответа
+
+Все эндпоинты Anchor API возвращают:
+```json
+{ "success": true, "body": { ... } }
+{ "success": false, "message": "Описание ошибки", "timeout": "..." }
+```
+
+```kotlin
+@Serializable
+open class NetworkEntity<T>(
+    val success: Boolean = true,
+    val body: T?         = null,
+    val message: String? = null,
+    val timeout: String? = null,
+)
+```
+
+**Наследование DTO от `NetworkEntity<BodyType>`** — рекомендуемый паттерн для всех Response-классов:
+
+```kotlin
+// models/data/, internal, @Serializable
+@Serializable
+internal class AddictionAllGroupsResponse : NetworkEntity<AddictionAllGroupsBody>()
+
+// В Mapper:
+override suspend fun getAllGroups(): AddictionAllGroups {
+    val response = apiClient.request<AddictionAllGroupsResponse> { endpoint = "client/addictions/all" }
+    return response.requireBody().toDomain()
+}
+
+// Для void-эндпоинта (не возвращает body):
+override suspend fun deleteAddiction(id: Int) {
+    val response = apiClient.request<NetworkEntity<Unit>> {
+        endpoint = "client/addictions/delete/$id"
+        method = HttpMethod.Delete
+    }
+    response.isSuccessfulExecute()
+}
+```
+
+- `requireBody()` бросает `IllegalStateException` если `success==false` или `body==null`
+- `isSuccessfulExecute()` бросает `IllegalStateException` если `success==false`
+- Текст ошибки берётся из `message ?: timeout ?: "Unknown server error"`
 
 ## Как добавить новый запрос в Feature-модуле
 
@@ -53,6 +100,16 @@ single<String>(named("anchorBaseUrl")) { resolveBaseUrl() }
 
 `HttpClient` зарегистрирован с квалификатором `named("anchorHttpClient")`.
 Не использовать `get<HttpClient>()` без квалификатора — получите чужой клиент.
+
+### coreMockNetworkModule
+
+Альтернатива `coreNetworkModule` для разработки без реального сервера:
+- Использует `MockEngine` вместо OkHttp/Darwin
+- JSON-стабы читаются из `composeResources/files/mock/` через `Res.readBytes`
+- Регистрирует `HttpClient(named("anchorHttpClient"))` + `ApiClient`
+- **Не регистрирует** `TokenRepository` — авторизация не нужна для мока
+- Переключение: в `SharedModule` заменить `includes(coreNetworkModule)` → `includes(coreMockNetworkModule)`
+- Добавление нового стаба: положить `<name>.json` в `composeResources/files/mock/` и добавить ветку в `MockApiResponses.resolve()`
 
 ## Токены: как это работает
 
@@ -124,6 +181,7 @@ try {
 ❌ Хранить токены в обычном Settings() / SharedPreferences / NSUserDefaults
 ❌ Вызывать методы TokenRepository рекурсивно внутри одного withLock
 ❌ Добавлять новые expect без actual для обеих платформ
+❌ Использовать coreMockNetworkModule в production-сборках
 ```
 
 ## Таймауты (NetworkConstants)

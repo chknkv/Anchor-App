@@ -16,15 +16,14 @@ description: >
 ## Stack (do not ask — already known)
 | | |
 |-|-|
-| Kotlin | 2.1.x |
-| Compose Multiplatform | latest stable |
+| Kotlin | 2.3.20 (K2) |
+| Compose Multiplatform | 1.10.x+ |
 | DI | Koin 4.x |
 | Network | Ktor 3.x |
 | Local DB | SQLDelight 2.x |
 | Async | Coroutines + Flow only |
-| Error model | `sealed class NetworkResult<out T>` |
-| Presentation | MVVM or MVI per feature |
-| Navigation | Jetpack Navigation (androidMain) |
+| Presentation | MVI per feature (Pattern A flat / Pattern B sealed) |
+| Navigation | Jetpack Navigation Component Multiplatform |
 | Platforms | Android + iOS |
 
 **Before generating a full feature** → read `references/full-feature.md`
@@ -53,7 +52,7 @@ request type
 | Interactor interface + impl | `commonMain/domain/interactor/` | No data layer |
 | Converter (data↔domain) | `commonMain/domain/converter/` | No data layer, no presentation imports, no Compose types |
 | Converter (domain↔presentation, UI-типы) | `commonMain/presentation/Utils.kt` | Один файл на модуль; region-комментарии на каждый экран |
-| Repository interface | `commonMain/domain/` | No suspend — use `Flow` |
+| Repository interface | `commonMain/data/repository/` | No domain constructors |
 | RepositoryImpl | `commonMain/data/repository/` | No domain constructors |
 | ApiMapper interface + impl | `commonMain/data/mapper/` | No DI dependencies, no domain |
 | Ktor Api | `commonMain/data/remote/` | No DTOs in domain |
@@ -69,12 +68,41 @@ request type
 
 | Что | Правило |
 |-----|---------|
-| Класс / interface / object | KDOC на объявлении: назначение в 1–2 предложениях |
+| `interface XxxInteractor / XxxRepository / XxxApiMapper` | Полный KDOC: назначение класса + каждый метод с `@param`, `@return`, `@throws` |
+| `class XxxInteractorImpl / XxxRepositoryImpl / XxxApiMapperImpl` | Только `/** Реализация [XxxInterface]. */` + `@param` на конструктор. Методы **не** документируются. |
+| Остальные классы / interface / object | KDOC на объявлении: назначение в 1–2 предложениях |
 | Конструктор с параметрами | `@param` на каждый параметр |
-| `fun` (публичная / internal) | KDOC: что делает + `@param` + `@return` если не `Unit` |
+| `fun` (публичная / internal, кроме override impl) | KDOC: что делает + `@param` + `@return` если не `Unit` |
 | `val` / `var` (публичный / internal) | Однострочный KDOC |
 | `sealed interface` / `sealed class` варианты | KDOC на каждом варианте |
 | `data class` поля через конструктор | `@param` в KDOC класса |
+
+**Принцип Interface vs Impl:** контракт документируется **один раз** — в интерфейсе. Impl ссылается на него через `[XxxInterface]`.
+
+```kotlin
+// ✅ Интерфейс — полный KDOC
+/**
+ * Контракт доменного слоя для работы с X.
+ */
+internal interface XInteractor {
+    /**
+     * Возвращает список элементов X.
+     * @return Список доменных моделей [XModel].
+     */
+    suspend fun getItems(): List<XModel>
+}
+
+// ✅ Реализация — только ссылка + @param конструктора
+/**
+ * Реализация [XInteractor].
+ * @param repository Источник данных.
+ */
+internal class XInteractorImpl(
+    private val repository: XRepository,
+) : XInteractor {
+    override suspend fun getItems(): List<XModel> = repository.fetchAll()
+}
+```
 
 **Язык KDOC — русский.** Идентификаторы и технические термины — на английском.
 
@@ -82,17 +110,7 @@ request type
 - Комментарий `// ...` вместо `/** ... */` для публичного/internal API
 - KDOC, который просто дублирует имя метода (`/** Возвращает items. */ fun getItems()`)
 - Пустые KDOC `/** */`
-
-**Пример:**
-```kotlin
-/**
- * Загружает список привычек пользователя из удалённого источника.
- *
- * @param userId Идентификатор пользователя.
- * @return Flow с результатом запроса.
- */
-fun getUserHabits(userId: Int): Flow<NetworkResult<List<Habit>>>
-```
+- Дублировать KDOC метода в интерфейсе и реализации одновременно
 
 ---
 
@@ -106,7 +124,6 @@ fun getUserHabits(userId: Int): Flow<NetworkResult<List<Habit>>>
 ❌ Dispatchers.Main/IO directly — use expect/actual AppDispatchers
 ❌ @Serializable or @Entity on domain models
 ❌ Domain layer importing kotlinx.serialization or SQLDelight
-❌ Repository interface with suspend — use Flow<NetworkResult<T>>
 ❌ runBlocking in production code
 ❌ !! without explicit justifying comment
 ❌ Mutable collections exposed from ViewModel/Store
@@ -114,25 +131,219 @@ fun getUserHabits(userId: Int): Flow<NetworkResult<List<Habit>>>
 ❌ Mixing MVVM and MVI within one feature
 ❌ UI-конвертер (domain→presentation с Compose-типами) в domain/converter/
 ❌ Отдельный файл XxxUiConverter.kt в domain/ или data/
+❌ Эндпоинт-строки прямо в методах ApiMapperImpl — только через companion object константы
+❌ Response DTO без наследования NetworkEntity<XxxBody>
+❌ Возврат List<T> напрямую из ApiMapper — всегда через Body-обёртку
+❌ Body-класс наследует NetworkEntity вместо отдельного класса-обёртки
 ```
 
 ---
 
-## NetworkResult (canonical — do not vary)
+## NetworkEntity — сетевой конверт Anchor API
+
+Все сетевые ответы оборачиваются в `NetworkEntity<T>` из `CoreNetwork`:
 
 ```kotlin
-sealed class NetworkResult<out T> {
-    data class Success<T>(val data: T) : NetworkResult<T>()
-    data class Error(val exception: AppException) : NetworkResult<Nothing>()
-    data object Loading : NetworkResult<Nothing>()
-}
+@Serializable
+open class NetworkEntity<T>(
+    val success: Boolean = true,
+    val body: T? = null,
+    val message: String? = null,
+    val timeout: String? = null,
+)
+```
 
-sealed class AppException(message: String, cause: Throwable? = null) : Exception(message, cause) {
-    class NetworkException(cause: Throwable) : AppException("Network error", cause)
-    class ServerException(val code: Int, val body: String) : AppException("Server error $code")
-    class UnknownException(cause: Throwable) : AppException("Unknown", cause)
+### Response DTO — структура
+
+```kotlin
+// ПРАВИЛЬНО — Response наследует NetworkEntity; Body — отдельный data class
+@Serializable
+internal class XxxResponse : NetworkEntity<XxxBody>()
+
+@Serializable
+internal data class XxxBody(
+    @SerialName("items") val items: List<XxxItemBody>,
+)
+
+// ЗАПРЕЩЕНО — не возвращать List<T> напрямую
+@Serializable
+internal class XxxResponse : NetworkEntity<List<XxxItemBody>>()  // ❌
+```
+
+### Extension-функции для разворачивания ответа
+
+| Функция | Когда использовать |
+|---------|-------------------|
+| `NetworkEntity<T>.requireBody(): T` | GET-запросы, возвращающие тело ответа |
+| `NetworkEntity<*>.isSuccessfulExecute()` | POST / PATCH / DELETE без тела ответа |
+
+```kotlin
+// GET с телом
+override suspend fun getItems(): XxxBody =
+    apiClient.request<XxxResponse> {
+        endpoint = ENDPOINT_ITEMS
+        method = HttpMethod.Get
+    }.requireBody()
+
+// POST/PATCH/DELETE без тела
+override suspend fun createItem(request: XxxCreateRequest) {
+    apiClient.request<NetworkEntity<Unit>> {
+        endpoint = ENDPOINT_CREATE
+        method = HttpMethod.Post
+        body = request
+    }.isSuccessfulExecute()
 }
 ```
+
+---
+
+## ApiMapper — эталонный паттерн
+
+### Интерфейс — полный KDOC
+
+```kotlin
+/**
+ * Сетевой маппер для работы с API X.
+ *
+ * Предоставляет доступ к эндпоинтам X через [ApiClient].
+ */
+internal interface XxxApiMapper {
+
+    /**
+     * Возвращает список элементов X.
+     *
+     * `GET /xxx`
+     *
+     * @return Body-объект [XxxBody] с результатами.
+     * @throws NetworkException.Unauthorized При истёкшем / невалидном токене.
+     * @throws NetworkException.NoConnection При отсутствии сети.
+     * @throws NetworkException.HttpError При ошибке на стороне сервера.
+     */
+    suspend fun getItems(): XxxBody
+
+    /**
+     * Создаёт новый элемент X.
+     *
+     * `POST /xxx`
+     *
+     * @param request Тело запроса с данными нового элемента.
+     * @throws NetworkException.Unauthorized При истёкшем / невалидном токене.
+     * @throws NetworkException.NoConnection При отсутствии сети.
+     * @throws NetworkException.HttpError При ошибке на стороне сервера.
+     */
+    suspend fun createItem(request: XxxCreateRequest)
+}
+```
+
+### Реализация — только ссылка + эндпоинты в companion object
+
+```kotlin
+/**
+ * Реализация [XxxApiMapper].
+ *
+ * @param apiClient DSL-клиент из CoreNetwork.
+ */
+internal class XxxApiMapperImpl(
+    private val apiClient: ApiClient,
+) : XxxApiMapper {
+
+    override suspend fun getItems(): XxxBody =
+        apiClient.request<XxxResponse> {
+            endpoint = ENDPOINT_ITEMS
+            method = HttpMethod.Get
+        }.requireBody()
+
+    override suspend fun createItem(request: XxxCreateRequest) {
+        apiClient.request<NetworkEntity<Unit>> {
+            endpoint = ENDPOINT_CREATE
+            method = HttpMethod.Post
+            body = request
+        }.isSuccessfulExecute()
+    }
+
+    companion object {
+        private const val ENDPOINT_ITEMS = "xxx/items"
+        private const val ENDPOINT_CREATE = "xxx/create"
+    }
+}
+```
+
+**Правила ApiMapper:**
+- Все строки эндпоинтов — **только** в `companion object` реализации; нигде больше.
+- `ApiMapper` — `single<>` в Koin; принимает `ApiClient` через конструктор.
+- Методы реализации — без KDOC (контракт задокументирован в интерфейсе).
+
+---
+
+## Конвертеры — расположение и формат
+
+### domain/converter/ — domain↔data (без Compose-типов)
+
+Один файл на сущность: `domain/converter/XxxConverter.kt`.
+
+```kotlin
+/** Конвертирует data-model [XxxBody] в domain-model [XxxDomain]. */
+internal fun XxxBody.toDomain(): XxxDomain = XxxDomain(
+    id = id,
+    name = name,
+)
+
+/** Конвертирует domain-model [XxxDomain] в data-model [XxxCreateRequest]. */
+internal fun XxxDomain.toRequest(): XxxCreateRequest = XxxCreateRequest(
+    name = name,
+)
+```
+
+### domain/converter/base/ — data-enum↔domain-type
+
+Один файл на enum: `domain/converter/base/XxxKeyConverter.kt`.
+
+```kotlin
+/** Конвертирует data-enum [XxxKey] в domain-sealed [XxxDomain]. */
+internal fun XxxKey.toDomain(): XxxDomain = when (this) {
+    XxxKey.ALPHA -> XxxDomain.Alpha
+    XxxKey.BETA  -> XxxDomain.Beta
+}
+
+/** Конвертирует domain-sealed [XxxDomain] в data-enum [XxxKey]. */
+internal fun XxxDomain.toApiKey(): XxxKey = when (this) {
+    XxxDomain.Alpha -> XxxKey.ALPHA
+    XxxDomain.Beta  -> XxxKey.BETA
+}
+```
+
+**Запрещено:** любые `Brush`, `DrawableResource`, `Color`, `StringResource` в `domain/converter/` или `domain/converter/base/`.
+
+### presentation/Utils.kt — domain↔presentation (с Compose-типами)
+
+Один файл на модуль. Region-комментарии на каждый экран/сущность.
+
+```kotlin
+package com.chknkv.feature.xxx.presentation
+
+// -----------------------------
+// XxxAll Region
+// -----------------------------
+
+internal fun XxxDomain.toUi(): XxxUi = XxxUi(
+    id = id,
+    iconRes = iconKey.toIconDrawableResource(),   // DrawableResource — только здесь
+    brush = gradientKey.toGradientBrush(),         // Brush — только здесь
+)
+
+// -----------------------------
+// XxxCreate Region
+// -----------------------------
+
+internal fun XxxCategoryUi.toDomain(): XxxCategory = when (this) { ... }
+```
+
+Именование extension-функций:
+- `XxxDomain.toXxxUi()` — domain → UI model
+- `XxxUi.toXxxDomain()` — UI model → domain
+- `String.toXxxDomain()` — строковый ключ → domain type
+
+---
 
 ---
 
@@ -150,7 +361,8 @@ sealed class AppException(message: String, cause: Throwable? = null) : Exception
 | Repo interface | `<Feature>Repository` | `ProfileRepository` |
 | Repo impl | `<Feature>RepositoryImpl` | `ProfileRepositoryImpl` |
 | Ktor impl | `<Feature>ApiImpl` | `ProfileApiImpl` |
-| DTO | `<Feature>Dto` | `ProfileDto` |
+| DTO (запрос к серверу) | `<Feature>Request` | `ProfileRequest` |
+| DTO (ответ сервера) | `<Feature>Response` | `ProfileResponse` |
 | DB entity | `<Feature>Entity` | `ProfileEntity` |
 | Domain model | plain | `Profile` |
 | Koin module val | camelCase | `profileModule` |
@@ -181,8 +393,15 @@ Apply before finalizing every response:
 - [ ] `collectAsStateWithLifecycle()` not `collectAsState()`
 - [ ] Screen split into `Screen` (wires VM) + `Content` (pure, previewable)
 - [ ] KDOC на каждом публичном и internal символе (русский язык)
-- [ ] Interactor и его реализация — в `domain/interactor/`
-- [ ] Converter (data↔domain, без Compose) — в `domain/converter/`
-- [ ] Converter (domain↔presentation, с Compose-типами) — в `presentation/Utils.kt`
-- [ ] Repository interface — в `domain/`, реализация — в `data/repository/`
-- [ ] ApiMapper interface + impl — в `data/mapper/`
+- [ ] Interface (`Interactor`, `Repository`, `ApiMapper`) — полный KDOC на каждом методе
+- [ ] Impl — только `/** Реализация [XxxInterface]. */` + `@param` на конструктор; методы не документируются
+- [ ] Interactor interface + impl — в `domain/interactor/`
+- [ ] Converter (data↔domain, без Compose) — top-level extension-функции в `domain/converter/`, по одному файлу на сущность
+- [ ] Converter (domain↔presentation, с Compose-типами) — в `presentation/Utils.kt`, region-комментарии на каждый экран
+- [ ] Repository interface + impl — в `data/repository/`; impl хранит `MutableSharedFlow<Unit>` для `updates`
+- [ ] ApiMapper interface + impl — в `data/mapper/`; impl принимает `ApiClient` через конструктор
+- [ ] DTO-модели: суффиксы `Request` (запрос) и `Response` (ответ); не `Dto`
+- [ ] Response DTO наследует `NetworkEntity<XxxBody>()`; Body — отдельный `@Serializable data class`
+- [ ] GET с телом → `.requireBody()`; POST/PATCH/DELETE без тела → `.isSuccessfulExecute()`
+- [ ] Все эндпоинт-строки в `companion object` реализации ApiMapper; нигде больше
+- [ ] base-конвертеры (data-enum↔domain-type) — в `domain/converter/base/XxxKeyConverter.kt`; без Compose-типов

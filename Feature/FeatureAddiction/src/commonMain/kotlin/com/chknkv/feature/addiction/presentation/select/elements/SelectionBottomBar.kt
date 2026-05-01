@@ -4,6 +4,7 @@ import anchor_app.feature.featureaddiction.generated.resources.Res
 import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_button_next
 import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_button_skip
 import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_counter
+import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_saveFailed_warning
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.chknkv.designsystem.Footnote
 import com.chknkv.designsystem.button.Button
 import com.chknkv.designsystem.button.ButtonStyle
+import com.chknkv.designsystem.theme.Tokens
+import com.chknkv.designsystem.theme.getThemedColor
 import com.chknkv.feature.addiction.models.presentation.select.AddictionSelectionUiResult
 import org.jetbrains.compose.resources.stringResource
 
@@ -46,6 +49,18 @@ internal fun SelectionBottomBar(
             isSecondary = true,
             textAlign = TextAlign.Center,
         )
+
+        if (result.isFailed) {
+            Footnote(
+                text = stringResource(Res.string.addiction_selection_saveFailed_warning),
+                color = Tokens.Warning.getThemedColor(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 8.dp),
+            )
+        }
+
         Button(
             modifier = Modifier.fillMaxWidth(),
             text = if (result.isNextMode) {

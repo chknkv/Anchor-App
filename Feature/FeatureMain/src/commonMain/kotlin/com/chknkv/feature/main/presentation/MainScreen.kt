@@ -51,6 +51,7 @@ fun MainScreen(
 
             AddictionAllScreen(
                 onAddAddiction = onAddAddiction,
+                onOpenSettings = onOpenSettings,
                 onInfoAddiction = onInfoAddiction,
             )
 

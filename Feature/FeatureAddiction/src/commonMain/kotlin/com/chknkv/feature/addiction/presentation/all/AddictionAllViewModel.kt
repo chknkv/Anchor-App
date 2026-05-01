@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -62,9 +63,7 @@ internal class AddictionAllViewModel(
      */
     private fun subscribeToUpdates() {
         viewModelScope.launch {
-            interactor.updates.collect {
-                handleRefresh()
-            }
+            interactor.updates.collectLatest { handleRefresh() }
         }
     }
 
@@ -95,15 +94,16 @@ internal class AddictionAllViewModel(
     }
 
     /** Переводит экран в состояние загрузки и запускает первичное получение данных. */
-    private fun handleInit() {
-        viewModelScope.launch(addictionAllCoroutineExceptionHandler) {
-            _uiState.value = AddictionAllUiState.Loading
-            loadData()
-        }
-    }
+    private fun handleInit() = loadScreen()
 
     /** Переводит экран в состояние загрузки и повторно запрашивает данные. */
-    private fun handleRefresh() {
+    private fun handleRefresh() = loadScreen()
+
+    /**
+     * Переводит экран в состояние загрузки и выполняет загрузку данных.
+     * Используется как при первичной инициализации, так и при обновлении.
+     */
+    private fun loadScreen() {
         viewModelScope.launch(addictionAllCoroutineExceptionHandler) {
             _uiState.value = AddictionAllUiState.Loading
             loadData()
