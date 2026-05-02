@@ -166,16 +166,6 @@ apiClient.request<ResponseType> {
 
 ---
 
-## Добавление нового Feature-модуля
-
-1. Создать Gradle-модуль `Feature/FeatureXxx`; добавить в `settings.gradle.kts`
-2. Реализовать `featureXxxModule` (Koin): single + factory + viewModel
-3. `includes(featureXxxModule)` в `sharedModule` (`shared/SharedModule.kt`)
-4. Добавить маршрут в `AnchorNavRoute` (если корневой) или во внутренний граф родителя
-5. Написать `CLAUDE.md` ≤ 200 строк в корне нового модуля
-
----
-
 ## Глобальные жёсткие правила
 
 | # | Правило |

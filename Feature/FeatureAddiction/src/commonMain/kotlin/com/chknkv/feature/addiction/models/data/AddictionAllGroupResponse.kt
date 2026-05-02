@@ -22,7 +22,7 @@ internal class AddictionAllGroupsResponse : NetworkEntity<AddictionAllGroupsBody
 @Serializable
 internal data class AddictionAllGroupsBody(
     @SerialName("is_create_new_available")  val isCreateNewAvailable: Boolean = false,
-    @SerialName("items")                    val items: List<AddictionsAllGroup>,
+    @SerialName("items")                    val items: List<AddictionsAllGroup>? = null,
 )
 
 /**

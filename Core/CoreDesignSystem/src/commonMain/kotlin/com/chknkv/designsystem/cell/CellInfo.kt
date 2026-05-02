@@ -83,13 +83,13 @@ fun CellInfo(
                 ) {
                     if (iconRes != null) {
                         Box(
-                            modifier = Modifier.size(76.dp).padding(bottom = 8.dp),
+                            modifier = Modifier.size(48.dp).padding(bottom = 8.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             SquareIcon(
                                 iconRes = iconRes,
-                                iconSize = 72.dp,
-                                iconResSize = 58.dp,
+                                iconSize = 48.dp,
+                                iconResSize = 32.dp,
                                 backgroundColor = iconColor,
                                 backgroundGradient = iconGradient
                             )

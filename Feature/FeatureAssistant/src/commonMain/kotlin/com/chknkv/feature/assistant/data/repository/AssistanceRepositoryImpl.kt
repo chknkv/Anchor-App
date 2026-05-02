@@ -1,19 +1,18 @@
 package com.chknkv.feature.assistant.data.repository
 
+import com.chknkv.feature.assistant.data.converter.toDomain
+import com.chknkv.feature.assistant.data.mapper.AssistanceApiMapper
 import com.chknkv.feature.assistant.models.domain.MotivationalQuote
-import kotlinx.coroutines.delay
 
 /**
  * Реализация [AssistanceRepository].
+ *
+ * @param apiMapper Сетевой маппер для взаимодействия с API виджета помощи.
  */
-internal class AssistanceRepositoryImpl : AssistanceRepository {
+internal class AssistanceRepositoryImpl(
+    private val apiMapper: AssistanceApiMapper,
+) : AssistanceRepository {
 
-    override suspend fun getMotivationalQuote(): MotivationalQuote {
-        delay(3500)
-        return MotivationalQuote(
-            text = "Ты справишься — один шаг за раз.",
-            detailText = "Каждый момент — это возможность сделать правильный выбор. " +
-                "Ты сильнее, чем думаешь.",
-        )
-    }
+    override suspend fun getMotivationalQuote(): MotivationalQuote =
+        apiMapper.getMotivationalQuote().toDomain()
 }

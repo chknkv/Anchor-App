@@ -11,10 +11,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Публичная точка входа виджета помощи.
- *
- * Встраивается напрямую на `MainScreen` — не является отдельным экраном,
- *
- * Управление BottomSheet цитаты полностью локально в [AssistanceWidgetSuccessfulContent].
  */
 @Composable
 fun AssistanceWidget() {
@@ -28,6 +24,5 @@ fun AssistanceWidget() {
             result = state.result,
             onAction = viewModel::emitAction,
         )
-        is AssistanceWidgetUiState.Error -> Unit
     }
 }

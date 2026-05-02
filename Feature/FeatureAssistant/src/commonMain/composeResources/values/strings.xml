@@ -2,7 +2,6 @@
 <resources>
     <!-- Assistance Widget -->
     <string name="assistance_quote_title">Quote of the day</string>
-    <string name="assistance_quote_sheet_detail_label">Remember:</string>
     <string name="assistance_alarm_title">Alarm Button</string>
     <string name="assistance_alarm_subtitle">Coming soon</string>
 </resources>

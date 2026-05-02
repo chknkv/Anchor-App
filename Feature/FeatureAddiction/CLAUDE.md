@@ -33,32 +33,30 @@ val featureAddictionModule: Module
 | PATCH | `client/addictions/update/{id}` | Обновить привычку |
 | DELETE | `client/addictions/delete/{id}` | Удалить привычку |
 
-**DTO (models/data/, internal, @Serializable, наследуют `NetworkEntity<BodyType>`):**
-- `AddictionAllGroupsResponse : NetworkEntity<AddictionAllGroupsBody>` ← `isCreateNewAvailable, items: List<AddictionsAllGroup>`
-- `AddictionsAllGroup` ← `categoryKey: AddictionCategoryKey, addictions: List<AddictionAllInGroup>`
-- `AddictionAllInGroup` ← `id, name, iconKey: AddictionIconKey, gradientKey: AddictionGradientKey, controlDays`
-- `AddictionSelectionGroupResponse` ← `categoryKey, addictions: List<AddictionSelectionItemResponse>`
-- `AddictionSelectionItemResponse` ← `id, name, iconKey, category`
-- `AddictionDetailsResponse` ← `id, name, category, iconKey, gradient, controlDays, description, completedDates, canIncrementToday, nextIncrementAvailableInSeconds`
-- `AddictionCreateRequest` → `name, description, iconKey, gradientKey, category`
-- `AddictionUpdateRequest` → `name, description, iconKey, gradientKey, category`
+**DTO (models/data/, internal, @Serializable):**
+- `AddictionAllGroupsResponse : NetworkEntity<AddictionAllGroupsBody>` — `isCreateNewAvailable, items: List<AddictionsAllGroup>`
+- `AddictionsAllGroup` — `categoryKey: AddictionCategoryKey, addictions: List<AddictionAllInGroup>`
+- `AddictionAllInGroup` — `id, name, iconKey: AddictionIconKey, gradientKey: AddictionGradientKey, controlDays`
+- `AddictionSelectionGroupsResponse : NetworkEntity<AddictionSelectionGroupsBody>` — `items: List<AddictionSelectionGroups>`
+- `AddictionSelectionGroups` — `categoryKey: AddictionCategoryKey, addictions: List<AddictionSelectionItem>`
+- `AddictionSelectionItem` — `id: Int, name: String` (без iconKey/category)
+- `AddictionDetailsResponse : NetworkEntity<AddictionDetailsBody>` — `id, name, categoryKey, iconKey, gradientKey, controlDays, description?, completedDates: List<String>, canIncrementToday, nextIncrementAvailableInSeconds: Long`
+- `AddictionCreateRequest` → `name, description, iconKey: AddictionIconKey, gradientKey: AddictionGradientKey, categoryKey: AddictionCategoryKey`
+- `AddictionUpdateRequest` → `name, description, iconKey, gradientKey, categoryKey`
 - `AddictionSelectedRequest` → `ids: List<Int>`
 
 Категории — строковый ключ: `lifestyle/health/sport/productivity/finance/relationships/other`.
-Конвертация: `String.toAddictionCategory()` / `AddictionCategory.toApiKey()` в `AddictionCategoryConverter.kt`.
 
 ---
 
 ## Доменные модели (models/domain/, internal)
 
-`AddictionCategory` — enum (7 значений).
-
-`AddictionIcon` — enum (6): `Lifestyle, Health, Sport, Productivity, Finance, Relationships`; `AddictionIconKey.toDomain()` → `AddictionIcon` → `DrawableResource` через `Utils.toIconDrawableResource()`.
-`AddictionGradient` — enum; `AddictionGradientKey.toDomain()` → `AddictionGradient`.
+`AddictionCategory` — enum (7 значений: LIFESTYLE..OTHER).
+`AddictionIcon` — sealed (6: Lifestyle/Health/Sport/Productivity/Finance/Relationships).
+`AddictionGradient` — sealed (11: Gray/Green/Blue/Indigo/Purple/Pink/Red/Orange/DarkOrange/DarkRed/Black).
 `AddictionAllGroups(category, addictions: List<AddictionAllGroup>, isCreateNewAvailable: Boolean)`.
 `AddictionAllGroup(id, name, icon: AddictionIcon, gradient: AddictionGradient, controlDays: Int)`.
-`AddictionDetails(id, name, category, iconKey: AddictionIcon, gradient: AddictionGradient, controlDays, description, completedDates: Set<String>, canIncrementToday, nextIncrementAvailableInSeconds)` — заменила `UserAddiction`.
-
+`AddictionDetails(id, name, category, iconKey: AddictionIcon, gradient: AddictionGradient, controlDays, description, completedDates: Set<String>, canIncrementToday, nextIncrementAvailableInSeconds)`.
 `AddictionsSelectionGroups` / `AddictionCreate(name, description, iconKey, gradientKey, category)` / `AddictionUpdate(id, …)`.
 
 `AddictionRepository.updates: SharedFlow<Unit>` — эмитит после каждой мутации; `AddictionAllViewModel` подписывается для автообновления.
@@ -67,19 +65,21 @@ val featureAddictionModule: Module
 
 ## MVI — контракты экранов
 
-### AddictionAllScreen — **без AppScaffold**, без UiEvent
+### AddictionAllScreen — без AppScaffold, без UiEvent
 
 **UiAction:** `Init · Refresh`
 **UiState:** `Init | Loading | Successful(AddictionAllUiResult) | Error(message?) | Empty`
-`AddictionAllUiResult(groups: List<UserAddictionGroupUi>)` — `UserAddictionGroupUi(category: AddictionCategoryUi, addictions: List<UserAddictionUi>)`.
+`AddictionAllUiResult(isCreateNewAvailable: Boolean, groups: List<UserAddictionGroupUi>)`.
+`UserAddictionGroupUi(category: AddictionCategoryUi, addictions: List<UserAddictionUi>)`.
+`UserAddictionUi(id, name, category, iconRes: DrawableResource, iconGradient: Brush, controlDays)`.
 Автообновление: `interactor.updates.collect { handleRefresh() }`.
 
-### AddictionSelectionScreen — **с AppScaffold + LoadingHUD поверх формы**
+### AddictionSelectionScreen — с AppScaffold + LoadingHUD поверх формы
 
 **UiAction:** `Init · OnAddictionToggled(id) · OnSkipClicked · OnNextClicked`
 **UiEvent:** `OnSelectionLimitReached · OnFinished`
 **UiState:** `Init | Loading | Successful(AddictionSelectionUiResult) | Error`
-`AddictionSelectionUiResult(groups, selectedIds: Set<Int>, maxSelectable=3, isSaving)` + вычисляемые: `selectedCount, isLimitReached, isNextMode`.
+`AddictionSelectionUiResult(groups, selectedIds: Set<Int>, maxSelectable=3, isSaving, isFailed)` + вычисляемые: `selectedCount, isLimitReached, isNextMode`.
 Выбор 4-й → `OnSelectionLimitReached` (haptic в Screen, стейт не меняется). После `saveSelected` → `OnFinished` независимо от ошибки.
 
 ### AddictionCreateScreen — с AppScaffold, LoadingHUD поверх формы
@@ -87,47 +87,38 @@ val featureAddictionModule: Module
 **UiAction:** `Init · ChangeTitle · ChangeDescription · SelectIcon · SelectGradient · SelectCategory · Submit(emptyTitleError, emptyCategoryError) · NavigateBack`
 **UiEvent:** `OnCreated`
 **UiState:** `Init | Loading | Successful(AddictionCreateUiResult) | Error`
-`AddictionCreateUiResult(title, description, selectedIconKey, selectedGradientKey, selectedCategory: AddictionCategoryUi?, availableIconKeys, availableGradientKeys, isLoading, errorMessage)`.
+`AddictionCreateUiResult(title, description, selectedIcon: AddictionIconUi, selectedGradient: AddictionGradientUi, selectedCategory: AddictionCategoryUi?, availableIcons, availableGradients, availableCategories, isLoading, isError: ErrorMessageUiResult?)`.
 
 ### AddictionDetailsScreen — с AppScaffold, DetailsMode, expect BackHandler
 
-**UiAction:** `Init · NavigateBack · SwitchToEditMode · ChangeTitle · ChangeDescription · SelectIcon · SelectGradient · SelectCategory · SubmitEdit(emptyTitleError, emptyCategoryError) · IncrementDays · DeleteHabit`
+**UiAction:** `Init · NavigateBack · SwitchToEditMode · ChangeTitle · ChangeDescription · SelectIcon · SelectGradient · SelectCategory · SubmitEdit(emptyTitleError, emptyCategoryError) · IncrementDays · ChangeDeleteConfirmationVisibility(isVisible) · DeleteHabit`
 **UiEvent:** `HabitDeleted · NavigateBack`
 **UiState:** `Init | Loading | Successful(AddictionDetailsUiResult) | Error`
-`AddictionDetailsUiResult` — 18 полей: `addictionId, mode: DetailsMode(ViewMode|EditMode), title, category, iconKey, gradientKey, description, controlDays, editTitle/Description/IconKey/GradientKey/Category, availableIconKeys/GradientKeys, completedDates: Set<String>, canIncrementToday, nextIncrementSeconds, isLoading, errorMessage`.
+`AddictionDetailsUiResult` — поля: `addictionId, mode: DetailsMode(ViewMode|EditMode), title, category, icon, gradient, description, controlDays, editTitle, editDescription, editIcon, editGradient, editCategory?, availableIcons, availableGradients, completedDates: Set<String>, canIncrementToday, nextIncrementSeconds, isDeleteConfirmationVisible, isLoading, isError: ErrorMessageUiResult?`.
 `NavigateBack` в EditMode → переключает в ViewMode (не закрывает). `countdownJob` тикает раз в секунду. `handleSubmitEdit` после успешного PATCH → вызывает `handleInit()`.
 
 ---
 
-## UI-конвертеры (presentation/Utils.kt)
+## UI-конвертеры (presentation/Utils.kt, все internal)
 
 ```kotlin
 internal fun List<AddictionAllGroups>.toUiResult(): AddictionAllUiResult
-internal fun AddictionAllGroup.toUi(): UserAddictionUi
+internal fun AddictionAllGroup.toUi(category): UserAddictionUi
 internal fun AddictionCategory.toUi(): AddictionCategoryUi
 internal fun AddictionCategoryUi.toDomain(): AddictionCategory
-internal fun String.toIconDrawableResource(): DrawableResource   // fallback → ic_habit_placeholder
-       fun String.toGradientBrush(): Brush                       // PUBLIC; fallback → Gray; НЕ @Composable
+internal fun AddictionCategoryUi.toStringResource(): StringResource
+internal fun AddictionIcon.toIconDrawableResource(): DrawableResource   // через toUi().toDrawableResource()
+internal fun AddictionIconUi.toDrawableResource(): DrawableResource
+internal fun AddictionGradient.toGradientBrush(): Brush                 // не @Composable
+internal fun AddictionGradientUi.toGradientBrush(): Brush               // не @Composable
 @Composable @ReadOnlyComposable
-internal fun String.toGradientPrimaryColor(): Color              // только в Composable
-val AVAILABLE_ICON_KEYS: List<String>     // 6 ключей (Lifestyle..Relationships)
-val AVAILABLE_GRADIENT_KEYS: List<String> // 11 ключей
+internal fun AddictionGradientUi.toGradientPrimaryColor(): Color
+internal val AVAILABLE_ICONS: List<AddictionIconUi>          // 6 значений
+internal val AVAILABLE_GRADIENTS: List<AddictionGradientUi>  // 11 значений
+internal fun Int.toCountdownString(): String                 // "HH:MM:SS"
 ```
 
 `toGradientBrush()` — не `@Composable`; оборачивать в `remember(key) { key.toGradientBrush() }`.
-
----
-
-## Строковые ресурсы (strings.xml + values-ru/strings.xml)
-
-Ключи, которые уже есть — **не дублировать**:
-- `addiction_common_error_generic`
-- `addiction_selection_`: header_title · body_subtitle · counter · errorState_description · button_skip · button_next · saveFailed_warning
-- `habit_group_`: lifestyle/health/sport/productivity/finance/relationships/other (7 ключей)
-- `habit_`: 40+ предустановленных привычек (no_smoking, no_alcohol, water, gym_cardio…)
-- `addictionCreate_`: header_title · name_hint · description_hint · icon/gradient/category_section_label · submit_button · nameEmpty_error · submit_error · categoryEmpty_error
-- `addictionDetails_`: header_title · header_edit_title · activity_section_title · edit_button · delete_button · deleteConfirmation_title/subtitle/button · incrementDays_button · controlDays_label · nameEmpty/categoryEmpty/submit_error · errorState_description/retry_button
-- `addictionAll_`: addHabit_button · filterAll_label · filterEmpty/emptyState/errorState_description · errorState_retry_button · limitSheet_title/subtitle/button · controlDays_label (plurals)
 
 ---
 
@@ -153,17 +144,18 @@ val featureAddictionModule = module {
 
 ```
 commonMain/kotlin/com/chknkv/feature/addiction/
-├── data/converter/        AllGroupConverter · DetailConverter · SelectionGroupConverter (+ base/*KeyConverter ×3)
+├── data/converter/        AllGroupConverter · DetailConverter · SelectionGroupConverter
+│                          base/*KeyConverter ×3 (Category/Gradient/Icon)
 ├── data/mapper/           AddictionApiMapper · AddictionApiMapperImpl
 ├── data/repository/       AddictionRepository (+ updates: SharedFlow) · AddictionRepositoryImpl
-├── domain/converter/      CreateConverter · UpdateConverter (+ base/*KeyConverter ×3)
+├── domain/converter/      CreateConverter · UpdateConverter + base/*KeyConverter ×3
 ├── domain/interactor/     AddictionInteractor · AddictionInteractorImpl
 ├── models/data/           DTO (Request/Response + base/Keys, @Serializable, internal)
 ├── models/domain/         AllGroups · AllGroup · Details · Create · Update · SelectionGroups
-│                          base/(AddictionCategory · AddictionGradient · AddictionIcon enums)
+│                          base/(AddictionCategory · AddictionGradient · AddictionIcon)
 ├── models/presentation/   CategoryUi · GradientUi · IconUi · ErrorMessageUiResult
 │                          all/ · create/ · details/(DetailsMode) · select/ — UiAction·UiResult·UiState·UiEvent
-├── presentation/Utils.kt  конвертеры domain→UI, Brush/Color
+├── presentation/Utils.kt  конвертеры domain→UI, Brush/DrawableResource
 ├── presentation/all/      AddictionAllScreen · ViewModel · compose/(4 content)
 ├── presentation/create/   AddictionCreateScreen · ViewModel · compose/
 ├── presentation/details/  AddictionDetailsScreen · ViewModel · compose/(4 content)
@@ -184,7 +176,7 @@ composeResources/ → ic_habit_*.xml (6) · ic_edit.xml · ic_cross.xml · strin
 | 1 | Публичный API — только 4 Screen-функции + `featureAddictionModule`; всё остальное `internal` |
 | 2 | `AddictionAllScreen` — **без** `AppScaffold`; `AddictionSelectionScreen` — **с** `AppScaffold` + `LoadingHUD` |
 | 3 | `AddictionApiMapper` и `AddictionRepository` — `single`; `updates: SharedFlow` должен быть общим |
-| 4 | `gradient: AddictionGradient` в domain; конвертация в `Brush` — только в `Utils.kt.toGradientBrush()` |
+| 4 | `gradient: AddictionGradient` в domain; конвертация в `Brush` — только через `Utils.kt.toGradientBrush()` |
 | 5 | Никаких Compose-типов (`Brush`, `DrawableResource`, `Color`) в domain-слое |
 | 6 | `isScreenInitialized` guard — повторный `initScreen()` no-op; не убирать |
 | 7 | `_actionFlow.onStart { emit(Init) }` — не убирать; гарантирует доставку Init |
@@ -196,4 +188,4 @@ composeResources/ → ic_habit_*.xml (6) · ic_edit.xml · ic_cross.xml · strin
 | 13 | `handleSubmitEdit` после успешного PATCH → вызывает `handleInit()`, не обновляет поля вручную |
 | 14 | `addictionId: Int` в Details ViewModel — через Koin `params.get()`, не через `SavedStateHandle` |
 | 15 | LoadingHUD — поверх AppScaffold во втором `Box`; перехватывать клики снаружи |
-| 16 | `toGradientBrush()` — `public`, не `internal`; не добавлять `@Composable` |
+| 16 | `toGradientBrush()` — `internal`; не делать public без явного решения |

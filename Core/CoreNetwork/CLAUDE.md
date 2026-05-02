@@ -1,4 +1,4 @@
-# Core/CoreNetwork
+[# Core/CoreNetwork
 
 KMP-библиотечный модуль. Единственный источник истины для HTTP-взаимодействия с Anchor API.
 Предоставляет `ApiClient` DSL всем Feature-модулям. Feature-модули **не импортируют Ktor напрямую**.
@@ -173,7 +173,7 @@ try {
 ## Запрещённые паттерны
 
 ```
-❌ Импортировать io.ktor.* в Feature-модулях (кроме HttpMethod через ApiRequestBuilder)
+❌ Импортировать io.ktor.* в Feature-модулях (кроме io.ktor.http.HttpMethod — TODO: CoreNetwork должен реэкспортировать HttpMethod, чтобы убрать и это)
 ❌ Регистрировать HttpClient без named("anchorHttpClient") квалификатора
 ❌ Добавлять BuildConfig или платформенный код в commonMain
 ❌ Делать RefreshRequest / RefreshResponse data class
@@ -197,3 +197,4 @@ try {
 
 - **Certificate pinning** не реализован — ждёт production-сертификат (добавить в `network_security_config.xml` и iOS URLSession challenge handler)
 - **iOS Keychain accessibility** — `KeychainSettings` не гарантирует `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` на уровне библиотеки; при необходимости заменить на прямую обёртку над `Security.framework`
+]()

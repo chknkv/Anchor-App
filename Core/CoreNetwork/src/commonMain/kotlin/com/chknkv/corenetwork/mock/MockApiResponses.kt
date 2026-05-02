@@ -29,6 +29,10 @@ internal object MockApiResponses {
         return when (method) {
             // Auth
 
+            // FeatureAssistant
+            HttpMethod.Get if path == GET_MOTIVATIONAL_QUOTE_ENDPOINT_PATH ->
+                readFile(GET_MOTIVATIONAL_QUOTE_STUB_PATH)
+
             // FeatureAddiction
             HttpMethod.Get if path == GET_ADDICTION_GROUP_FOR_SELECTION_ENDPOINT_PATH ->
                 readFile(GET_ADDICTION_GROUP_FOR_SELECTION_STUB_PATH)
@@ -75,10 +79,14 @@ internal object MockApiResponses {
     private const val POST_CLIENT_ADDICTIONS_INCREMENT = "client/addictions/increment"
     private const val PATCH_CLIENT_ADDICTIONS_UPDATE_ENDPOINT_PATH = "client/addictions/update"
     private const val DELETE_CLIENT_ADDICTIONS_DELETE_ENDPOINT_PATH = "client/addictions/delete"
+    private const val GET_MOTIVATIONAL_QUOTE_ENDPOINT_PATH = "assistant/motivational-quote"
 
     private const val SUCCESS_RESPONSE_STUB_PATH = "success_response.json"
+    private const val FAILED_RESPONSE_STUB_PATH = "failed_response.json"
+
     private const val GET_ADDICTION_GROUP_FOR_SELECTION_STUB_PATH = "selection_groups.json"
     private const val GET_CLIENT_ADDITIONS_ALL_STUB_PATH = "addiction_all_groups.json"
     private const val GET_CLIENT_ADDITIONS_ALL_EMPTY_STUB_PATH = "addiction_all_groups_empty.json"
     private const val GET_CLIENT_ADDITION_DETAILS_STUB_PATH = "addiction_details_"
+    private const val GET_MOTIVATIONAL_QUOTE_STUB_PATH = "motivational_quote.json"
 }

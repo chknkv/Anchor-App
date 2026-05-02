@@ -44,6 +44,7 @@ kotlin {
 
             implementation(project(":Core:CoreDesignSystem"))
             implementation(project(":Core:CoreUtils"))
+            implementation(project(":Core:CoreNetwork"))
         }
     }
 }

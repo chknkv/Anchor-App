@@ -36,7 +36,6 @@ import org.jetbrains.compose.resources.stringResource
 
 private const val PAGE_COUNT = 2
 private const val PAGE_QUOTE = 0
-private const val PAGE_PANIC = 1
 
 private const val DISABLED_ALPHA = 0.5f
 
@@ -47,10 +46,7 @@ private const val DISABLED_ALPHA = 0.5f
  * 1. «Цитата» — кликабельна; нажатие открывает [Sheet] с развёрнутым текстом.
  * 2. «Кнопка тревоги» — заблокирована (alpha 0.5f, без onClick).
  *
- * Открытие и закрытие BottomSheet управляется через [AssistanceWidgetUiAction.ShowQuoteSheet]
- * и [AssistanceWidgetUiAction.HideQuoteSheet] — локальный state не используется.
- *
- * @param result Данные для отображения, включая флаг [AssistanceWidgetUiResult.isQuoteSheetVisible].
+ * @param result Данные для отображения.
  * @param onAction Коллбэк для отправки действий в ViewModel.
  */
 @Composable
@@ -58,17 +54,18 @@ internal fun AssistanceWidgetSuccessfulContent(
     result: AssistanceWidgetUiResult,
     onAction: (AssistanceWidgetUiAction) -> Unit,
 ) {
-    val pagerState = rememberPagerState(pageCount = { PAGE_COUNT })
+    val pageCount = if (result.quote != null) PAGE_COUNT else 1
+    val pagerState = rememberPagerState(key1 = result.quote != null, pageCount = { pageCount })
 
     HorizontalPager(
         state = pagerState,
         modifier = Modifier.fillMaxWidth(),
     ) { page ->
-        when (page) {
-            PAGE_QUOTE -> {
+        when {
+            result.quote != null && page == PAGE_QUOTE -> {
                 CellInfo(
                     title = stringResource(Res.string.assistance_quote_title),
-                    subtitle = result.quoteText,
+                    subtitle = result.quote.quoteText,
                     iconRes = Res.drawable.ic_assistance_quote,
                     iconGradient = TokensGradient.Green.getThemedGradient(),
                     outPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
@@ -76,7 +73,7 @@ internal fun AssistanceWidgetSuccessfulContent(
                 )
             }
 
-            PAGE_PANIC -> {
+            else -> {
                 Box(modifier = Modifier.alpha(DISABLED_ALPHA)) {
                     CellInfo(
                         title = stringResource(Res.string.assistance_alarm_title),
@@ -91,30 +88,34 @@ internal fun AssistanceWidgetSuccessfulContent(
         }
     }
 
-    PagerDotsIndicator(
-        pageCount = pagerState.pageCount,
-        currentPage = pagerState.currentPage,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-    )
-
-    Sheet(
-        isVisible = result.isQuoteSheetVisible,
-        onDismissRequest = { onAction(AssistanceWidgetUiAction.HideQuoteSheet) },
-        title = result.quoteText,
-        isDragable = true,
-        onDragDismissAction = { onAction(AssistanceWidgetUiAction.HideQuoteSheet) },
-        isOutsideClickEnabled = true,
-        onOutsideClickAction = { onAction(AssistanceWidgetUiAction.HideQuoteSheet) },
-    ) {
-        Body(
-            text = result.quoteDetailText,
+    if (pagerState.pageCount > 1) {
+        PagerDotsIndicator(
+            pageCount = pagerState.pageCount,
+            currentPage = pagerState.currentPage,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            isSecondary = true,
+                .padding(top = 8.dp),
         )
+    }
+
+    if (result.quote != null) {
+        Sheet(
+            isVisible = result.quote.isQuoteSheetVisible,
+            onDismissRequest = { onAction(AssistanceWidgetUiAction.HideQuoteSheet) },
+            title = result.quote.quoteText,
+            isDragable = true,
+            onDragDismissAction = { onAction(AssistanceWidgetUiAction.HideQuoteSheet) },
+            isOutsideClickEnabled = true,
+            onOutsideClickAction = { onAction(AssistanceWidgetUiAction.HideQuoteSheet) },
+        ) {
+            Body(
+                text = result.quote.quoteDetailText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                isSecondary = true,
+            )
+        }
     }
 }
 

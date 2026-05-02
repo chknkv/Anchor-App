@@ -21,17 +21,14 @@ import kotlinx.coroutines.launch
  * Отвечает за загрузку мотивационной цитаты и управление состоянием [AssistanceWidgetUiState],
  * включая видимость BottomSheet с детальной цитатой.
  *
- * @property interactor Интерактор для получения данных виджета.
+ * При ошибке загрузки цитаты переходит в [AssistanceWidgetUiState.Successful] с `quote = null` —
+ * карточка «Тревожная кнопка» остаётся видимой, карточка цитаты скрыта.
+ *
+ * @param interactor Интерактор для получения данных виджета.
  */
 internal class AssistanceWidgetViewModel(
     private val interactor: AssistanceInteractor,
 ) : ViewModel() {
-
-    /** Обработчик необработанных исключений: логирует и переводит UI в [AssistanceWidgetUiState.Error]. */
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
-        _uiState.value = AssistanceWidgetUiState.Error(throwable.message)
-    }
 
     /** Входящий поток действий; буферизует до 64 элементов без блокировки эмиттера. */
     private val _actionFlow = MutableSharedFlow<AssistanceWidgetUiAction>(extraBufferCapacity = 64)
@@ -40,6 +37,16 @@ internal class AssistanceWidgetViewModel(
 
     /** Публичный поток состояния для наблюдения из Compose. */
     val uiState: StateFlow<AssistanceWidgetUiState> = _uiState.asStateFlow()
+
+    /**
+     * Перехватывает сетевые ошибки при загрузке цитаты.
+     * Переходит в [AssistanceWidgetUiState.Successful] с `quote = null`, сохраняя видимость
+     * карточки «Тревожная кнопка».
+     */
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Napier.e(tag = TAG, message = throwable.message ?: "Unknown error", throwable = throwable)
+        _uiState.value = AssistanceWidgetUiState.Successful(AssistanceWidgetUiResult())
+    }
 
     /** Guard против повторной инициализации при рекомпозиции. */
     private var isInitialized = false
@@ -88,27 +95,26 @@ internal class AssistanceWidgetViewModel(
     private fun handleLoadData() {
         viewModelScope.launch(exceptionHandler) {
             _uiState.value = AssistanceWidgetUiState.Loading
-            loadData()
+            val quote = interactor.getMotivationalQuote()
+            _uiState.value = AssistanceWidgetUiState.Successful(
+                AssistanceWidgetUiResult(quote = quote.toQuoteUiResult()),
+            )
         }
     }
 
     private fun handleShowQuoteSheet() {
         val current = successfulResult ?: return
-        _uiState.value = AssistanceWidgetUiState.Successful(current.copy(isQuoteSheetVisible = true))
+        val quote = current.quote ?: return
+        _uiState.value = AssistanceWidgetUiState.Successful(
+            current.copy(quote = quote.copy(isQuoteSheetVisible = true)),
+        )
     }
 
     private fun handleHideQuoteSheet() {
         val current = successfulResult ?: return
-        _uiState.value = AssistanceWidgetUiState.Successful(current.copy(isQuoteSheetVisible = false))
-    }
-
-    private suspend fun loadData() {
-        val quote = interactor.getMotivationalQuote()
+        val quote = current.quote ?: return
         _uiState.value = AssistanceWidgetUiState.Successful(
-            AssistanceWidgetUiResult(
-                quoteText = quote.text,
-                quoteDetailText = quote.detailText,
-            )
+            current.copy(quote = quote.copy(isQuoteSheetVisible = false)),
         )
     }
 
@@ -116,9 +122,3 @@ internal class AssistanceWidgetViewModel(
         private const val TAG = "AssistanceWidgetViewModel"
     }
 }
-
-
-//private const val WEEKS_COUNT = 16
-//private const val DAYS_IN_WEEK = 7
-//
-//private val CELL_GAP = 5.dp

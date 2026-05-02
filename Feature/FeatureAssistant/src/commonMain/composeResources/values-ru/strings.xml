@@ -2,7 +2,6 @@
 <resources>
     <!-- Assistance Widget -->
     <string name="assistance_quote_title">Цитата дня</string>
-    <string name="assistance_quote_sheet_detail_label">Помни:</string>
     <string name="assistance_alarm_title">Кнопка тревоги</string>
     <string name="assistance_alarm_subtitle">Скоро будет доступно</string>
 </resources>

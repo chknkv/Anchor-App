@@ -1,32 +1,24 @@
 # FeatureAssistant
 
 Виджет мотивационных цитат и тревожной кнопки, встраиваемый в `MainScreen`.
-KMP, commonMain only. Зависимости: `:Core:CoreDesignSystem`, `:Core:CoreUtils`.
-Stack: Compose MP · Koin 4.x · Napier 2.7.1 · kotlinx.coroutines.
+KMP, commonMain only. Зависимости: `:Core:CoreDesignSystem`, `:Core:CoreUtils`, `:Core:CoreNetwork`.
 
 ---
 
 ## Публичный API
 
-Два публичных символа — всё остальное `internal`:
-
 ```kotlin
-// точка входа в UI
-@Composable
-fun AssistanceWidget()   // com.chknkv.feature.assistant.presentation
-
-// Koin-модуль
-val featureAssistantModule: Module   // com.chknkv.feature.assistant.di
+@Composable fun AssistanceWidget()          // com.chknkv.feature.assistant.presentation
+val featureAssistantModule: Module          // com.chknkv.feature.assistant.di
 ```
 
-Модуль **не является отдельным навигационным экраном** — вставляется как composable внутрь
-`MainScreen`. Собственного NavRoute нет.
+Модуль **не является отдельным навигационным экраном** — вставляется как composable внутрь `MainScreen`. Собственного NavRoute нет.
 
 ---
 
-## MVI — контракт виджета
+## MVI — контракт
 
-### UiAction → AssistanceWidgetUiAction (sealed interface, internal)
+### UiAction (sealed interface, internal)
 
 | Action | Когда |
 |--------|-------|
@@ -37,11 +29,17 @@ val featureAssistantModule: Module   // com.chknkv.feature.assistant.di
 
 ### UiResult → AssistanceWidgetUiResult (data class, internal)
 
-| Поле | Тип | По умолчанию |
-|------|-----|--------------|
-| `quoteText` | `String` | — |
-| `quoteDetailText` | `String` | — |
-| `isQuoteSheetVisible` | `Boolean` | `false` |
+```kotlin
+data class AssistanceWidgetUiResult(
+    val quote: QuoteUiResult? = null,   // null = ошибка загрузки; карточка цитаты скрыта
+)
+
+data class QuoteUiResult(
+    val quoteText: String,
+    val quoteDetailText: String,
+    val isQuoteSheetVisible: Boolean = false,
+)
+```
 
 ### UiState → AssistanceWidgetUiState (sealed interface, internal)
 
@@ -49,34 +47,34 @@ val featureAssistantModule: Module   // com.chknkv.feature.assistant.di
 |-------|------------|----|
 | `Loading` | — | Shimmer-скелетон |
 | `Successful(result)` | `AssistanceWidgetUiResult` | HorizontalPager + Sheet |
-| `Error(message?)` | `String?` | Виджет скрыт (Unit) |
+
+`Error`-ветки нет: при ошибке загрузки переходит в `Successful(AssistanceWidgetUiResult())` с `quote = null` — карточка тревожной кнопки остаётся видимой.
 
 UiEvent отсутствует.
 
 ### ViewModel — ключевые механики
 
 - `initWidget()` защищён `isInitialized` guard — повторный вызов no-op; вызывается из `LaunchedEffect(Unit)`.
-- `_actionFlow` — `MutableSharedFlow(extraBufferCapacity = 64)`, `onStart { emit(Init) }` гарантирует Init первым.
-- `successfulResult` — computed property: `(_uiState.value as? Successful)?.result`; используется в `handleShowQuoteSheet` / `handleHideQuoteSheet` как safe guard.
-- `exceptionHandler` → `Napier.e(...)` + `_uiState.value = Error(throwable.message)`.
+- `_actionFlow` — `MutableSharedFlow(extraBufferCapacity = 64)`, `onStart { emit(Init) }`.
 - `Init` и `Refresh` оба маршрутизируются в `handleLoadData()` — единая точка перезагрузки.
+- `successfulResult` — computed property: `(_uiState.value as? Successful)?.result`; safe guard в `handleShowQuoteSheet` / `handleHideQuoteSheet`.
+- `exceptionHandler` → `Napier.e(...)` + `_uiState.value = Successful(AssistanceWidgetUiResult())`.
 
 ---
 
 ## Карусель (AssistanceWidgetSuccessfulContent)
 
-`HorizontalPager` с `PAGE_COUNT = 2`:
+`HorizontalPager` с `PAGE_COUNT = 2` (если `quote != null`), иначе 1.
 
-| Константа | Индекс | Градиент | Иконка | onClick |
-|-----------|--------|----------|--------|---------|
-| `PAGE_QUOTE` | 0 | `TokensGradient.Green` | `ic_assistance_quote` | `ShowQuoteSheet` |
-| `PAGE_PANIC` | 1 | `TokensGradient.Red` | `ic_assistance_alarm` | `null` (отключено) |
+| Индекс | Константа | Градиент | Иконка | onClick |
+|--------|-----------|----------|--------|---------|
+| 0 | `PAGE_QUOTE` | `TokensGradient.Green` | `ic_assistance_quote` | `ShowQuoteSheet` |
+| 1 | (else) | `TokensGradient.Red` | `ic_assistance_alarm` | `null` |
 
-- Страница `PAGE_PANIC` обёрнута в `Box(modifier = Modifier.alpha(0.5f))` — функционал не реализован.
-- `PagerDotsIndicator`: активная точка — `Tokens.Action`, неактивная — `Tokens.Separator`; размеры 8dp / 6dp.
-- `Sheet`: `isVisible = result.isQuoteSheetVisible`; `onDismissRequest`, `onDragDismissAction`, `onOutsideClickAction` — все три → `HideQuoteSheet`.
-- Контент Sheet: `Body(text = result.quoteDetailText, isSecondary = true)`.
-- `CellInfo` вызывается с параметром `outPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 0.dp)`.
+- Страница тревожной кнопки обёрнута в `Box(Modifier.alpha(0.5f))` — функционал не реализован.
+- `PagerDotsIndicator`: активная точка — `Tokens.Action`, неактивная — `Tokens.Separator`; 8dp / 6dp. Показывается только при `pageCount > 1`.
+- `Sheet`: управляется через `isQuoteSheetVisible`; `onDismissRequest`, `onDragDismissAction`, `onOutsideClickAction` — все три → `HideQuoteSheet`.
+- `CellInfo` вызывается с `outPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 0.dp)`.
 
 ---
 
@@ -84,13 +82,17 @@ UiEvent отсутствует.
 
 ```
 ViewModel
-  └─ AssistanceInteractor (interface, internal)
-       └─ AssistanceInteractorImpl — тонкий прокси, без доп. логики
-            └─ AssistanceRepository (interface, internal)
-                 └─ AssistanceRepositoryImpl — ЗАГЛУШКА: delay(3500) + хардкод
+  └─ AssistanceInteractor (interface, factory)
+       └─ AssistanceInteractorImpl — прокси к репозиторию
+            └─ AssistanceRepository (interface, single)
+                 └─ AssistanceRepositoryImpl — вызывает apiMapper.getMotivationalQuote().toDomain()
+                      └─ AssistanceApiMapper (interface, single)
+                           └─ AssistanceApiMapperImpl — GET assistant/motivational-quote
 ```
 
-`MotivationalQuote(text: String, detailText: String)` — единственная domain-модель (internal data class).
+Цепочка конвертации: `MotivationalQuoteResponse` → `MotivationalQuoteBody` → (toDomain) → `MotivationalQuote` → (toQuoteUiResult) → `QuoteUiResult`.
+
+`MotivationalQuoteBody`: `@SerialName("text") val text`, `@SerialName("detail_text") val detailText`.
 
 ---
 
@@ -98,7 +100,8 @@ ViewModel
 
 ```kotlin
 val featureAssistantModule = module {
-    single<AssistanceRepository> { AssistanceRepositoryImpl() }   // single — future-proof для кэша/БД
+    single<AssistanceApiMapper> { AssistanceApiMapperImpl(get<ApiClient>()) }
+    single<AssistanceRepository> { AssistanceRepositoryImpl(get()) }
     factory<AssistanceInteractor> { AssistanceInteractorImpl(get()) }
     viewModel { AssistanceWidgetViewModel(get()) }
 }
@@ -113,7 +116,6 @@ val featureAssistantModule = module {
 | Ключ | EN | RU |
 |------|----|----|
 | `assistance_quote_title` | Quote of the day | Цитата дня |
-| `assistance_quote_sheet_detail_label` | Remember: | Помни: |
 | `assistance_alarm_title` | Alarm Button | Кнопка тревоги |
 | `assistance_alarm_subtitle` | Coming soon | Скоро будет доступно |
 
@@ -126,30 +128,34 @@ Drawables: `ic_assistance_quote`, `ic_assistance_alarm`.
 ```
 src/commonMain/kotlin/com/chknkv/feature/assistant/
 ├── di/
-│   └── FeatureAssistantModule.kt           — val featureAssistantModule (public)
+│   └── FeatureAssistantModule.kt               — val featureAssistantModule (public)
 ├── models/
 │   ├── domain/
-│   │   └── MotivationalQuote.kt            — internal data class(text, detailText)
+│   │   └── MotivationalQuote.kt                — internal data class(text, detailText)
+│   ├── data/
+│   │   └── MotivationalQuoteResponse.kt        — MotivationalQuoteResponse : NetworkEntity<MotivationalQuoteBody>; MotivationalQuoteBody(@SerialName)
 │   └── presentation/
-│       ├── AssistanceWidgetUiAction.kt     — internal sealed interface (Init/Refresh/ShowQuoteSheet/HideQuoteSheet)
-│       ├── AssistanceWidgetUiResult.kt     — internal data class (quoteText, quoteDetailText, isQuoteSheetVisible)
-│       └── AssistanceWidgetUiState.kt      — internal sealed interface (Loading/Successful/Error)
+│       ├── AssistanceWidgetUiAction.kt         — internal sealed interface
+│       ├── AssistanceWidgetUiResult.kt         — AssistanceWidgetUiResult(quote: QuoteUiResult?); QuoteUiResult(quoteText, quoteDetailText, isQuoteSheetVisible)
+│       └── AssistanceWidgetUiState.kt          — internal sealed interface (Loading / Successful)
 ├── domain/interactor/
-│   ├── AssistanceInteractor.kt             — internal interface
-│   └── AssistanceInteractorImpl.kt         — internal class, прокси к репозиторию
-├── data/repository/
-│   ├── AssistanceRepository.kt             — internal interface
-│   └── AssistanceRepositoryImpl.kt         — internal class, ЗАГЛУШКА delay(3500)
+│   ├── AssistanceInteractor.kt                 — internal interface
+│   └── AssistanceInteractorImpl.kt             — internal class, прокси
+├── data/
+│   ├── converter/
+│   │   └── MotivationalQuoteConverter.kt       — fun MotivationalQuoteBody.toDomain(): MotivationalQuote
+│   ├── mapper/
+│   │   ├── AssistanceApiMapper.kt              — internal interface; getMotivationalQuote(): MotivationalQuoteBody
+│   │   └── AssistanceApiMapperImpl.kt          — GET assistant/motivational-quote; импортирует io.ktor.http.HttpMethod
+│   └── repository/
+│       ├── AssistanceRepository.kt             — internal interface
+│       └── AssistanceRepositoryImpl.kt         — вызывает apiMapper → converter
 └── presentation/
-    ├── AssistanceWidget.kt                 — public @Composable, точка входа
-    ├── AssistanceWidgetViewModel.kt        — internal ViewModel
+    ├── AssistanceWidget.kt                     — public @Composable, точка входа
+    ├── AssistanceWidgetViewModel.kt            — internal ViewModel
     └── compose/
-        ├── AssistanceWidgetLoadingContent.kt   — internal; shimmer 144dp + dot-placeholder 32×16dp
-        └── AssistanceWidgetSuccessfulContent.kt — internal; HorizontalPager + PagerDotsIndicator + Sheet
-
-src/commonMain/composeResources/
-├── drawable/  ic_assistance_quote.xml, ic_assistance_alarm.xml
-└── values/ + values-ru/  strings.xml
+        ├── AssistanceWidgetLoadingContent.kt   — shimmer-скелетон
+        └── AssistanceWidgetSuccessfulContent.kt — HorizontalPager + PagerDotsIndicator + Sheet
 ```
 
 ---
@@ -163,4 +169,5 @@ src/commonMain/composeResources/
 | 3 | Domain-модели (`MotivationalQuote`) не должны содержать Compose-типы (`Brush`, `DrawableResource`, `StringResource`) |
 | 4 | `featureAssistantModule` подключается через `includes()` в `featureMainModule`, не напрямую в `SharedModule` |
 | 5 | FeatureAssistant не импортирует другие Feature-модули |
-| 6 | `CellInfo` вызывается с параметром `outPaddingValues`, не `innerPaddingValues` — проверь актуальную сигнатуру в CoreDesignSystem при изменении |
+| 6 | `io.ktor.http.HttpMethod` допустим в `AssistanceApiMapperImpl` — это единственное исключение; прямой импорт других Ktor-пакетов в Feature запрещён (TODO: CoreNetwork должен реэкспортировать `HttpMethod`) |
+| 7 | `CellInfo` вызывается с параметром `outPaddingValues`, не `innerPaddingValues` — проверь актуальную сигнатуру в CoreDesignSystem при изменении |

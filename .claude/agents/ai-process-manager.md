@@ -127,6 +127,13 @@ Stack: <relevant subset>.
 <numbered invariants — things that must never change without explicit decision>
 ```
 
+### CLAUDE.md Size and Content Rules
+
+1. **≤ 200 lines per file** — every CLAUDE.md (root and module-level) must not exceed 200 lines. When updating, compress or remove outdated content first. Count lines before saving.
+2. **Synchronize CLAUDE.md and GEMINI.md** — if a module has both files, they must be identical in content. After updating one, update the other in the same operation without exception.
+3. **Only document what Claude cannot infer from reading source** — obvious things (method names, package structure, standard Kotlin patterns) do not belong in CLAUDE.md. Document: architectural decisions, banned patterns, non-obvious invariants, interface contracts, DI registrations, NavRoute shapes.
+4. **Always read source before writing** — before writing or updating a CLAUDE.md, read the actual current source files for that module. Never rely solely on the previous CLAUDE.md version — it may be stale.
+
 ### Staleness Triggers
 A doc is stale and must be updated when:
 - A new file was added to the module's `src/` tree

@@ -11,7 +11,7 @@ import com.chknkv.feature.addiction.models.domain.AddictionAllGroup
  * Конвертирует data-model [AddictionAllGroupsBody] в список domain-model [AddictionAllGroups].
  */
 internal fun AddictionAllGroupsBody.toDomain(): List<AddictionAllGroups> =
-    items.map { it.toDomain(isCreateNewAvailable) }
+    items?.map { it.toDomain(isCreateNewAvailable) } ?: emptyList()
 
 /**
  * Конвертирует data-model [AddictionsAllGroup] в domain-model [AddictionAllGroups].
