@@ -10,5 +10,5 @@
     <string name="authorization_bottomsheet_footnote">Enter the 5-digit code from your email</string>
     <string name="authorization_timer_text">Resend in\u00a0%1$d\u00a0sec</string>
     <string name="authorization_resend_button">Resend code</string>
-    <string name="authorization_button_sign_in">Sign In</string>
+    <string name="authorization_error_session_expired">Session expired. Please enter your email again.</string>
 </resources>

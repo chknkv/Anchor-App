@@ -28,6 +28,14 @@ internal object MockApiResponses {
     suspend fun resolve(path: String, method: HttpMethod): String {
         return when (method) {
             // Auth
+            HttpMethod.Post if path == POST_AUTH_OTP_SEND_ENDPOINT_PATH ->
+                readFile(POST_AUTH_OTP_SEND_STUB_PATH)
+
+            HttpMethod.Post if path == POST_AUTH_OTP_VERIFY_ENDPOINT_PATH ->
+                readFile(POST_AUTH_OTP_VERIFY_STUB_PATH)
+
+            HttpMethod.Post if path == POST_AUTH_OTP_RESEND_ENDPOINT_PATH ->
+                readFile(POST_AUTH_OTP_RESEND_STUB_PATH)
 
             // FeatureAssistant
             HttpMethod.Get if path == GET_MOTIVATIONAL_QUOTE_ENDPOINT_PATH ->
@@ -71,6 +79,9 @@ internal object MockApiResponses {
      */
     private suspend fun readFile(fileName: String): String = Res.readBytes("files/mock/$fileName").decodeToString()
 
+    private const val POST_AUTH_OTP_SEND_ENDPOINT_PATH = "auth/otp/send"
+    private const val POST_AUTH_OTP_VERIFY_ENDPOINT_PATH = "auth/otp/verify"
+    private const val POST_AUTH_OTP_RESEND_ENDPOINT_PATH = "auth/otp/resend"
     private const val GET_ADDICTION_GROUP_FOR_SELECTION_ENDPOINT_PATH = "addictions/default-selection-groups"
     private const val POST_ADDICTION_SAVE_SELECTED_ENDPOINT_PATH = "addictions/save-selected"
     private const val GET_CLIENT_ADDICTIONS_ALL_ENDPOINT_PATH = "client/addictions/all"
@@ -84,6 +95,9 @@ internal object MockApiResponses {
     private const val SUCCESS_RESPONSE_STUB_PATH = "success_response.json"
     private const val FAILED_RESPONSE_STUB_PATH = "failed_response.json"
 
+    private const val POST_AUTH_OTP_SEND_STUB_PATH = "auth_otp_send.json"
+    private const val POST_AUTH_OTP_VERIFY_STUB_PATH = "auth_otp_verify.json"
+    private const val POST_AUTH_OTP_RESEND_STUB_PATH = "auth_otp_resend.json"
     private const val GET_ADDICTION_GROUP_FOR_SELECTION_STUB_PATH = "selection_groups.json"
     private const val GET_CLIENT_ADDITIONS_ALL_STUB_PATH = "addiction_all_groups.json"
     private const val GET_CLIENT_ADDITIONS_ALL_EMPTY_STUB_PATH = "addiction_all_groups_empty.json"

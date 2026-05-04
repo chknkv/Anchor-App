@@ -1,4 +1,4 @@
-[# Core/CoreNetwork
+# Core/CoreNetwork
 
 KMP-библиотечный модуль. Единственный источник истины для HTTP-взаимодействия с Anchor API.
 Предоставляет `ApiClient` DSL всем Feature-модулям. Feature-модули **не импортируют Ktor напрямую**.
@@ -12,10 +12,12 @@ KMP-библиотечный модуль. Единственный источн
 | `NetworkEntity<T>` | универсальный конверт ответа Anchor API |
 | `NetworkEntity<T>.requireBody()` | извлечь тело или бросить `IllegalStateException` |
 | `NetworkEntity<*>.isSuccessfulExecute()` | проверить успешность void-запроса |
+| `TokenStorage` | `saveTokens(access, refresh)` — Feature сохраняют токены после авторизации |
 | `coreNetworkModule` | Koin-модуль с реальным HTTP-клиентом |
 | `coreMockNetworkModule` | Koin-модуль с `MockEngine` — **только разработка/тестирование** |
 
-Всё остальное — `internal`. `TokenRepository`, `HttpClient`, `KtorConfig` — детали реализации.
+`TokenRepository` — internal. Feature-модули работают **только** через `TokenStorage`.
+Всё остальное (`HttpClient`, `KtorConfig`, `TokenRepositoryImpl`) — internal.
 
 ## NetworkEntity<T>: конверт ответа
 
@@ -62,29 +64,17 @@ override suspend fun deleteAddiction(id: Int) {
 - `isSuccessfulExecute()` бросает `IllegalStateException` если `success==false`
 - Текст ошибки берётся из `message ?: timeout ?: "Unknown server error"`
 
-## Как добавить новый запрос в Feature-модуле
+## Как добавить новый запрос
 
 ```kotlin
-class MyApiMapperImpl(private val apiClient: ApiClient) : MyApiMapper {
-    override suspend fun getItems(): List<ItemResponse> = apiClient.request {
-        endpoint = "items"
-    }
-    override suspend fun createItem(body: ItemRequest): ItemResponse = apiClient.request {
-        endpoint = "items"
-        method   = HttpMethod.Post
-        body     = body
-    }
-    override suspend fun search(query: String, page: Int): List<ItemResponse> = apiClient.request {
-        endpoint = "items/search"
-        query("q" to query, "page" to page)
-    }
+// endpoint — relative path без слэша; query() игнорирует null; body — @Serializable
+apiClient.request<MyResponse> {
+    endpoint = "items"
+    method   = HttpMethod.Post
+    body     = myRequest
+    query("q" to query, "page" to page)
 }
 ```
-
-- `endpoint` — relative path без ведущего слэша, добавляется к `baseUrl`
-- `query(...)` — `null`-значения игнорируются, в URL не попадают
-- `body` — должен быть `@Serializable`; `Content-Type: application/json` выставляется автоматически
-- Тип `T` в `request<T>` — тип десериализованного ответа, тоже должен быть `@Serializable`
 
 ## Koin: что требуется от app-модуля
 
@@ -101,13 +91,19 @@ single<String>(named("anchorBaseUrl")) { resolveBaseUrl() }
 `HttpClient` зарегистрирован с квалификатором `named("anchorHttpClient")`.
 Не использовать `get<HttpClient>()` без квалификатора — получите чужой клиент.
 
+`coreNetworkModule` регистрирует `TokenStorage` как отдельный тип через `get<TokenRepository>()`:
+```kotlin
+single<TokenRepository> { TokenRepositoryImpl(createSecureTokenSettings()) }
+single<TokenStorage> { get<TokenRepository>() }
+```
+
 ### coreMockNetworkModule
 
 Альтернатива `coreNetworkModule` для разработки без реального сервера:
 - Использует `MockEngine` вместо OkHttp/Darwin
 - JSON-стабы читаются из `composeResources/files/mock/` через `Res.readBytes`
 - Регистрирует `HttpClient(named("anchorHttpClient"))` + `ApiClient`
-- **Не регистрирует** `TokenRepository` — авторизация не нужна для мока
+- **Не регистрирует** `TokenRepository` / `TokenStorage` — авторизация не нужна для мока
 - Переключение: в `SharedModule` заменить `includes(coreNetworkModule)` → `includes(coreMockNetworkModule)`
 - Добавление нового стаба: положить `<name>.json` в `composeResources/files/mock/` и добавить ветку в `MockApiResponses.resolve()`
 
@@ -153,27 +149,15 @@ Ktor Auth-плагин (`bearer {}`) управляет токенами пол�
 - `sendWithoutRequest` гарантирует: токен прикрепляется **только** к хосту из `baseUrl`
 - `iosBaseUrl` — `internal`; iOS-приложение читает `BASE_URL` из `NSBundle` самостоятельно
 
-## Обработка ошибок в Feature-модулях
+## Обработка ошибок
 
-```kotlin
-try {
-    val result = apiClient.request<MyResponse> { endpoint = "..." }
-} catch (e: NetworkException.Unauthorized) {
-    // разлогинить пользователя
-} catch (e: NetworkException.NoConnection) {
-    // показать экран "нет интернета"
-} catch (e: NetworkException.HttpError) {
-    // e.code — HTTP статус, e.description — текст статуса
-} catch (e: NetworkException.Unknown) {
-    // непредвиденная ошибка
-}
-// CancellationException НЕ перехватывается внутри ApiClient — пробрасывается наружу
-```
+`NetworkException`: `Unauthorized` (разлогинить) · `NoConnection` (нет сети) · `HttpError(code, description)` · `Unknown`.
+`CancellationException` НЕ перехватывается внутри `ApiClient` — пробрасывается наружу.
 
 ## Запрещённые паттерны
 
 ```
-❌ Импортировать io.ktor.* в Feature-модулях (кроме io.ktor.http.HttpMethod — TODO: CoreNetwork должен реэкспортировать HttpMethod, чтобы убрать и это)
+❌ Импортировать io.ktor.* в Feature-модулях (кроме io.ktor.http.HttpMethod — TODO: CoreNetwork должен реэкспортировать HttpMethod)
 ❌ Регистрировать HttpClient без named("anchorHttpClient") квалификатора
 ❌ Добавлять BuildConfig или платформенный код в commonMain
 ❌ Делать RefreshRequest / RefreshResponse data class
@@ -182,6 +166,7 @@ try {
 ❌ Вызывать методы TokenRepository рекурсивно внутри одного withLock
 ❌ Добавлять новые expect без actual для обеих платформ
 ❌ Использовать coreMockNetworkModule в production-сборках
+❌ Внедрять TokenRepository в Feature-модули — только TokenStorage
 ```
 
 ## Таймауты (NetworkConstants)
@@ -195,6 +180,5 @@ try {
 
 ## Известные ограничения (TODO перед production)
 
-- **Certificate pinning** не реализован — ждёт production-сертификат (добавить в `network_security_config.xml` и iOS URLSession challenge handler)
-- **iOS Keychain accessibility** — `KeychainSettings` не гарантирует `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` на уровне библиотеки; при необходимости заменить на прямую обёртку над `Security.framework`
-]()
+- **Certificate pinning** не реализован — ждёт production-сертификат
+- **iOS Keychain accessibility** — `KeychainSettings` не гарантирует `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`; при необходимости заменить на прямую обёртку над `Security.framework`

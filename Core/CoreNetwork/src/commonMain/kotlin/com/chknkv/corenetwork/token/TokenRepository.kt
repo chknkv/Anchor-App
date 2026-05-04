@@ -4,8 +4,10 @@ package com.chknkv.corenetwork.token
  * Контракт для чтения и записи JWT-токенов в защищённом хранилище платформы.
  *
  * Реализация обязана обеспечивать атомарность операций чтения/записи.
+ * Расширяет [TokenStorage] — Feature-модули работают только через [TokenStorage],
+ * не имея доступа к методам чтения и очистки.
  */
-interface TokenRepository {
+interface TokenRepository : TokenStorage {
 
     /**
      * Возвращает сохранённый access-токен.
@@ -27,7 +29,7 @@ interface TokenRepository {
      * @param accessToken  Новый JWT access-токен.
      * @param refreshToken Новый JWT refresh-токен.
      */
-    suspend fun saveTokens(accessToken: String, refreshToken: String)
+    override suspend fun saveTokens(accessToken: String, refreshToken: String)
 
     /**
      * Удаляет оба токена из хранилища (например, при выходе из аккаунта).

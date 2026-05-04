@@ -45,6 +45,7 @@ kotlin {
             implementation(project(":Core:CoreDesignSystem"))
             implementation(project(":Core:CoreUtils"))
             implementation(project(":Core:CorePasscode"))
+            implementation(project(":Core:CoreNetwork"))
             implementation(project(":Feature:FeatureAddiction"))
         }
     }

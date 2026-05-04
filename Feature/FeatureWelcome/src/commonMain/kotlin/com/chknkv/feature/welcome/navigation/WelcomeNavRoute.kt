@@ -12,12 +12,14 @@ internal sealed interface WelcomeNavRoute {
     @Serializable
     data object Authorization : WelcomeNavRoute
 
-    /** 
+    /**
      * Экран управления паролем (создание или ввод).
      * @param isCreation true — если требуется создание нового пароля, false — ввод существующего.
+     * @param isFirstAuthorized true — первый вход (после passcode → HabitSelection),
+     *   false — возвращающийся пользователь (после passcode → onFinished).
      */
     @Serializable
-    data class Passcode(val isCreation: Boolean) : WelcomeNavRoute
+    data class Passcode(val isCreation: Boolean, val isFirstAuthorized: Boolean = true) : WelcomeNavRoute
 
     /** Экран выбора первичных привычек. */
     @Serializable

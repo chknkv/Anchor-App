@@ -57,18 +57,23 @@ import anchor_app.feature.featurewelcome.generated.resources.authorization_foote
 import anchor_app.feature.featurewelcome.generated.resources.authorization_resend_button
 import anchor_app.feature.featurewelcome.generated.resources.authorization_timer_text
 import anchor_app.feature.featurewelcome.generated.resources.authorization_error_otp
+import anchor_app.feature.featurewelcome.generated.resources.authorization_error_session_expired
 import anchor_app.feature.featurewelcome.generated.resources.ic_cross
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Экран авторизации пользователя по Email.
- * 
+ *
  * Включает в себя поле ввода email и модальное окно (Sheet) для ввода OTP-кода.
- * 
- * @param onAuthorized Коллбэк, вызываемый после успешной проверки OTP-кода.
+ *
+ * @param onAuthorizedNewUser Коллбэк после успешной авторизации нового пользователя.
+ * @param onAuthorizedReturningUser Коллбэк после успешной авторизации возвращающегося пользователя.
  */
 @Composable
-fun AuthorizationScreen(onAuthorized: () -> Unit) {
+fun AuthorizationScreen(
+    onAuthorizedNewUser: () -> Unit,
+    onAuthorizedReturningUser: () -> Unit,
+) {
     val viewModel = koinViewModel<AuthorizationViewModel>()
     val state by viewModel.uiResult.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -76,9 +81,9 @@ fun AuthorizationScreen(onAuthorized: () -> Unit) {
     LaunchedEffect(viewModel) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                AuthorizationUiEvent.OnAuthorized -> {
-                    onAuthorized()
-                }
+                AuthorizationUiEvent.OnAuthorizedNewUser -> onAuthorizedNewUser()
+                AuthorizationUiEvent.OnAuthorizedReturningUser -> onAuthorizedReturningUser()
+                AuthorizationUiEvent.OnSessionExpired -> Unit
             }
         }
     }
@@ -119,7 +124,11 @@ private fun AuthorizationContent(
                 ModuleContent(
                     modifier = Modifier.fillMaxWidth(),
                     outPaddingValues = PaddingValues(top = 12.dp),
-                    description = if (state.isError) stringResource(Res.string.authorization_error_otp) else null,
+                    description = when {
+                    state.isSessionExpired -> stringResource(Res.string.authorization_error_session_expired)
+                    state.isError -> stringResource(Res.string.authorization_error_otp)
+                    else -> null
+                },
                 ) {
                     TextInput(
                         value = state.email,
@@ -148,20 +157,20 @@ private fun AuthorizationContent(
                 )
             }
 
-            val resendTextLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
+            val termsTextLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
             Footnote(
                 text = stringResource(Res.string.authorization_footer_terms),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
                     .link(
-                        textLayoutResult = resendTextLayout,
+                        textLayoutResult = termsTextLayout,
                         enabled = state.otp.isResendAvailable,
                         onAction = { onAction(AuthorizationUiAction.OnResendOtpClicked) }
                     ),
                 textAlign = TextAlign.Center,
                 isSecondary = true,
-                onTextLayout = { resendTextLayout.value = it }
+                onTextLayout = { termsTextLayout.value = it }
             )
         }
     }

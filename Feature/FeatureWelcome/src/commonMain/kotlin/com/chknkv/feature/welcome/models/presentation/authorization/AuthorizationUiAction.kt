@@ -24,11 +24,6 @@ sealed interface AuthorizationUiAction {
     data object OnTermsClicked : AuthorizationUiAction
 
     /**
-     * Пользователь успешно авторизован, необходимо перейти далее.
-     */
-    data object OnAuthorizedClicked : AuthorizationUiAction
-
-    /**
      * Пользователь изменил состояние видимости шторки OTP.
      */
     data class OnSheetVisibilityChange(val isVisible: Boolean) : AuthorizationUiAction
@@ -42,9 +37,4 @@ sealed interface AuthorizationUiAction {
      * Пользователь нажал "Отправить код повторно".
      */
     data object OnResendOtpClicked : AuthorizationUiAction
-
-    /**
-     * Событие тика таймера.
-     */
-    data object OnTimerTick : AuthorizationUiAction
 }

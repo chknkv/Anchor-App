@@ -4,6 +4,7 @@ import com.chknkv.corenetwork.api.ApiClient
 import com.chknkv.corenetwork.client.createAnchorHttpClient
 import com.chknkv.corenetwork.token.TokenRepository
 import com.chknkv.corenetwork.token.TokenRepositoryImpl
+import com.chknkv.corenetwork.token.TokenStorage
 import com.chknkv.corenetwork.token.createSecureTokenSettings
 import io.ktor.client.HttpClient
 import org.koin.core.qualifier.named
@@ -30,6 +31,7 @@ val coreNetworkModule = module {
     single<TokenRepository> {
         TokenRepositoryImpl(createSecureTokenSettings())
     }
+    single<TokenStorage> { get<TokenRepository>() }
     single<HttpClient>(named("anchorHttpClient")) {
         createAnchorHttpClient(get(), get(named("anchorBaseUrl")))
     }

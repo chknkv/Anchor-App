@@ -1,5 +1,6 @@
 package com.chknkv.feature.welcome.models.presentation.authorization
 
+import androidx.compose.runtime.Immutable
 import com.chknkv.designsystem.otp.PinInputState
 
 /**
@@ -10,13 +11,16 @@ import com.chknkv.designsystem.otp.PinInputState
  * @param isGetOtpEnabled Активна ли кнопка "Get OTP" (email прошёл валидацию).
  * @param isLoading Показывать ли индикатор загрузки поверх экрана.
  * @param isError Произошла ли ошибка при запросе OTP.
+ * @param isSessionExpired Истекла ли OTP-сессия (показывает отдельное сообщение).
  * @param otp Состояние OTP-элемента.
  */
+@Immutable
 data class AuthorizationUiResult(
     val email: String = "",
     val isGetOtpEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val isError: Boolean = false,
+    val isSessionExpired: Boolean = false,
     val otp: OtpUiResult = OtpUiResult()
 )
 
@@ -29,6 +33,7 @@ data class AuthorizationUiResult(
  * @param timerValue Значение таймера обратного отсчета (в секундах).
  * @param isResendAvailable Доступна ли кнопка повторной отправки кода.
  */
+@Immutable
 data class OtpUiResult(
     val pinCode: String = "",
     val pinState: PinInputState = PinInputState.Input,

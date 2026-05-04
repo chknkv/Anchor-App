@@ -1,6 +1,6 @@
 # Anchor App
 
-Kotlin Multiplatform + Compose Multiplatform приложение. Android + iOS.
+Kotlin Multiplatform + Compose Multiplatform. Android + iOS.
 Package-prefix: `com.chknkv`. Kotlin: 2.3.20. ComposeMP: 1.10.3.
 
 Каждый модуль содержит собственный `CLAUDE.md` с детальным контрактом.
@@ -16,7 +16,7 @@ Package-prefix: `com.chknkv`. Kotlin: 2.3.20. ComposeMP: 1.10.3.
 
 :Core:CoreUtils                — AppSettings (тема/язык/авторизация), getAppVersion()
 :Core:CoreDesignSystem         — Compose UI-компоненты, токены, типографика, навигация
-:Core:CoreNetwork              — Ktor ApiClient, JWT refresh, NetworkException
+:Core:CoreNetwork              — Ktor ApiClient, JWT refresh, NetworkException, TokenStorage
 :Core:CorePasscode             — PasscodeFlow, биометрия
 
 :Feature:FeatureWelcome        — WelcomeFlow: авторизация (email+OTP) → passcode → выбор привычек
@@ -119,9 +119,17 @@ sharedModule {
 }
 ```
 
+`featureWelcomeModule` регистрирует слоистую авторизацию:
+```kotlin
+factory<AuthorizationApiMapper> { AuthorizationApiMapperImpl(apiClient = get()) }
+single<AuthorizationRepository> { AuthorizationRepositoryImpl(apiMapper = get(), tokenStorage = get()) }
+factory<AuthorizationInteractor> { AuthorizationInteractorImpl(repository = get()) }
+viewModel { WelcomeViewModel(get(), get()) }        // AppSettings, PasscodeRepository
+viewModel { AuthorizationViewModel(get(), get()) }  // AuthorizationInteractor, AppSettings
+```
+
 - `single<Interface>` — репозитории и интеракторы с состоянием (SharedFlow)
 - `factory<Interface>` — интеракторы без состояния
-- `viewModel { VM(get()) }` / `viewModel { p -> VM(p.get(), get()) }` — для ViewModels с параметрами
 - `named("qualifier")` — при конфликте одного типа (пример: `corePasscodeSettings`)
 - `AppSettings` — ровно один `single<>` на весь граф
 
@@ -161,6 +169,7 @@ apiClient.request<ResponseType> {
 ```
 
 - `NetworkException`: `Unauthorized · NoConnection · HttpError(code, description) · Unknown`
+- `TokenStorage` — публичный интерфейс CoreNetwork; Feature используют только его для сохранения токенов после авторизации. `TokenRepository` — internal, Feature-модулям недоступен.
 - JWT refresh — автоматический через Ktor `bearer { }`; Mutex предотвращает гонку
 - `BASE_URL` — из `BuildConfig.BASE_URL` → `local.properties`; не хардкодить
 
@@ -180,3 +189,4 @@ apiClient.request<ResponseType> {
 | 8 | Параметры экрана — в полях `@Serializable data class` маршрута |
 | 9 | `collectAsStateWithLifecycle()` везде; `isScreenInitialized` guard в каждой ViewModel |
 | 10 | Именование DTO: суффиксы `Request` / `Response`; не `Dto` |
+| 11 | Feature получают `TokenStorage` из DI; прямой доступ к `TokenRepository` — запрещён |

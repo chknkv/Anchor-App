@@ -38,5 +38,5 @@ internal data class AddictionDetailsBody(
     @SerialName("description")                          val description: String? = null,
     @SerialName("completed_dates")                      val completedDates: List<String> = emptyList(),
     @SerialName("can_increment_today")                  val canIncrementToday: Boolean,
-    @SerialName("next_increment_available_in_seconds")  val nextIncrementAvailableInSeconds: Long,
+    @SerialName("next_increment_available_in_seconds")  val nextIncrementAvailableInSeconds: Long? = null,
 )

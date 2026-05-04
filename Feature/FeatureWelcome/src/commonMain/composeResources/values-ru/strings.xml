@@ -10,5 +10,5 @@
     <string name="authorization_bottomsheet_footnote">Введите 5-значный&#160;код из письма</string>
     <string name="authorization_timer_text">Повторная отправка через&#160;%1$d&#160;сек</string>
     <string name="authorization_resend_button">Отправить повторно</string>
-    <string name="authorization_button_sign_in">Войти</string>
+    <string name="authorization_error_session_expired">Сессия истекла. Введите почту повторно.</string>
 </resources>

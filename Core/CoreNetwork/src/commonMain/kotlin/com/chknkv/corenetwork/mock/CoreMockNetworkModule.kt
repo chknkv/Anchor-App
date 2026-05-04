@@ -1,6 +1,7 @@
 package com.chknkv.corenetwork.mock
 
 import com.chknkv.corenetwork.api.ApiClient
+import com.chknkv.corenetwork.token.TokenStorage
 import io.ktor.client.HttpClient
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -23,7 +24,11 @@ val coreMockNetworkModule = module {
             resolver = MockApiResponses::resolve,
         )
     }
-    single {
-        ApiClient(get(named("anchorHttpClient")))
+    single { ApiClient(get(named("anchorHttpClient"))) }
+
+    single<TokenStorage> {
+        object : TokenStorage {
+            override suspend fun saveTokens(accessToken: String, refreshToken: String) = Unit
+        }
     }
 }

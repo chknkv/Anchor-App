@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chknkv.coreutils.AppSettings
 import com.chknkv.designsystem.otp.PinInputState
-import com.chknkv.feature.welcome.domain.AuthorizationInteractor
+import com.chknkv.feature.welcome.domain.interactor.AuthorizationInteractor
+import com.chknkv.feature.welcome.domain.OtpException
 import com.chknkv.feature.welcome.models.presentation.authorization.AuthorizationUiAction
 import com.chknkv.feature.welcome.models.presentation.authorization.AuthorizationUiEvent
 import com.chknkv.feature.welcome.models.presentation.authorization.AuthorizationUiResult
@@ -24,10 +25,10 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel для управления процессом авторизации.
- * 
- * Реализует логику ввода email, запроса OTP-кода, управления таймером повторной отправки 
- * и верификации введенного кода.
- * 
+ *
+ * Реализует логику ввода email, запроса OTP-кода, управления таймером повторной отправки
+ * и верификации введённого кода.
+ *
  * @property interactor Интерактор для выполнения сетевых запросов авторизации.
  * @property appSettings Настройки приложения для сохранения состояния авторизации.
  */
@@ -49,6 +50,8 @@ internal class AuthorizationViewModel(
     private val _uiEvent = MutableSharedFlow<AuthorizationUiEvent>(extraBufferCapacity = 16)
     val uiEvent: SharedFlow<AuthorizationUiEvent> = _uiEvent.asSharedFlow()
 
+    private var sessionId: String = ""
+
     private var timerJob: Job? = null
 
     init {
@@ -65,11 +68,12 @@ internal class AuthorizationViewModel(
                 when (action) {
                     is AuthorizationUiAction.OnEmailChanged ->
                         _uiResult.value = handleEmailChanged(action.email)
+
                     is AuthorizationUiAction.OnGetOtpClicked ->
                         viewModelScope.launch(authorizationCoroutineExceptionHandler) { onGetOtp() }
+
                     is AuthorizationUiAction.OnTermsClicked -> interactor.handleTermsClicked()
-                    is AuthorizationUiAction.OnAuthorizedClicked ->
-                        viewModelScope.launch { _uiEvent.emit(AuthorizationUiEvent.OnAuthorized) }
+
                     is AuthorizationUiAction.OnSheetVisibilityChange -> {
                         _uiResult.value = _uiResult.value.copy(
                             otp = if (action.isVisible) OtpUiResult(isSheetVisible = true)
@@ -77,11 +81,12 @@ internal class AuthorizationViewModel(
                         )
                         if (action.isVisible) startTimer() else stopTimer()
                     }
+
                     is AuthorizationUiAction.OnPinChange ->
-                        viewModelScope.launch(authorizationCoroutineExceptionHandler) { onPinChange(action.pinCode) }
+                        viewModelScope.launch { onPinChange(action.pinCode) }
+
                     is AuthorizationUiAction.OnResendOtpClicked ->
-                        viewModelScope.launch(authorizationCoroutineExceptionHandler) { onResendOtp() }
-                    is AuthorizationUiAction.OnTimerTick -> handleTimerTick()
+                        viewModelScope.launch { onResendOtp() }
                 }
             }
         }
@@ -92,7 +97,7 @@ internal class AuthorizationViewModel(
         timerJob = viewModelScope.launch {
             while (true) {
                 delay(1000L)
-                emitAction(AuthorizationUiAction.OnTimerTick)
+                handleTimerTick()
             }
         }
     }
@@ -118,31 +123,37 @@ internal class AuthorizationViewModel(
     }
 
     private suspend fun onResendOtp() {
-        interactor.resendOtp(_uiResult.value.email)
         _uiResult.value = _uiResult.value.copy(
-            otp = _uiResult.value.otp.copy(
-                timerValue = 60,
-                isResendAvailable = false
-            )
+            otp = _uiResult.value.otp.copy(timerValue = 60, isResendAvailable = false)
         )
         startTimer()
+
+        try {
+            interactor.resendOtp(sessionId)
+        } catch (e: Exception) {
+            Napier.e(tag = TAG, message = "resendOtp failed: ${e.message}", throwable = e)
+        }
     }
 
-    private fun handleEmailChanged(email: String): AuthorizationUiResult = _uiResult.value.copy(
-        email = email,
-        isGetOtpEnabled = isEmailValid(email),
-        isError = false
-    )
+    private fun handleEmailChanged(email: String): AuthorizationUiResult {
+        sessionId = ""
+        return _uiResult.value.copy(
+            email = email,
+            isGetOtpEnabled = isEmailValid(email),
+            isError = false,
+            isSessionExpired = false,
+        )
+    }
 
     private suspend fun onGetOtp() {
+        if (_uiResult.value.isLoading) return
         _uiResult.value = _uiResult.value.copy(isLoading = true, isError = false)
-        val emailOtpResult = interactor.handleGetOtp(_uiResult.value.email)
+        sessionId = interactor.sendOtp(_uiResult.value.email)
         _uiResult.value = _uiResult.value.copy(
             isLoading = false,
-            isError = !emailOtpResult,
-            otp = OtpUiResult(isSheetVisible = emailOtpResult)
+            otp = OtpUiResult(isSheetVisible = true)
         )
-        if (emailOtpResult) startTimer()
+        startTimer()
     }
 
     private suspend fun onPinChange(pinCode: String) {
@@ -161,14 +172,33 @@ internal class AuthorizationViewModel(
         _uiResult.value = _uiResult.value.copy(
             otp = _uiResult.value.otp.copy(pinState = PinInputState.Loading)
         )
-        val isSuccess = interactor.checkOtp(pinCode)
-        if (isSuccess) {
+        try {
+            val isFirstAuthorized = interactor.verifyOtp(sessionId, pinCode)
             appSettings.setAuthorized(true)
             _uiResult.value = _uiResult.value.copy(
                 otp = _uiResult.value.otp.copy(isSheetVisible = false)
             )
-            _uiEvent.emit(AuthorizationUiEvent.OnAuthorized)
-        } else {
+            val event = if (isFirstAuthorized) {
+                AuthorizationUiEvent.OnAuthorizedNewUser
+            } else {
+                AuthorizationUiEvent.OnAuthorizedReturningUser
+            }
+            _uiEvent.emit(event)
+        } catch (e: OtpException.InvalidOtp) {
+            Napier.e(tag = TAG, message = e.message ?: "Unknown error", throwable = e)
+            _uiResult.value = _uiResult.value.copy(
+                otp = _uiResult.value.otp.copy(pinState = PinInputState.Error)
+            )
+        } catch (e: OtpException.SessionExpired) {
+            Napier.e(tag = TAG, message = e.message ?: "Unknown error", throwable = e)
+            sessionId = ""
+            _uiResult.value = _uiResult.value.copy(
+                isSessionExpired = true,
+                otp = _uiResult.value.otp.copy(isSheetVisible = false)
+            )
+            _uiEvent.emit(AuthorizationUiEvent.OnSessionExpired)
+        } catch (e: Exception) {
+            Napier.e(tag = TAG, message = e.message ?: "Unknown error", throwable = e)
             _uiResult.value = _uiResult.value.copy(
                 otp = _uiResult.value.otp.copy(pinState = PinInputState.Error)
             )

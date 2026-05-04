@@ -21,5 +21,5 @@ internal data class AddictionUpdateRequest(
     @SerialName("description")  val description: String,
     @SerialName("icon_key")     val iconKey: AddictionIconKey,
     @SerialName("gradient_key") val gradientKey: AddictionGradientKey,
-    @SerialName("category_ley") val categoryKey: AddictionCategoryKey,
+    @SerialName("category_key") val categoryKey: AddictionCategoryKey,
 )

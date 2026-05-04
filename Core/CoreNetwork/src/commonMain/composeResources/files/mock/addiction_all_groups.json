@@ -10,7 +10,7 @@
             "id": 101,
             "name": "Выпивать 2 л воды в день",
             "icon_key": "ic_habit_health",
-            "gradient": "blue",
+            "gradient_key": "blue",
             "control_days": 12
           }
         ]
@@ -22,14 +22,14 @@
             "id": 102,
             "name": "Учёт расходов",
             "icon_key": "ic_habit_finance",
-            "gradient": "purple",
+            "gradient_key": "purple",
             "control_days": 30
           },
           {
             "id": 103,
             "name": "Без спонтанных покупок",
             "icon_key": "ic_habit_finance",
-            "gradient": "indigo",
+            "gradient_key": "indigo",
             "control_days": 7
           }
         ]
@@ -41,7 +41,7 @@
             "id": 104,
             "name": "Планирование дня",
             "icon_key": "ic_habit_productivity",
-            "gradient": "orange",
+            "gradient_key": "orange",
             "control_days": 21
           }
         ]
@@ -53,7 +53,7 @@
             "id": 105,
             "name": "Хобби",
             "icon_key": "ic_habit_lifestyle",
-            "gradient": "green",
+            "gradient_key": "green",
             "control_days": 3
           }
         ]

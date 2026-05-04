@@ -37,25 +37,33 @@ fun WelcomeFlow(onFinished: () -> Unit) {
     ) {
         composable<WelcomeNavRoute.Authorization> {
             AuthorizationScreen(
-                onAuthorized = {
+                onAuthorizedNewUser = {
                     passcodeRepository.clearPasscode()
-                    navController.navigate(WelcomeNavRoute.Passcode(isCreation = true)) {
+                    navController.navigate(WelcomeNavRoute.Passcode(isCreation = true, isFirstAuthorized = true)) {
                         popUpTo<WelcomeNavRoute.Authorization> { inclusive = true }
                     }
-                }
+                },
+                onAuthorizedReturningUser = {
+                    passcodeRepository.clearPasscode()
+                    navController.navigate(WelcomeNavRoute.Passcode(isCreation = true, isFirstAuthorized = false)) {
+                        popUpTo<WelcomeNavRoute.Authorization> { inclusive = true }
+                    }
+                },
             )
         }
 
         composable<WelcomeNavRoute.Passcode> { backStackEntry ->
             val route = backStackEntry.toRoute<WelcomeNavRoute.Passcode>()
-            val onSuccess: () -> Unit = if (route.isCreation) {
-                {
-                    navController.navigate(WelcomeNavRoute.HabitSelection) {
-                        popUpTo<WelcomeNavRoute.Passcode> { inclusive = true }
+            val onSuccess: () -> Unit = when {
+                !route.isCreation -> onFinished
+                route.isFirstAuthorized -> {
+                    {
+                        navController.navigate(WelcomeNavRoute.HabitSelection) {
+                            popUpTo<WelcomeNavRoute.Passcode> { inclusive = true }
+                        }
                     }
                 }
-            } else {
-                onFinished
+                else -> onFinished
             }
             PasscodeFlow(
                 mode = PasscodeFlowMode.Enter,

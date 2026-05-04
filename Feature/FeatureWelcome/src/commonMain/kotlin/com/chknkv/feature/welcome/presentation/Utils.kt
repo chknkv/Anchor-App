@@ -14,6 +14,6 @@ private val EMAIL_REGEX = Regex(
  * @param email Строка для проверки.
  * @return `true`, если строка соответствует формату email.
  */
-fun isEmailValid(email: String): Boolean {
+internal fun isEmailValid(email: String): Boolean {
     return email.isNotBlank() && EMAIL_REGEX.matches(email.trim())
 }

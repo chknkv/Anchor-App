@@ -51,6 +51,6 @@ internal data class AddictionAllInGroup(
     @SerialName("id")           val id: Int,
     @SerialName("name")         val name: String,
     @SerialName("icon_key")     val iconKey: AddictionIconKey,
-    @SerialName("gradient")     val gradientKey: AddictionGradientKey,
+    @SerialName("gradient_key") val gradientKey: AddictionGradientKey,
     @SerialName("control_days") val controlDays: Int,
 )

@@ -55,7 +55,7 @@ internal fun AssistanceWidgetSuccessfulContent(
     onAction: (AssistanceWidgetUiAction) -> Unit,
 ) {
     val pageCount = if (result.quote != null) PAGE_COUNT else 1
-    val pagerState = rememberPagerState(key1 = result.quote != null, pageCount = { pageCount })
+    val pagerState = rememberPagerState(pageCount = { pageCount })
 
     HorizontalPager(
         state = pagerState,

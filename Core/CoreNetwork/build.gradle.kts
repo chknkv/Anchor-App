@@ -13,6 +13,7 @@ kotlin {
         namespace = "com.chknkv.corenetwork"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
     }
 
     val xcfName = "core-networkKit"
@@ -42,6 +43,7 @@ kotlin {
             implementation(libs.napier)
             implementation(libs.koin.core)
             implementation(libs.ktor.client.mock)
+            implementation(libs.runtime)
             implementation(libs.components.resources)
 
             implementation(project(":Core:CoreUtils"))

@@ -18,5 +18,5 @@ internal fun AddictionDetailsBody.toDomain(): AddictionDetails = AddictionDetail
     completedDates = completedDates.toSet(),
     canIncrementToday = canIncrementToday,
     nextIncrementAvailableInSeconds = nextIncrementAvailableInSeconds
-        .coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+        ?.coerceAtMost(Int.MAX_VALUE.toLong())?.toInt() ?: 0,
 )

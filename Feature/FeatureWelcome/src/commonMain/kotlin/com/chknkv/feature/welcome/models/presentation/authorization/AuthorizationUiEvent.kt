@@ -5,6 +5,12 @@ package com.chknkv.feature.welcome.models.presentation.authorization
  */
 sealed interface AuthorizationUiEvent {
 
-    /** Событие успешного завершения авторизации. */
-    data object OnAuthorized : AuthorizationUiEvent
+    /** Авторизация завершена, пользователь входит впервые. */
+    data object OnAuthorizedNewUser : AuthorizationUiEvent
+
+    /** Авторизация завершена, пользователь возвращается. */
+    data object OnAuthorizedReturningUser : AuthorizationUiEvent
+
+    /** Сессия OTP истекла — необходимо начать авторизацию заново. */
+    data object OnSessionExpired : AuthorizationUiEvent
 }
