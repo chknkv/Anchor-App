@@ -1,7 +1,7 @@
 # Anchor App
 
 Kotlin Multiplatform + Compose Multiplatform. Android + iOS.
-Package-prefix: `com.chknkv`. Kotlin: 2.3.20. ComposeMP: 1.10.3.
+Package-prefix: `com.chknkv`. Kotlin: 2.3.21. ComposeMP: 1.10.3.
 
 Каждый модуль содержит собственный `CLAUDE.md` с детальным контрактом.
 Этот файл — глобальные правила, карта зависимостей и паттерны, общие для всего проекта.
@@ -78,9 +78,9 @@ AnchorMainActivity → setContent { AnchorApp() }
 
 ## Ключевые версии
 
-Kotlin 2.3.20 · ComposeMP 1.10.3 · Navigation 2.9.0 · Koin 4.2.0 · Ktor 3.1.3
-Coroutines 1.10.2 · Serialization 1.10.0 · multiplatform-settings 1.3.0
-Lifecycle/ViewModel 2.10.0 · AGP 9.1.0 · compileSdk 36 / minSdk 24
+Kotlin 2.3.21 · ComposeMP 1.10.3 · Navigation 2.9.2 · Koin 4.2.1 · Ktor 3.4.3
+Coroutines 1.10.2 · Serialization 1.11.0 · multiplatform-settings 1.3.0
+Lifecycle/ViewModel 2.10.0 · AGP 9.2.0 · compileSdk 37 / targetSdk 37 / minSdk 24
 
 ---
 

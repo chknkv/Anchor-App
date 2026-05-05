@@ -1,10 +1,10 @@
 description = "Core module: passcode & biometry flow."
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
-    alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinxSerialization)
 }
 
@@ -16,49 +16,36 @@ kotlin {
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
     }
 
-    val xcfName = "core-passcodeKit"
-    listOf(
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = xcfName
-            isStatic = true
-        }
-    }
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlin.stdlib)
-
-            implementation(libs.runtime)
-            implementation(libs.foundation)
-            implementation(libs.material3)
-            implementation(libs.ui)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.components.resources)
-
-            implementation(libs.navigation.compose)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.coroutines.core)
-
-            implementation(libs.koin.core)
-            implementation(libs.koin.core.viewmodel)
+            implementation(libs.foundation)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-
+            implementation(libs.koin.core)
+            implementation(libs.koin.core.viewmodel)
+            implementation(libs.kotlin.stdlib)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.material3)
             implementation(libs.multiplatform.settings)
+            implementation(libs.navigation.compose)
+            implementation(libs.runtime)
+            implementation(libs.ui)
 
             implementation(project(":Core:CoreDesignSystem"))
             implementation(project(":Core:CoreUtils"))
         }
 
         androidMain.dependencies {
+            implementation(libs.androidx.appcompat)
             implementation(libs.androidx.biometric)
             implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.appcompat)
         }
     }
 }

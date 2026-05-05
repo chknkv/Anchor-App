@@ -1,9 +1,10 @@
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+description = "Android entry point: Application, MainActivity, BuildConfig wiring."
+
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
 }
 
@@ -21,7 +22,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "0.2.1"
+        versionName = "0.2.2"
 
         val localProps = Properties()
         val localPropsFile = rootProject.file("local.properties")
@@ -67,11 +68,11 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":Anchor-MobileApp:shared"))
     implementation(libs.androidx.activity.compose)
-    implementation(libs.koin.core)
     implementation(libs.koin.compose)
+    implementation(libs.koin.core)
     implementation(libs.napier)
 
+    implementation(project(":Anchor-MobileApp:shared"))
     implementation(project(":Core:CoreUtils"))
 }

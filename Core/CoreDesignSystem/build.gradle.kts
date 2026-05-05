@@ -2,11 +2,11 @@
 description = "Core module with design system."
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.androidLint)
-    alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.kotlinMultiplatform)
 }
 
 kotlin {
@@ -17,30 +17,20 @@ kotlin {
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
     }
 
-    val xcfName = "core-designsystemKit"
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = xcfName
-            isStatic = true
-        }
-    }
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":Core:CoreUtils"))
+            implementation(libs.components.resources)
+            implementation(libs.foundation)
             implementation(libs.kotlin.stdlib)
-
+            implementation(libs.material3)
             implementation(libs.navigation.compose)
             implementation(libs.runtime)
-            implementation(libs.foundation)
-            implementation(libs.material3)
             implementation(libs.ui)
-            implementation(libs.components.resources)
 
+            implementation(project(":Core:CoreUtils"))
         }
     }
 }
