@@ -14,28 +14,33 @@ sealed class NetworkException(
     cause: Throwable? = null,
 ) : Exception(message, cause) {
 
-    /**
-     * Сервер вернул HTTP-ошибку.
-     *
-     * Объявлен как `data class` для структурного равенства при тестировании.
-     * Не содержит PII, поэтому автогенерация [toString] безопасна.
-     *
-     * Поле названо [description], а не `message`, чтобы не затенять [Throwable.message].
-     *
-     * @param code        HTTP-статус (например, 400, 404, 500).
-     * @param description Краткое описание из статусной строки ответа.
-     */
-    data class HttpError(val code: Int, val description: String) : NetworkException("HTTP $code: $description")
+    /** Сервер вернул HTTP 400. */
+    data class BadRequest(val error: ErrorResponse?) : NetworkException("HTTP 400")
 
-    /**
-     * Сервер вернул HTTP 401 после попытки обновить токен.
-     * Вызывающий код должен перенаправить пользователя на экран входа.
-     */
+    /** Сервер вернул HTTP 401 после попытки обновить токен. */
     data object Unauthorized : NetworkException("Unauthorized")
 
+    /** Сервер вернул HTTP 403. */
+    data class Forbidden(val error: ErrorResponse?) : NetworkException("HTTP 403")
+
+    /** Сервер вернул HTTP 404. */
+    data class NotFound(val error: ErrorResponse?) : NetworkException("HTTP 404")
+
+    /** Сервер вернул HTTP 409. */
+    data class Conflict(val error: ErrorResponse?) : NetworkException("HTTP 409")
+
+    /** Сервер вернул HTTP 5xx. */
+    data class ServerError(val code: Int, val error: ErrorResponse?) : NetworkException("HTTP $code")
+
     /**
-     * Сетевое соединение недоступно (нет интернета или хост недостижим).
+     * Сервер вернул иной HTTP-код ошибки (не покрытый выше).
+     *
+     * @param code  HTTP-статус.
+     * @param error Тело ошибки от сервера или `null`.
      */
+    data class HttpError(val code: Int, val error: ErrorResponse?) : NetworkException("HTTP $code")
+
+    /** Сетевое соединение недоступно (нет интернета или хост недостижим). */
     data object NoConnection : NetworkException("No internet connection")
 
     /**

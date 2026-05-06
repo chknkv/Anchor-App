@@ -2,6 +2,7 @@ package com.chknkv.corenetwork.mock
 
 import anchor_app.core.corenetwork.generated.resources.Res
 import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
@@ -20,51 +21,52 @@ internal object MockApiResponses {
      * Порядок `when`-веток имеет значение: более специфичные пути (без wildcard)
      * должны стоять раньше шаблонов с `*`.
      *
-     * @param path   Относительный путь запроса без ведущего слэша (напр. "user/addictions/5").
+     * @param path   Относительный путь запроса без ведущего слэша (напр. "client/addictions/5").
      * @param method HTTP-метод запроса.
-     * @return Строка с JSON, которую отдаст MockEngine.
+     * @return Пара (тело ответа, HTTP-статус), которую отдаст MockEngine.
      * @throws IllegalStateException Если эндпоинт не зарегистрирован в реестре.
      */
-    suspend fun resolve(path: String, method: HttpMethod): String {
+    suspend fun resolve(path: String, method: HttpMethod): Pair<String, HttpStatusCode> {
         return when (method) {
             // Auth
             HttpMethod.Post if path == POST_AUTH_OTP_SEND_ENDPOINT_PATH ->
-                readFile(POST_AUTH_OTP_SEND_STUB_PATH)
+                readFile(POST_AUTH_OTP_SEND_STUB_PATH) to HttpStatusCode.OK
 
             HttpMethod.Post if path == POST_AUTH_OTP_VERIFY_ENDPOINT_PATH ->
-                readFile(POST_AUTH_OTP_VERIFY_STUB_PATH)
+                readFile(POST_AUTH_OTP_VERIFY_STUB_PATH) to HttpStatusCode.OK
 
             HttpMethod.Post if path == POST_AUTH_OTP_RESEND_ENDPOINT_PATH ->
-                readFile(POST_AUTH_OTP_RESEND_STUB_PATH)
+                "" to HttpStatusCode.NoContent
 
             // FeatureAssistant
             HttpMethod.Get if path == GET_MOTIVATIONAL_QUOTE_ENDPOINT_PATH ->
-                readFile(GET_MOTIVATIONAL_QUOTE_STUB_PATH)
+                readFile(GET_MOTIVATIONAL_QUOTE_STUB_PATH) to HttpStatusCode.OK
 
-            // FeatureAddiction
+            // FeatureAddiction — онбординг
             HttpMethod.Get if path == GET_ADDICTION_GROUP_FOR_SELECTION_ENDPOINT_PATH ->
-                readFile(GET_ADDICTION_GROUP_FOR_SELECTION_STUB_PATH)
+                readFile(GET_ADDICTION_GROUP_FOR_SELECTION_STUB_PATH) to HttpStatusCode.OK
 
             HttpMethod.Post if path == POST_ADDICTION_SAVE_SELECTED_ENDPOINT_PATH ->
-                readFile(SUCCESS_RESPONSE_STUB_PATH)
+                "" to HttpStatusCode.NoContent
 
+            // FeatureAddiction — CRUD
             HttpMethod.Get if path == GET_CLIENT_ADDICTIONS_ALL_ENDPOINT_PATH ->
-                readFile(GET_CLIENT_ADDITIONS_ALL_STUB_PATH)
+                readFile(GET_CLIENT_ADDICTIONS_ALL_STUB_PATH) to HttpStatusCode.OK
 
             HttpMethod.Post if path == POST_CLIENT_ADDICTIONS_CREATE_ENDPOINT_PATH ->
-                readFile(SUCCESS_RESPONSE_STUB_PATH)
+                "" to HttpStatusCode.NoContent
 
             HttpMethod.Get if path.startsWith("$GET_CLIENT_ADDICTIONS_DETAILS_ENDPOINT_PATH/") ->
-                readFile("$GET_CLIENT_ADDITION_DETAILS_STUB_PATH${path.substringAfterLast('/')}.json")
+                readFile("$GET_CLIENT_ADDITION_DETAILS_STUB_PATH${path.substringAfterLast('/')}.json") to HttpStatusCode.OK
 
             HttpMethod.Post if path.startsWith("$POST_CLIENT_ADDICTIONS_INCREMENT/") ->
-                readFile(SUCCESS_RESPONSE_STUB_PATH)
+                "" to HttpStatusCode.NoContent
 
             HttpMethod.Patch if path.startsWith("$PATCH_CLIENT_ADDICTIONS_UPDATE_ENDPOINT_PATH/") ->
-                readFile(SUCCESS_RESPONSE_STUB_PATH)
+                "" to HttpStatusCode.NoContent
 
             HttpMethod.Delete if path.startsWith("$DELETE_CLIENT_ADDICTIONS_DELETE_ENDPOINT_PATH/") ->
-                readFile(SUCCESS_RESPONSE_STUB_PATH)
+                "" to HttpStatusCode.NoContent
 
             // Неизвестный эндпоинт
             else -> error("MockApiResponses: no stub for ${method.value} $path")
@@ -92,15 +94,10 @@ internal object MockApiResponses {
     private const val DELETE_CLIENT_ADDICTIONS_DELETE_ENDPOINT_PATH = "client/addictions/delete"
     private const val GET_MOTIVATIONAL_QUOTE_ENDPOINT_PATH = "assistant/motivational-quote"
 
-    private const val SUCCESS_RESPONSE_STUB_PATH = "success_response.json"
-    private const val FAILED_RESPONSE_STUB_PATH = "failed_response.json"
-
     private const val POST_AUTH_OTP_SEND_STUB_PATH = "auth_otp_send.json"
     private const val POST_AUTH_OTP_VERIFY_STUB_PATH = "auth_otp_verify.json"
-    private const val POST_AUTH_OTP_RESEND_STUB_PATH = "auth_otp_resend.json"
     private const val GET_ADDICTION_GROUP_FOR_SELECTION_STUB_PATH = "selection_groups.json"
-    private const val GET_CLIENT_ADDITIONS_ALL_STUB_PATH = "addiction_all_groups.json"
-    private const val GET_CLIENT_ADDITIONS_ALL_EMPTY_STUB_PATH = "addiction_all_groups_empty.json"
+    private const val GET_CLIENT_ADDICTIONS_ALL_STUB_PATH = "addiction_all_groups.json"
     private const val GET_CLIENT_ADDITION_DETAILS_STUB_PATH = "addiction_details_"
     private const val GET_MOTIVATIONAL_QUOTE_STUB_PATH = "motivational_quote.json"
 }

@@ -90,9 +90,9 @@ ViewModel
                            └─ AssistanceApiMapperImpl — GET assistant/motivational-quote
 ```
 
-Цепочка конвертации: `MotivationalQuoteResponse` → `MotivationalQuoteBody` → (toDomain) → `MotivationalQuote` → (toQuoteUiResult) → `QuoteUiResult`.
+Цепочка конвертации: `MotivationalQuoteResponse` → (toDomain) → `MotivationalQuote` → (toQuoteUiResult) → `QuoteUiResult`.
 
-`MotivationalQuoteBody`: `@SerialName("text") val text`, `@SerialName("detail_text") val detailText`.
+`MotivationalQuoteResponse` (flat): `@SerialName("text") val text`, `@SerialName("detail_text") val detailText`.
 
 ---
 
@@ -133,7 +133,7 @@ src/commonMain/kotlin/com/chknkv/feature/assistant/
 │   ├── domain/
 │   │   └── MotivationalQuote.kt                — internal data class(text, detailText)
 │   ├── data/
-│   │   └── MotivationalQuoteResponse.kt        — MotivationalQuoteResponse : NetworkEntity<MotivationalQuoteBody>; MotivationalQuoteBody(@SerialName)
+│   │   └── MotivationalQuoteResponse.kt        — flat data class(text, detailText); @SerialName("text"), @SerialName("detail_text")
 │   └── presentation/
 │       ├── AssistanceWidgetUiAction.kt         — internal sealed interface
 │       ├── AssistanceWidgetUiResult.kt         — AssistanceWidgetUiResult(quote: QuoteUiResult?); QuoteUiResult(quoteText, quoteDetailText, isQuoteSheetVisible)
@@ -143,9 +143,9 @@ src/commonMain/kotlin/com/chknkv/feature/assistant/
 │   └── AssistanceInteractorImpl.kt             — internal class, прокси
 ├── data/
 │   ├── converter/
-│   │   └── MotivationalQuoteConverter.kt       — fun MotivationalQuoteBody.toDomain(): MotivationalQuote
+│   │   └── MotivationalQuoteConverter.kt       — fun MotivationalQuoteResponse.toDomain(): MotivationalQuote
 │   ├── mapper/
-│   │   ├── AssistanceApiMapper.kt              — internal interface; getMotivationalQuote(): MotivationalQuoteBody
+│   │   ├── AssistanceApiMapper.kt              — internal interface; getMotivationalQuote(): MotivationalQuoteResponse
 │   │   └── AssistanceApiMapperImpl.kt          — GET assistant/motivational-quote; импортирует io.ktor.http.HttpMethod
 │   └── repository/
 │       ├── AssistanceRepository.kt             — internal interface

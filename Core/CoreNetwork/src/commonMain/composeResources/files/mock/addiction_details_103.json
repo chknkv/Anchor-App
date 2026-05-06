@@ -1,15 +1,12 @@
 {
-  "success": true,
-  "body": {
-    "id": 103,
-    "name": "Без спонтанных покупок",
-    "category_key": "finance",
-    "icon_key": "ic_habit_finance",
-    "gradient_key": "indigo",
-    "control_days": 7,
-    "description": "Не совершать незапланированных покупок. Перед любой покупкой — пауза 24 часа.",
-    "completed_dates": ["2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-28", "2026-04-29"],
-    "can_increment_today": true,
-    "next_increment_available_in_seconds": 0
-  }
+  "id": 103,
+  "name": "Без спонтанных покупок",
+  "category_key": "finance",
+  "icon_key": "ic_habit_finance",
+  "gradient_key": "indigo",
+  "control_days": 7,
+  "description": "Не совершать незапланированных покупок. Перед любой покупкой — пауза 24 часа.",
+  "completed_dates": ["2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-28", "2026-04-29"],
+  "can_increment_today": true,
+  "next_increment_available_in_seconds": null
 }

@@ -17,7 +17,7 @@ internal interface AuthorizationApiMapper {
      * `POST auth/otp/send`
      *
      * @param email Адрес электронной почты пользователя.
-     * @return Сырой ответ сервера с идентификатором сессии.
+     * @return Ответ сервера с идентификатором сессии.
      * @throws com.chknkv.corenetwork.api.NetworkException При сетевой или серверной ошибке.
      */
     suspend fun sendOtp(email: String): OtpSendResponse
@@ -29,7 +29,7 @@ internal interface AuthorizationApiMapper {
      *
      * @param sessionId Идентификатор сессии, полученный в [sendOtp].
      * @param otp Код из письма (5 символов).
-     * @return Сырой ответ сервера с токенами и флагом первой авторизации.
+     * @return Ответ сервера с токенами и флагом первой авторизации.
      * @throws com.chknkv.corenetwork.api.NetworkException При сетевой или серверной ошибке.
      */
     suspend fun verifyOtp(sessionId: String, otp: String): OtpVerifyResponse

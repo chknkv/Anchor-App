@@ -1,23 +1,16 @@
 package com.chknkv.feature.addiction.models.data
 
-import com.chknkv.corenetwork.NetworkEntity
 import com.chknkv.feature.addiction.models.data.base.AddictionCategoryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Ответ для эндпоинта `GET /addictions/default-groups`.
- */
-@Serializable
-internal class AddictionSelectionGroupsResponse : NetworkEntity<AddictionSelectionGroupsBody>()
-
-/**
- * Body модель с группами привычек для экрана выбора при онбординге.
+ * Ответ для эндпоинта `GET /addictions/default-selection-groups`.
  *
  * @param items Список групп привычек для экрана выбора при онбординге.
  */
 @Serializable
-internal data class AddictionSelectionGroupsBody(
+internal data class AddictionSelectionGroupsResponse(
     @SerialName("items") val items: List<AddictionSelectionGroups>,
 )
 
@@ -30,7 +23,7 @@ internal data class AddictionSelectionGroupsBody(
 @Serializable
 internal data class AddictionSelectionGroups(
     @SerialName("category_key") val categoryKey: AddictionCategoryKey,
-    @SerialName("addictions")   val addictions: List<AddictionSelectionItem>,
+    @SerialName("addictions") val addictions: List<AddictionSelectionItem>,
 )
 
 /**
@@ -41,14 +34,12 @@ internal data class AddictionSelectionGroups(
  */
 @Serializable
 internal data class AddictionSelectionItem(
-    @SerialName("id")           val id: Int,
-    @SerialName("name")         val name: String,
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String,
 )
 
 /**
  * Тело запроса на сохранение выбранных привычек при онбординге.
- *
- * Используется для эндпоинта `POST /user/addictions/select`.
  *
  * @param ids Список идентификаторов выбранных привычек.
  */

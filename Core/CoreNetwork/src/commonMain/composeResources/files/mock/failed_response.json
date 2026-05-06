@@ -1,4 +1,4 @@
 {
-  "success": false,
-  "message": "Произошла ошибка на бэкенде"
+  "code": "MACHINE_READABLE_CODE",
+  "message": "Human readable description"
 }

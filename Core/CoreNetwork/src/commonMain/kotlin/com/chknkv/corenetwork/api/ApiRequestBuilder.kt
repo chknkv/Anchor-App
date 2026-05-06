@@ -3,7 +3,7 @@ package com.chknkv.corenetwork.api
 import io.ktor.http.HttpMethod
 
 /**
- * DSL-билдер для формирования HTTP-запроса через [ApiClient.request].
+ * DSL-билдер для формирования HTTP-запроса через [ApiClient.execute].
  *
  * Пример использования:
  * ```kotlin

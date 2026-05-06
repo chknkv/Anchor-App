@@ -33,14 +33,14 @@ val featureAddictionModule: Module
 | PATCH | `client/addictions/update/{id}` | Обновить привычку |
 | DELETE | `client/addictions/delete/{id}` | Удалить привычку |
 
-**DTO (models/data/, internal, @Serializable):**
-- `AddictionAllGroupsResponse : NetworkEntity<AddictionAllGroupsBody>` — `isCreateNewAvailable, items: List<AddictionsAllGroup>`
+**DTO (models/data/, internal, @Serializable, flat — без NetworkEntity):**
+- `AddictionAllGroupsResponse` — `isCreateNewAvailable: Boolean, items: List<AddictionsAllGroup>?`
 - `AddictionsAllGroup` — `categoryKey: AddictionCategoryKey, addictions: List<AddictionAllInGroup>`
 - `AddictionAllInGroup` — `id, name, iconKey: AddictionIconKey, gradientKey: AddictionGradientKey, controlDays`
-- `AddictionSelectionGroupsResponse : NetworkEntity<AddictionSelectionGroupsBody>` — `items: List<AddictionSelectionGroups>`
+- `AddictionSelectionGroupsResponse` — `items: List<AddictionSelectionGroups>`
 - `AddictionSelectionGroups` — `categoryKey: AddictionCategoryKey, addictions: List<AddictionSelectionItem>`
 - `AddictionSelectionItem` — `id: Int, name: String` (без iconKey/category)
-- `AddictionDetailsResponse : NetworkEntity<AddictionDetailsBody>` — `id, name, categoryKey, iconKey, gradientKey, controlDays, description?, completedDates: List<String>, canIncrementToday, nextIncrementAvailableInSeconds: Long`
+- `AddictionDetailsResponse` — `id, name, categoryKey, iconKey, gradientKey, controlDays, description?, completedDates: List<String>, canIncrementToday, nextIncrementAvailableInSeconds: Long?`
 - `AddictionCreateRequest` → `name, description, iconKey: AddictionIconKey, gradientKey: AddictionGradientKey, categoryKey: AddictionCategoryKey`
 - `AddictionUpdateRequest` → `name, description, iconKey, gradientKey, categoryKey`
 - `AddictionSelectedRequest` → `ids: List<Int>`

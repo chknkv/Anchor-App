@@ -9,9 +9,8 @@ KMP-библиотечный модуль. Единственный источн
 |-----|-----------|
 | `ApiClient` | DSL-фасад для выполнения запросов |
 | `NetworkException` | sealed class сетевых ошибок |
-| `NetworkEntity<T>` | универсальный конверт ответа Anchor API |
-| `NetworkEntity<T>.requireBody()` | извлечь тело или бросить `IllegalStateException` |
-| `NetworkEntity<*>.isSuccessfulExecute()` | проверить успешность void-запроса |
+| `ErrorResponse` | тело ошибки `{ code, message }` при HTTP 4xx/5xx |
+| `ItemsResponse<T>` | конверт `{ items: List<T> }` для списочных эндпоинтов |
 | `TokenStorage` | `saveTokens(access, refresh)` — Feature сохраняют токены после авторизации |
 | `coreNetworkModule` | Koin-модуль с реальным HTTP-клиентом |
 | `coreMockNetworkModule` | Koin-модуль с `MockEngine` — **только разработка/тестирование** |
@@ -19,62 +18,66 @@ KMP-библиотечный модуль. Единственный источн
 `TokenRepository` — internal. Feature-модули работают **только** через `TokenStorage`.
 Всё остальное (`HttpClient`, `KtorConfig`, `TokenRepositoryImpl`) — internal.
 
-## NetworkEntity<T>: конверт ответа
+## REST-контракт API
 
-Все эндпоинты Anchor API возвращают:
-```json
-{ "success": true, "body": { ... } }
-{ "success": false, "message": "Описание ошибки", "timeout": "..." }
-```
+HTTP-статус — единственный источник истины об успехе/ошибке.
 
-```kotlin
-@Serializable
-open class NetworkEntity<T>(
-    val success: Boolean = true,
-    val body: T?         = null,
-    val message: String? = null,
-    val timeout: String? = null,
-)
-```
+| Код | Смысл | Поведение клиента |
+|-----|-------|-------------------|
+| **200 OK** | Успех с телом | `execute<T>` десериализует в `T` |
+| **204 No Content** | Успех без тела | `execute<Unit>` — тело не читается |
+| **400 Bad Request** | Невалидный запрос | `NetworkException.BadRequest(error?)` |
+| **401 Unauthorized** | Токен невалиден | bearer-плагин → refresh; повторный 401 → разлогин |
+| **403 Forbidden** | Нет прав | `NetworkException.Forbidden(error?)` |
+| **404 Not Found** | Ресурс не существует | `NetworkException.NotFound(error?)` |
+| **409 Conflict** | Конфликт состояния | `NetworkException.Conflict(error?)` |
+| **5xx** | Серверная ошибка | `NetworkException.ServerError(code, error?)` |
 
-**Наследование DTO от `NetworkEntity<BodyType>`** — рекомендуемый паттерн для всех Response-классов:
-
-```kotlin
-// models/data/, internal, @Serializable
-@Serializable
-internal class AddictionAllGroupsResponse : NetworkEntity<AddictionAllGroupsBody>()
-
-// В Mapper:
-override suspend fun getAllGroups(): AddictionAllGroups {
-    val response = apiClient.request<AddictionAllGroupsResponse> { endpoint = "client/addictions/all" }
-    return response.requireBody().toDomain()
-}
-
-// Для void-эндпоинта (не возвращает body):
-override suspend fun deleteAddiction(id: Int) {
-    val response = apiClient.request<NetworkEntity<Unit>> {
-        endpoint = "client/addictions/delete/$id"
-        method = HttpMethod.Delete
-    }
-    response.isSuccessfulExecute()
-}
-```
-
-- `requireBody()` бросает `IllegalStateException` если `success==false` или `body==null`
-- `isSuccessfulExecute()` бросает `IllegalStateException` если `success==false`
-- Текст ошибки берётся из `message ?: timeout ?: "Unknown server error"`
+Тело ошибки — `ErrorResponse(code: String, message: String)`. Поля `error?.code` и `error?.message` **не логировать** (PII).
 
 ## Как добавить новый запрос
 
 ```kotlin
-// endpoint — relative path без слэша; query() игнорирует null; body — @Serializable
-apiClient.request<MyResponse> {
-    endpoint = "items"
+// GET с телом ответа
+val response: MyResponse = apiClient.execute<MyResponse> {
+    endpoint = "resource/path"
+    method   = HttpMethod.Get
+    query("key" to value)   // null-значения игнорируются
+}
+
+// POST с телом запроса, ответ 200
+val result: MyResponse = apiClient.execute<MyResponse> {
+    endpoint = "resource"
     method   = HttpMethod.Post
-    body     = myRequest
-    query("q" to query, "page" to page)
+    body     = myRequest     // @Serializable
+}
+
+// Мутация, ответ 204 No Content
+apiClient.execute<Unit> {
+    endpoint = "resource/$id"
+    method   = HttpMethod.Delete
 }
 ```
+
+Типовой аргумент **всегда указывается явно**: `execute<MyResponse>`, `execute<Unit>`.
+
+## NetworkException — иерархия
+
+```kotlin
+sealed class NetworkException {
+    data class  BadRequest(val error: ErrorResponse?)                 // 400
+    data object Unauthorized                                          // 401
+    data class  Forbidden(val error: ErrorResponse?)                  // 403
+    data class  NotFound(val error: ErrorResponse?)                   // 404
+    data class  Conflict(val error: ErrorResponse?)                   // 409
+    data class  ServerError(val code: Int, val error: ErrorResponse?) // 5xx
+    data class  HttpError(val code: Int, val error: ErrorResponse?)   // прочие
+    data object NoConnection                                          // timeout/no internet
+    class       Unknown(cause: Throwable)                             // неизвестная ошибка
+}
+```
+
+`CancellationException` **не перехватывается** — пробрасывается наружу.
 
 ## Koin: что требуется от app-модуля
 
@@ -100,12 +103,13 @@ single<TokenStorage> { get<TokenRepository>() }
 ### coreMockNetworkModule
 
 Альтернатива `coreNetworkModule` для разработки без реального сервера:
-- Использует `MockEngine` вместо OkHttp/Darwin
+- Использует `MockEngine` + `HttpCallValidator` (бросает `ResponseException` для non-2xx)
 - JSON-стабы читаются из `composeResources/files/mock/` через `Res.readBytes`
 - Регистрирует `HttpClient(named("anchorHttpClient"))` + `ApiClient`
 - **Не регистрирует** `TokenRepository` / `TokenStorage` — авторизация не нужна для мока
 - Переключение: в `SharedModule` заменить `includes(coreNetworkModule)` → `includes(coreMockNetworkModule)`
 - Добавление нового стаба: положить `<name>.json` в `composeResources/files/mock/` и добавить ветку в `MockApiResponses.resolve()`
+- `resolve()` возвращает `Pair<String, HttpStatusCode>` — для 204 ответов возвращать `"" to HttpStatusCode.NoContent`
 
 ## Токены: как это работает
 
@@ -149,11 +153,6 @@ Ktor Auth-плагин (`bearer {}`) управляет токенами пол�
 - `sendWithoutRequest` гарантирует: токен прикрепляется **только** к хосту из `baseUrl`
 - `iosBaseUrl` — `internal`; iOS-приложение читает `BASE_URL` из `NSBundle` самостоятельно
 
-## Обработка ошибок
-
-`NetworkException`: `Unauthorized` (разлогинить) · `NoConnection` (нет сети) · `HttpError(code, description)` · `Unknown`.
-`CancellationException` НЕ перехватывается внутри `ApiClient` — пробрасывается наружу.
-
 ## Запрещённые паттерны
 
 ```
@@ -167,6 +166,8 @@ Ktor Auth-плагин (`bearer {}`) управляет токенами пол�
 ❌ Добавлять новые expect без actual для обеих платформ
 ❌ Использовать coreMockNetworkModule в production-сборках
 ❌ Внедрять TokenRepository в Feature-модули — только TokenStorage
+❌ Логировать error.code / error.message из ErrorResponse (PII)
+❌ Наследоваться от NetworkEntity — класс удалён; Response-классы должны быть flat data class
 ```
 
 ## Таймауты (NetworkConstants)

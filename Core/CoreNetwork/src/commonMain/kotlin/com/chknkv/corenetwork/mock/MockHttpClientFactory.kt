@@ -4,6 +4,8 @@ import com.chknkv.corenetwork.client.jsonConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.HttpCallValidator
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.ContentType
@@ -12,6 +14,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
 import io.ktor.http.headersOf
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.delay
 
@@ -30,7 +33,7 @@ import kotlinx.coroutines.delay
  */
 internal fun createMockHttpClient(
     baseUrl: String,
-    resolver: suspend (path: String, method: HttpMethod) -> String,
+    resolver: suspend (path: String, method: HttpMethod) -> Pair<String, HttpStatusCode>,
 ): HttpClient {
     val baseEncodedPath = Url(baseUrl).encodedPath.trimEnd('/')
 
@@ -42,16 +45,24 @@ internal fun createMockHttpClient(
                     .trimStart('/')
 
                 delay(MOCK_RESPONSE_DELAY_MS)
-                val responseJson = resolver(path, request.method)
+                val (responseJson, status) = resolver(path, request.method)
 
                 respond(
                     content = responseJson,
-                    status = HttpStatusCode.OK,
+                    status = status,
                     headers = headersOf(
                         HttpHeaders.ContentType,
                         ContentType.Application.Json.toString(),
                     ),
                 )
+            }
+        }
+
+        install(HttpCallValidator) {
+            validateResponse { response ->
+                if (!response.status.isSuccess()) {
+                    throw ResponseException(response, "HTTP error: ${response.status.value}")
+                }
             }
         }
 

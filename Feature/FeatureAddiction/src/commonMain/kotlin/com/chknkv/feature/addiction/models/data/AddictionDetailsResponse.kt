@@ -1,6 +1,5 @@
 package com.chknkv.feature.addiction.models.data
 
-import com.chknkv.corenetwork.NetworkEntity
 import com.chknkv.feature.addiction.models.data.base.AddictionCategoryKey
 import com.chknkv.feature.addiction.models.data.base.AddictionGradientKey
 import com.chknkv.feature.addiction.models.data.base.AddictionIconKey
@@ -9,12 +8,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * Ответ для эндпоинта `GET /client/addictions/details/{id}`.
- */
-@Serializable
-internal class AddictionDetailsResponse : NetworkEntity<AddictionDetailsBody>()
-
-/**
- * Body модель с полными данными привычки пользователя.
  *
  * @param id Уникальный идентификатор привычки.
  * @param name Название привычки.
@@ -28,15 +21,15 @@ internal class AddictionDetailsResponse : NetworkEntity<AddictionDetailsBody>()
  * @param nextIncrementAvailableInSeconds Секунд до следующей доступной отметки.
  */
 @Serializable
-internal data class AddictionDetailsBody(
-    @SerialName("id")                                   val id: Int,
-    @SerialName("name")                                 val name: String,
-    @SerialName("category_key")                         val categoryKey: AddictionCategoryKey,
-    @SerialName("icon_key")                             val iconKey: AddictionIconKey,
-    @SerialName("gradient_key")                         val gradientKey: AddictionGradientKey,
-    @SerialName("control_days")                         val controlDays: Int,
-    @SerialName("description")                          val description: String? = null,
-    @SerialName("completed_dates")                      val completedDates: List<String> = emptyList(),
-    @SerialName("can_increment_today")                  val canIncrementToday: Boolean,
-    @SerialName("next_increment_available_in_seconds")  val nextIncrementAvailableInSeconds: Long? = null,
+internal data class AddictionDetailsResponse(
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String,
+    @SerialName("category_key") val categoryKey: AddictionCategoryKey,
+    @SerialName("icon_key") val iconKey: AddictionIconKey,
+    @SerialName("gradient_key") val gradientKey: AddictionGradientKey,
+    @SerialName("control_days") val controlDays: Int,
+    @SerialName("description") val description: String? = null,
+    @SerialName("completed_dates") val completedDates: List<String> = emptyList(),
+    @SerialName("can_increment_today") val canIncrementToday: Boolean,
+    @SerialName("next_increment_available_in_seconds") val nextIncrementAvailableInSeconds: Long? = null,
 )

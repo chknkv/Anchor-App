@@ -5,6 +5,11 @@ import anchor_app.feature.featureaddiction.generated.resources.addiction_selecti
 import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_button_skip
 import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_counter
 import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_saveFailed_warning
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,14 +55,17 @@ internal fun SelectionBottomBar(
             textAlign = TextAlign.Center,
         )
 
-        if (result.isFailed) {
+        AnimatedVisibility(
+            visible = result.isFailed,
+            enter = fadeIn() + slideInVertically { it / 2 },
+            exit = fadeOut() + slideOutVertically { it / 2 },
+        ) {
             Footnote(
                 text = stringResource(Res.string.addiction_selection_saveFailed_warning),
                 color = Tokens.Warning.getThemedColor(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 8.dp),
+                    .padding(horizontal = 24.dp, vertical = 6.dp),
             )
         }
 

@@ -1,13 +1,13 @@
 package com.chknkv.feature.addiction.data.converter
 
 import com.chknkv.feature.addiction.data.converter.base.toDomain
-import com.chknkv.feature.addiction.models.data.AddictionDetailsBody
+import com.chknkv.feature.addiction.models.data.AddictionDetailsResponse
 import com.chknkv.feature.addiction.models.domain.AddictionDetails
 
 /**
- * Конвертирует data-model [AddictionDetailsBody] в domain-model [AddictionDetails].
+ * Конвертирует [AddictionDetailsResponse] в domain-model [AddictionDetails].
  */
-internal fun AddictionDetailsBody.toDomain(): AddictionDetails = AddictionDetails(
+internal fun AddictionDetailsResponse.toDomain(): AddictionDetails = AddictionDetails(
     id = id,
     name = name,
     category = categoryKey.toDomain(),

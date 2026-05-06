@@ -141,7 +141,6 @@ internal class AuthorizationViewModel(
             email = email,
             isGetOtpEnabled = isEmailValid(email),
             isError = false,
-            isSessionExpired = false,
         )
     }
 
@@ -189,14 +188,6 @@ internal class AuthorizationViewModel(
             _uiResult.value = _uiResult.value.copy(
                 otp = _uiResult.value.otp.copy(pinState = PinInputState.Error)
             )
-        } catch (e: OtpException.SessionExpired) {
-            Napier.e(tag = TAG, message = e.message ?: "Unknown error", throwable = e)
-            sessionId = ""
-            _uiResult.value = _uiResult.value.copy(
-                isSessionExpired = true,
-                otp = _uiResult.value.otp.copy(isSheetVisible = false)
-            )
-            _uiEvent.emit(AuthorizationUiEvent.OnSessionExpired)
         } catch (e: Exception) {
             Napier.e(tag = TAG, message = e.message ?: "Unknown error", throwable = e)
             _uiResult.value = _uiResult.value.copy(

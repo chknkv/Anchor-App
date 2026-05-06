@@ -1,15 +1,12 @@
 {
-  "success": true,
-  "body": {
-    "id": 105,
-    "name": "Хобби",
-    "category_key": "other",
-    "icon_key": "ic_habit_lifestyle",
-    "gradient_key": "green",
-    "control_days": 3,
-    "description": "Уделять не менее 30 минут любимому занятию каждый день.",
-    "completed_dates": ["2026-04-27", "2026-04-28"],
-    "can_increment_today": true,
-    "next_increment_available_in_seconds": 0
-  }
+  "id": 105,
+  "name": "Хобби",
+  "category_key": "other",
+  "icon_key": "ic_habit_lifestyle",
+  "gradient_key": "green",
+  "control_days": 3,
+  "description": "Уделять не менее 30 минут любимому занятию каждый день.",
+  "completed_dates": ["2026-04-27", "2026-04-28"],
+  "can_increment_today": true,
+  "next_increment_available_in_seconds": null
 }

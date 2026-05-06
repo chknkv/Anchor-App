@@ -1,12 +1,5 @@
 package com.chknkv.feature.addiction.presentation.select.compose
 
-import anchor_app.feature.featureaddiction.generated.resources.Res
-import anchor_app.feature.featureaddiction.generated.resources.addiction_selection_saveFailed_warning
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,13 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.chknkv.designsystem.Footnote
 import com.chknkv.designsystem.chip.Chip
 import com.chknkv.designsystem.loading.LoadingHUD
 import com.chknkv.designsystem.module.ModuleContent
 import com.chknkv.designsystem.screen.AppScaffold
-import com.chknkv.designsystem.theme.Tokens
-import com.chknkv.designsystem.theme.getThemedColor
 import com.chknkv.feature.addiction.models.presentation.select.AddictionGroupUi
 import com.chknkv.feature.addiction.models.presentation.select.AddictionSelectionUiAction
 import com.chknkv.feature.addiction.models.presentation.select.AddictionSelectionUiResult
@@ -71,20 +61,6 @@ internal fun AddictionSelectionSuccessfulContent(
                         onToggled = { onAction(AddictionSelectionUiAction.OnAddictionToggled(it)) },
                     )
                 }
-            }
-
-            AnimatedVisibility(
-                visible = result.isFailed,
-                enter = fadeIn() + slideInVertically { it / 2 },
-                exit = fadeOut() + slideOutVertically { it / 2 },
-            ) {
-                Footnote(
-                    text = stringResource(Res.string.addiction_selection_saveFailed_warning),
-                    color = Tokens.Warning.getThemedColor(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 6.dp),
-                )
             }
 
             SelectionBottomBar(

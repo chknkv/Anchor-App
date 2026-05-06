@@ -1,6 +1,3 @@
 {
-  "success": true,
-  "body": {
-    "sessionId": "mock-session-123"
-  }
+  "sessionId": "mock-session-123"
 }

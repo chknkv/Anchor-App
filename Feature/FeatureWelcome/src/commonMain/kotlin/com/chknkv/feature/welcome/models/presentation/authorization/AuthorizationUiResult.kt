@@ -11,7 +11,6 @@ import com.chknkv.designsystem.otp.PinInputState
  * @param isGetOtpEnabled Активна ли кнопка "Get OTP" (email прошёл валидацию).
  * @param isLoading Показывать ли индикатор загрузки поверх экрана.
  * @param isError Произошла ли ошибка при запросе OTP.
- * @param isSessionExpired Истекла ли OTP-сессия (показывает отдельное сообщение).
  * @param otp Состояние OTP-элемента.
  */
 @Immutable
@@ -20,7 +19,6 @@ data class AuthorizationUiResult(
     val isGetOtpEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val isError: Boolean = false,
-    val isSessionExpired: Boolean = false,
     val otp: OtpUiResult = OtpUiResult()
 )
 

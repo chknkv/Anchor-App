@@ -10,7 +10,4 @@ sealed interface AuthorizationUiEvent {
 
     /** Авторизация завершена, пользователь возвращается. */
     data object OnAuthorizedReturningUser : AuthorizationUiEvent
-
-    /** Сессия OTP истекла — необходимо начать авторизацию заново. */
-    data object OnSessionExpired : AuthorizationUiEvent
 }

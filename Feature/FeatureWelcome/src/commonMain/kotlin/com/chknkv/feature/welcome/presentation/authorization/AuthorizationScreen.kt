@@ -57,7 +57,6 @@ import anchor_app.feature.featurewelcome.generated.resources.authorization_foote
 import anchor_app.feature.featurewelcome.generated.resources.authorization_resend_button
 import anchor_app.feature.featurewelcome.generated.resources.authorization_timer_text
 import anchor_app.feature.featurewelcome.generated.resources.authorization_error_otp
-import anchor_app.feature.featurewelcome.generated.resources.authorization_error_session_expired
 import anchor_app.feature.featurewelcome.generated.resources.ic_cross
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -83,7 +82,6 @@ fun AuthorizationScreen(
             when (event) {
                 AuthorizationUiEvent.OnAuthorizedNewUser -> onAuthorizedNewUser()
                 AuthorizationUiEvent.OnAuthorizedReturningUser -> onAuthorizedReturningUser()
-                AuthorizationUiEvent.OnSessionExpired -> Unit
             }
         }
     }
@@ -125,7 +123,6 @@ private fun AuthorizationContent(
                     modifier = Modifier.fillMaxWidth(),
                     outPaddingValues = PaddingValues(top = 12.dp),
                     description = when {
-                    state.isSessionExpired -> stringResource(Res.string.authorization_error_session_expired)
                     state.isError -> stringResource(Res.string.authorization_error_otp)
                     else -> null
                 },

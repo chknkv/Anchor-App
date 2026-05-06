@@ -64,7 +64,6 @@ AuthorizationViewModel
 
 `OtpException` (internal sealed class):
 - `InvalidOtp` — HTTP 400, неверный код
-- `SessionExpired` — HTTP 410, сессия истекла
 
 Цепочка вызовов:
 ```
@@ -74,12 +73,10 @@ AuthorizationViewModel.onGetOtp()
 AuthorizationViewModel.onCheckOtp()
   → interactor.verifyOtp(sessionId, otp): Boolean
   → isFirstAuthorized: true → OnAuthorizedNewUser; false → OnAuthorizedReturningUser
-  catch OtpException.InvalidOtp     → pinState = Error
-  catch OtpException.SessionExpired → isSessionExpired=true, sheet закрыт, emit OnSessionExpired
+  catch OtpException.InvalidOtp → pinState = Error
 
 AuthorizationViewModel.onResendOtp()
   → interactor.resendOtp(sessionId)
-  catch OtpException.SessionExpired → логировать (UI уже обработан через event)
 ```
 
 ---
@@ -95,7 +92,7 @@ data class AuthorizationUiResult(
     val isGetOtpEnabled: Boolean = false,   // isEmailValid(email)
     val isLoading: Boolean = false,
     val isError: Boolean = false,
-    val isSessionExpired: Boolean = false,
+
     val otp: OtpUiResult = OtpUiResult()
 )
 
@@ -113,7 +110,7 @@ data class OtpUiResult(
 
 | Action | Описание |
 |--------|----------|
-| `OnEmailChanged(email)` | `isGetOtpEnabled = isEmailValid(email)`, сбрасывает `isError`/`isSessionExpired`/`sessionId` |
+| `OnEmailChanged(email)` | `isGetOtpEnabled = isEmailValid(email)`, сбрасывает `isError`/`sessionId` |
 | `OnGetOtpClicked` | `isLoading=true` → `sendOtp()` → Sheet + `startTimer()` (или `isError=true`) |
 | `OnTermsClicked` | `interactor.handleTermsClicked()` (заглушка) |
 | `OnSheetVisibilityChange(isVisible)` | `true` → `startTimer()`; `false` → `stopTimer()` |
@@ -126,7 +123,6 @@ data class OtpUiResult(
 sealed interface AuthorizationUiEvent {
     data object OnAuthorizedNewUser      : AuthorizationUiEvent
     data object OnAuthorizedReturningUser : AuthorizationUiEvent
-    data object OnSessionExpired         : AuthorizationUiEvent
 }
 ```
 
@@ -164,7 +160,7 @@ val featureWelcomeModule = module {
 ```
 data/mapper/    AuthorizationApiMapper (interface) + Impl — HTTP-запросы через ApiClient
 data/repository/ AuthorizationRepository (interface) + Impl — маппинг NetworkException → OtpException; saveTokens после verifyOtp
-domain/         OtpException (sealed: InvalidOtp/SessionExpired)
+domain/         OtpException (sealed: InvalidOtp)
 domain/interactor/ AuthorizationInteractor (interface) + Impl — делегирование в Repository
 models/data/    OtpSendRequest/Response · OtpVerifyRequest/Response · OtpResendRequest
 models/presentation/authorization/  AuthorizationUiAction · UiEvent · UiResult (не internal)
@@ -175,8 +171,8 @@ di/             FeatureWelcomeModule
 composeResources/ drawable/ic_cross · values/strings.xml (EN) · values-ru/strings.xml (RU)
 ```
 
-`OtpVerifyResponse.body`: `accessToken`, `refreshToken`, `isFirstAuthorized`.
-`OtpSendResponse.body`: `sessionId`.
+`OtpVerifyResponse` (flat): `accessToken`, `refreshToken`, `isFirstAuthorized`.
+`OtpSendResponse` (flat): `sessionId`.
 
 ## Строковые ресурсы
 

@@ -26,7 +26,6 @@ internal interface AuthorizationInteractor {
      * @param otp Код из письма.
      * @return `true` если пользователь авторизуется впервые, `false` для возвращающегося.
      * @throws com.chknkv.feature.welcome.domain.OtpException.InvalidOtp Код неверен.
-     * @throws com.chknkv.feature.welcome.domain.OtpException.SessionExpired Сессия истекла.
      * @throws com.chknkv.corenetwork.api.NetworkException При иных сетевых ошибках.
      */
     suspend fun verifyOtp(sessionId: String, otp: String): Boolean
@@ -35,7 +34,6 @@ internal interface AuthorizationInteractor {
      * Повторно отправляет OTP-код для текущей сессии.
      *
      * @param sessionId Идентификатор сессии.
-     * @throws com.chknkv.feature.welcome.domain.OtpException.SessionExpired Сессия истекла.
      * @throws com.chknkv.corenetwork.api.NetworkException При иных сетевых ошибках.
      */
     suspend fun resendOtp(sessionId: String)

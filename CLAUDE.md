@@ -160,15 +160,24 @@ viewModel { AuthorizationViewModel(get(), get()) }  // AuthorizationInteractor, 
 ## Сеть
 
 ```kotlin
-apiClient.request<ResponseType> {
+apiClient.execute<ResponseType> {
     endpoint = "path/resource"
     method = HttpMethod.Post   // GET по умолчанию
     body = requestObject       // @Serializable
     query("key" to value)      // null-значения игнорируются автоматически
 }
+
+// Мутации без тела ответа (204 No Content):
+apiClient.execute<Unit> {
+    endpoint = "resource/$id"
+    method = HttpMethod.Delete
+}
 ```
 
-- `NetworkException`: `Unauthorized · NoConnection · HttpError(code, description) · Unknown`
+- `NetworkException`: `BadRequest(error?) · Unauthorized · Forbidden(error?) · NotFound(error?) · Conflict(error?) · ServerError(code, error?) · HttpError(code, error?) · NoConnection · Unknown`
+- `ErrorResponse(code: String, message: String)` — тело ошибки при 4xx/5xx; клиент не показывает `message` пользователю
+- `ItemsResponse<T>(items: List<T>)` — конверт для списочных эндпоинтов
+- HTTP status code — единственный источник истины об успехе/ошибке; тела `success/body/message` нет
 - `TokenStorage` — публичный интерфейс CoreNetwork; Feature используют только его для сохранения токенов после авторизации. `TokenRepository` — internal, Feature-модулям недоступен.
 - JWT refresh — автоматический через Ktor `bearer { }`; Mutex предотвращает гонку
 - `BASE_URL` — из `BuildConfig.BASE_URL` → `local.properties`; не хардкодить

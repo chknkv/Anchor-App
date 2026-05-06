@@ -1,10 +1,10 @@
 package com.chknkv.feature.addiction.data.mapper
 
-import com.chknkv.feature.addiction.models.data.AddictionAllGroupsBody
+import com.chknkv.feature.addiction.models.data.AddictionAllGroupsResponse
 import com.chknkv.feature.addiction.models.data.AddictionCreateRequest
-import com.chknkv.feature.addiction.models.data.AddictionDetailsBody
+import com.chknkv.feature.addiction.models.data.AddictionDetailsResponse
 import com.chknkv.feature.addiction.models.data.AddictionSelectedRequest
-import com.chknkv.feature.addiction.models.data.AddictionSelectionGroupsBody
+import com.chknkv.feature.addiction.models.data.AddictionSelectionGroupsResponse
 import com.chknkv.feature.addiction.models.data.AddictionUpdateRequest
 
 /**
@@ -13,11 +13,11 @@ import com.chknkv.feature.addiction.models.data.AddictionUpdateRequest
 internal interface AddictionApiMapper {
 
     /**
-     * Возвращает тело ответа с группами привычек для экрана выбора при онбординге.
+     * Возвращает ответ с группами привычек для экрана выбора при онбординге.
      *
-     * `GET /addictions/default-groups`
+     * `GET /addictions/default-selection-groups`
      */
-    suspend fun getAddictionGroupsForSelection(): AddictionSelectionGroupsBody
+    suspend fun getAddictionGroupsForSelection(): AddictionSelectionGroupsResponse
 
     /**
      * Сохраняет выбранные клиентом привычки при онбординге.
@@ -27,11 +27,11 @@ internal interface AddictionApiMapper {
     suspend fun saveSelectedAddictions(request: AddictionSelectedRequest)
 
     /**
-     * Возвращает тело ответа с привычками клиента, сгруппированными по категории.
+     * Возвращает ответ с привычками клиента, сгруппированными по категории.
      *
      * `GET /client/addictions/all`
      */
-    suspend fun getAllClientAddictions(): AddictionAllGroupsBody
+    suspend fun getAllClientAddictions(): AddictionAllGroupsResponse
 
     /**
      * Создаёт новую привычку клиента.
@@ -41,11 +41,11 @@ internal interface AddictionApiMapper {
     suspend fun createNewClientAddiction(request: AddictionCreateRequest)
 
     /**
-     * Возвращает тело ответа с полными данными одной привычки клиента по идентификатору.
+     * Возвращает ответ с полными данными одной привычки клиента по идентификатору.
      *
      * `GET /client/addictions/details/{id}`
      */
-    suspend fun getClientDetailsAddiction(id: Int): AddictionDetailsBody
+    suspend fun getClientDetailsAddiction(id: Int): AddictionDetailsResponse
 
     /**
      * Увеличивает счётчик контрольных дней привычки на 1.

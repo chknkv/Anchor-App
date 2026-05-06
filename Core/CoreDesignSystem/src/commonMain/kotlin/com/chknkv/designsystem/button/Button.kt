@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +55,7 @@ fun Button(
     description: String? = null
 ) {
     val haptic = LocalHapticFeedback.current
+    val currentOnClick by rememberUpdatedState(onClick)
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -95,7 +97,7 @@ fun Button(
                                 interactionSource.emit(PressInteraction.Release(press))
                             },
                             onTap = {
-                                onClick()
+                                currentOnClick()
                             }
                         )
                     }

@@ -1,8 +1,5 @@
 {
-  "success": true,
-  "body": {
-    "accessToken": "mock-access",
-    "refreshToken": "mock-refresh",
-    "isFirstAuthorized": true
-  }
+  "accessToken": "mock-access",
+  "refreshToken": "mock-refresh",
+  "isFirstAuthorized": true
 }

@@ -1,16 +1,16 @@
 package com.chknkv.feature.addiction.data.converter
 
 import com.chknkv.feature.addiction.data.converter.base.toDomain
+import com.chknkv.feature.addiction.models.data.AddictionAllGroupsResponse
 import com.chknkv.feature.addiction.models.data.AddictionAllInGroup
 import com.chknkv.feature.addiction.models.data.AddictionsAllGroup
-import com.chknkv.feature.addiction.models.data.AddictionAllGroupsBody
-import com.chknkv.feature.addiction.models.domain.AddictionAllGroups
 import com.chknkv.feature.addiction.models.domain.AddictionAllGroup
+import com.chknkv.feature.addiction.models.domain.AddictionAllGroups
 
 /**
- * Конвертирует data-model [AddictionAllGroupsBody] в список domain-model [AddictionAllGroups].
+ * Конвертирует [AddictionAllGroupsResponse] в список domain-model [AddictionAllGroups].
  */
-internal fun AddictionAllGroupsBody.toDomain(): List<AddictionAllGroups> =
+internal fun AddictionAllGroupsResponse.toDomain(): List<AddictionAllGroups> =
     items?.map { it.toDomain(isCreateNewAvailable) } ?: emptyList()
 
 /**
@@ -32,5 +32,5 @@ internal fun AddictionAllInGroup.toDomain(): AddictionAllGroup = AddictionAllGro
     name = name,
     icon = iconKey.toDomain(),
     gradient = gradientKey.toDomain(),
-    controlDays = controlDays
+    controlDays = controlDays,
 )
