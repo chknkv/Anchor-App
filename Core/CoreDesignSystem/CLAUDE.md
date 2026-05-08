@@ -166,7 +166,15 @@ Sheet(isVisible, onDismissRequest, title?, subtitle?, actionButton?, isDragable,
 
 **PasscodeKeyboard / PasscodeIndicator** — клавиши 82 dp, glass-эффект (`Tokens.PasscodeKeyGlass`).
 
-**Модификаторы** — `Modifier.link(enabled, onAction)` · `Modifier.shimmer()` (sweep 1300 ms).
+**Модификаторы** — `Modifier.shimmer()` (sweep 1300 ms).
+
+**LinkModifier** (`modifier/LinkModifier.kt`) — кликабельные диапазоны в тексте. `data class LinkSegment(val range: IntRange, val onAction: () -> Unit)`.
+```kotlin
+Modifier.link(enabled, color, onAction)                                          // всё, один action
+Modifier.link(textLayoutResult, range: IntRange, enabled, color, onAction)       // один диапазон
+Modifier.link(textLayoutResult, ranges: List<IntRange>, enabled, color, onAction)// несколько, один action
+Modifier.link(textLayoutResult, segments: List<LinkSegment>, enabled, color)     // независимые action
+```
 
 **Locale** — `CompositionLocalProvider(LocalAppLocale provides language)`. Не оборачивать в `key()`.
 

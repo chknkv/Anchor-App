@@ -74,6 +74,8 @@ internal class AuthorizationViewModel(
 
                     is AuthorizationUiAction.OnTermsClicked -> interactor.handleTermsClicked()
 
+                    is AuthorizationUiAction.OnPrivacyPolicyClicked -> interactor.handlePrivacyPolicyClicked()
+
                     is AuthorizationUiAction.OnSheetVisibilityChange -> {
                         _uiResult.value = _uiResult.value.copy(
                             otp = if (action.isVisible) OtpUiResult(isSheetVisible = true)

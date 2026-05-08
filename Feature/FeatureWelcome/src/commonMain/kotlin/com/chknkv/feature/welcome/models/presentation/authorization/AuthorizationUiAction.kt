@@ -24,6 +24,11 @@ sealed interface AuthorizationUiAction {
     data object OnTermsClicked : AuthorizationUiAction
 
     /**
+     * Пользователь нажал на ссылку Privacy Policy.
+     */
+    data object OnPrivacyPolicyClicked : AuthorizationUiAction
+
+    /**
      * Пользователь изменил состояние видимости шторки OTP.
      */
     data class OnSheetVisibilityChange(val isVisible: Boolean) : AuthorizationUiAction

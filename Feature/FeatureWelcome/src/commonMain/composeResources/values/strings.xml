@@ -6,6 +6,8 @@
     <string name="authorization_button_get_otp">Send code</string>
     <string name="authorization_error_otp">Failed to send the code. Please try again</string>
     <string name="authorization_footer_terms">Terms\u00a0of\u00a0Use &amp; Privacy\u00a0Policy</string>
+    <string name="authorization_footer_terms_first">Terms\u00a0of\u00a0Use</string>
+    <string name="authorization_footer_terms_second">Privacy\u00a0Policy</string>
     <string name="authorization_bottomsheet_title">Verification</string>
     <string name="authorization_bottomsheet_footnote">Enter the 5-digit code from your email</string>
     <string name="authorization_timer_text">Resend in\u00a0%1$d\u00a0sec</string>

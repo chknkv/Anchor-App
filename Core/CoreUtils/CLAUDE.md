@@ -20,6 +20,7 @@ Package: `com.chknkv.coreutils`. Платформы: `commonMain · androidMain 
 | `AppTheme` | `enum { SYSTEM, LIGHT, DARK }` |
 | `AppLanguage` | `enum { RUSSIAN, ENGLISH }` |
 | `getAppVersion()` | `expect fun` — Android: `PackageManager`; iOS: `CFBundleShortVersionString` |
+| `openUrl(url)` | `expect fun` — открывает URL в браузере по умолчанию; без DI, прямой вызов |
 | `coreUtilsModule(appIdentifier)` | Koin-модуль: `single<AppSettings> { AppSettingsImpl(appIdentifier) }` |
 
 ---
@@ -67,6 +68,7 @@ interface AppSettings {
 | `updateSystemLocale(code)` | `AppCompatDelegate.setApplicationLocales(LocaleListCompat)` | `NSUserDefaults["AppleLanguages"] = [code]` |
 | `getPlatformAppLanguageCode()` | `AppCompatDelegate.getApplicationLocales()[0]?.language` | `NSLocale.preferredLanguages[0].split("-")[0]` |
 | `getAppVersion()` | `PackageManager.getPackageInfo().versionName` | `NSBundle.mainBundle["CFBundleShortVersionString"]` |
+| `openUrl(url)` | `Intent(ACTION_VIEW, Uri.parse(url))` + `FLAG_ACTIVITY_NEW_TASK` через `appContext` | `UIApplication.sharedApplication.openURL(NSURL, emptyMap, null)` (iOS 10+); невалидный URL — no-op |
 
 ---
 
@@ -103,15 +105,18 @@ commonMain/kotlin/com/chknkv/coreutils/
 ├── ApplicationLanguage.kt  # enum AppLanguage · expect-функции · object ApplicationLanguage
 ├── ApplicationAuth.kt      # object ApplicationAuth
 ├── ApplicationVersion.kt   # expect fun getAppVersion()
+├── OpenUrl.kt              # expect fun openUrl(url: String)
 └── CoreUtilsModule.kt      # fun coreUtilsModule(appIdentifier): Module
 
 androidMain/kotlin/com/chknkv/coreutils/
 ├── ApplicationLanguage.android.kt  # actual: AppCompatDelegate · Resources
-└── ApplicationVersion.android.kt   # actual: appContext lateinit · PackageManager
+├── ApplicationVersion.android.kt   # actual: appContext lateinit · PackageManager
+└── OpenUrl.android.kt              # actual: Intent(ACTION_VIEW) + FLAG_ACTIVITY_NEW_TASK через appContext
 
 iosMain/kotlin/com/chknkv/coreutils/
 ├── ApplicationLanguage.ios.kt      # actual: NSLocale · NSUserDefaults
-└── ApplicationVersion.ios.kt       # actual: NSBundle · CFBundleShortVersionString
+├── ApplicationVersion.ios.kt       # actual: NSBundle · CFBundleShortVersionString
+└── OpenUrl.ios.kt                  # actual: UIApplication.openURL (iOS 10+); невалидный URL — no-op
 ```
 
 ---

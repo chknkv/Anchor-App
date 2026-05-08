@@ -6,6 +6,8 @@
     <string name="authorization_button_get_otp">Получить код</string>
     <string name="authorization_error_otp">Не удалось отправить код. Попробуйте ещё раз</string>
     <string name="authorization_footer_terms">Условия&#160;использования и Политика&#160;конфиденциальности</string>
+    <string name="authorization_footer_terms_first">Условия&#160;использования</string>
+    <string name="authorization_footer_terms_second">Политика&#160;конфиденциальности</string>
     <string name="authorization_bottomsheet_title">Подтверждение</string>
     <string name="authorization_bottomsheet_footnote">Введите 5-значный&#160;код из письма</string>
     <string name="authorization_timer_text">Повторная отправка через&#160;%1$d&#160;сек</string>

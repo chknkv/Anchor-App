@@ -42,4 +42,9 @@ internal interface AuthorizationInteractor {
      * Обрабатывает нажатие на ссылку Terms of Service.
      */
     fun handleTermsClicked()
+
+    /**
+     * Обрабатывает нажатие на ссылку Privacy Policy.
+     */
+    fun handlePrivacyPolicyClicked()
 }

@@ -35,6 +35,7 @@ import com.chknkv.designsystem.button.Button
 import com.chknkv.designsystem.button.ButtonCircle
 import com.chknkv.designsystem.button.ButtonStyle
 import com.chknkv.designsystem.loading.LoadingHUD
+import com.chknkv.designsystem.modifier.LinkSegment
 import com.chknkv.designsystem.modifier.link
 import com.chknkv.designsystem.module.ModuleContent
 import com.chknkv.designsystem.otp.OtpCodeInput
@@ -54,6 +55,8 @@ import anchor_app.feature.featurewelcome.generated.resources.authorization_texti
 import anchor_app.feature.featurewelcome.generated.resources.authorization_bottomsheet_title
 import anchor_app.feature.featurewelcome.generated.resources.authorization_bottomsheet_footnote
 import anchor_app.feature.featurewelcome.generated.resources.authorization_footer_terms
+import anchor_app.feature.featurewelcome.generated.resources.authorization_footer_terms_first
+import anchor_app.feature.featurewelcome.generated.resources.authorization_footer_terms_second
 import anchor_app.feature.featurewelcome.generated.resources.authorization_resend_button
 import anchor_app.feature.featurewelcome.generated.resources.authorization_timer_text
 import anchor_app.feature.featurewelcome.generated.resources.authorization_error_otp
@@ -123,9 +126,9 @@ private fun AuthorizationContent(
                     modifier = Modifier.fillMaxWidth(),
                     outPaddingValues = PaddingValues(top = 12.dp),
                     description = when {
-                    state.isError -> stringResource(Res.string.authorization_error_otp)
-                    else -> null
-                },
+                        state.isError -> stringResource(Res.string.authorization_error_otp)
+                        else -> null
+                    },
                 ) {
                     TextInput(
                         value = state.email,
@@ -154,16 +157,36 @@ private fun AuthorizationContent(
                 )
             }
 
+            val termsText = stringResource(Res.string.authorization_footer_terms)
+            val termsFirst = stringResource(Res.string.authorization_footer_terms_first)
+            val termsSecond = stringResource(Res.string.authorization_footer_terms_second)
+            val termsSegments = remember(termsText, termsFirst, termsSecond) {
+                buildList {
+                    val idx1 = termsText.indexOf(termsFirst)
+                    if (idx1 >= 0) add(
+                        LinkSegment(
+                            range = idx1..<idx1 + termsFirst.length,
+                            onAction = { onAction(AuthorizationUiAction.OnTermsClicked) }
+                        )
+                    )
+                    val idx2 = termsText.indexOf(termsSecond)
+                    if (idx2 >= 0) add(
+                        LinkSegment(
+                            range = idx2..<idx2 + termsSecond.length,
+                            onAction = { onAction(AuthorizationUiAction.OnPrivacyPolicyClicked) }
+                        )
+                    )
+                }
+            }
             val termsTextLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
             Footnote(
-                text = stringResource(Res.string.authorization_footer_terms),
+                text = termsText,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
                     .link(
                         textLayoutResult = termsTextLayout,
-                        enabled = state.otp.isResendAvailable,
-                        onAction = { onAction(AuthorizationUiAction.OnResendOtpClicked) }
+                        segments = termsSegments,
                     ),
                 textAlign = TextAlign.Center,
                 isSecondary = true,

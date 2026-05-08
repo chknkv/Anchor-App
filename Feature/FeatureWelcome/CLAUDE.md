@@ -112,7 +112,8 @@ data class OtpUiResult(
 |--------|----------|
 | `OnEmailChanged(email)` | `isGetOtpEnabled = isEmailValid(email)`, сбрасывает `isError`/`sessionId` |
 | `OnGetOtpClicked` | `isLoading=true` → `sendOtp()` → Sheet + `startTimer()` (или `isError=true`) |
-| `OnTermsClicked` | `interactor.handleTermsClicked()` (заглушка) |
+| `OnTermsClicked` | `interactor.handleTermsClicked()` → `openUrl(TERMS_OF_USE_LINK)` |
+| `OnPrivacyPolicyClicked` | `interactor.handlePrivacyPolicyClicked()` → `openUrl(PRIVACY_POLICY_LINK)` |
 | `OnSheetVisibilityChange(isVisible)` | `true` → `startTimer()`; `false` → `stopTimer()` |
 | `OnPinChange(pinCode)` | При `length == 5` → автоматически `checkOtp()` |
 | `OnResendOtpClicked` | `resendOtp()` + сброс таймера на 60с + `startTimer()` |
@@ -128,13 +129,9 @@ sealed interface AuthorizationUiEvent {
 
 ### Таймер
 
-`timerJob: Job?` — единственный активный Job. Всегда `stopTimer()` перед `startTimer()`.
-Запускается в `onGetOtp()` при успехе и в `OnSheetVisibilityChange(true)`.
-
-**Детали ViewModel:** `actions: MutableSharedFlow(extraBufferCapacity=64)`, `tryEmit`.
-`CoroutineExceptionHandler` → `isLoading=false`, `isError=true`.
-`appSettings.setAuthorized(true)` — ТОЛЬКО в `onCheckOtp()`.
-`sessionId: String` — private var; передаётся в каждый вызов interactor явно.
+`timerJob: Job?` — один активный Job; `stopTimer()` перед `startTimer()`. Запускается при успехе `onGetOtp()` и `OnSheetVisibilityChange(true)`.
+`actions: MutableSharedFlow(extraBufferCapacity=64)`, `tryEmit`. `CoroutineExceptionHandler` → `isLoading=false`, `isError=true`.
+`appSettings.setAuthorized(true)` — ТОЛЬКО в `onCheckOtp()`. `sessionId: String` — private var, передаётся в interactor явно.
 
 ---
 
@@ -161,7 +158,7 @@ val featureWelcomeModule = module {
 data/mapper/    AuthorizationApiMapper (interface) + Impl — HTTP-запросы через ApiClient
 data/repository/ AuthorizationRepository (interface) + Impl — маппинг NetworkException → OtpException; saveTokens после verifyOtp
 domain/         OtpException (sealed: InvalidOtp)
-domain/interactor/ AuthorizationInteractor (interface) + Impl — делегирование в Repository
+domain/interactor/ AuthorizationInteractor (interface) + Impl — делегирование в Repository; URL-константы в companion object Impl
 models/data/    OtpSendRequest/Response · OtpVerifyRequest/Response · OtpResendRequest
 models/presentation/authorization/  AuthorizationUiAction · UiEvent · UiResult (не internal)
 navigation/     WelcomeNavRoute (internal @Serializable sealed)
@@ -171,14 +168,16 @@ di/             FeatureWelcomeModule
 composeResources/ drawable/ic_cross · values/strings.xml (EN) · values-ru/strings.xml (RU)
 ```
 
-`OtpVerifyResponse` (flat): `accessToken`, `refreshToken`, `isFirstAuthorized`.
-`OtpSendResponse` (flat): `sessionId`.
+`OtpVerifyResponse`: `accessToken`, `refreshToken`, `isFirstAuthorized`. `OtpSendResponse`: `sessionId`.
 
 ## Строковые ресурсы
 
 `authorization_header_title` · `authorization_body_subtitle` · `authorization_textinput_placeholder` ·
 `authorization_button_get_otp` · `authorization_bottomsheet_title` · `authorization_bottomsheet_footnote` ·
-`authorization_footer_terms` · `authorization_resend_button` · `authorization_timer_text` · `authorization_error_otp`.
+`authorization_footer_terms` · `authorization_footer_terms_first` · `authorization_footer_terms_second` ·
+`authorization_resend_button` · `authorization_timer_text` · `authorization_error_otp`.
+
+`_first`/`_second` — якорные подстроки footer (с NBSP); `IntRange` вычисляется через `indexOf` в `remember(termsText, termsFirst, termsSecond)`. EN: "Terms of Use"/"Privacy Policy". RU: "Условия использования"/"Политика конфиденциальности".
 
 ## Жёсткие правила
 
@@ -194,3 +193,6 @@ composeResources/ drawable/ic_cross · values/strings.xml (EN) · values-ru/stri
 | 8 | `AuthorizationUiAction` / `AuthorizationUiResult` / `AuthorizationUiEvent` — не `internal` |
 | 9 | `collectAsStateWithLifecycle()`, не `collectAsState()` |
 | 10 | `TokenStorage` — внедряется в `AuthorizationRepositoryImpl`; `TokenRepository` — запрещён в Feature |
+| 11 | Terms Footnote (`authorization_footer_terms`) — `enabled = true` всегда; не связывать с `isResendAvailable` |
+| 12 | Footer использует `List<LinkSegment>` с двумя независимыми action; диапазоны через `remember(termsText, termsFirst, termsSecond)` + `indexOf`; не хардкодить числовые индексы |
+| 13 | URL-константы Terms/Privacy — только в `companion object` `AuthorizationInteractorImpl`; не выносить в другие слои |

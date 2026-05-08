@@ -14,7 +14,7 @@ Package-prefix: `com.chknkv`. Kotlin: 2.3.21. ComposeMP: 1.10.3.
 :Anchor-MobileApp:androidApp   — Android точка входа (Application + MainActivity)
 :Anchor-MobileApp:shared       — KMP точка входа: AnchorApp, AnchorViewModel, AnchorNavRoute, DI-сборка
 
-:Core:CoreUtils                — AppSettings (тема/язык/авторизация), getAppVersion()
+:Core:CoreUtils                — AppSettings (тема/язык/авторизация), getAppVersion(), openUrl()
 :Core:CoreDesignSystem         — Compose UI-компоненты, токены, типографика, навигация
 :Core:CoreNetwork              — Ktor ApiClient, JWT refresh, NetworkException, TokenStorage
 :Core:CorePasscode             — PasscodeFlow, биометрия
@@ -73,8 +73,6 @@ AnchorMainActivity → setContent { AnchorApp() }
 **`initialRoute`** в `AnchorViewModel`:
 - `isAuthorized && !hasPasscode` → `Main`
 - иначе → `Welcome`
-
----
 
 ## Ключевые версии
 
