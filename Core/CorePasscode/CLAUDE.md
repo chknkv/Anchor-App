@@ -84,10 +84,12 @@ startKoin { modules(coreUtilsModule(AppIdentifier.ANCHOR), corePasscodeModule) }
 
 ### EnterPasscode
 
-**UiState:** `enteredDigits` · `isError` · `isForgotAlertVisible` · `isBiometricAvailable` · `biometricType: BiometricType` · `isChangeFlow: Boolean` · `shakeTrigger: Int`
+**UiState:** `enteredDigits` · `isError` · `isForgotAlertVisible` · `isBiometricAvailable` · `biometricType: BiometricType` · `isChangeFlow: Boolean` · `shakeTrigger: Int` · `showLastAttemptWarning: Boolean`
 **UiAction:** `Init · NumberClick(digit) · DeleteClick · ShowForgotAlert · HideForgotAlert · ForgotPasscode · TryBiometric`
 **UiEvent:** `InvalidPasscode · EnterSuccess · ForgotPasscodeRequested`
 **initScreen(isChangeFlow, biometricContext, biometryTitle, biometryReason, biometryCancel)**
+
+`showLastAttemptWarning = true` только при `isChangeFlow == false` и `failedAttempts == 4`. При `failedAttempts >= 5` — автосброс: `repository.clearPasscode()` + `ForgotPasscodeRequested` (без alert, без shake). Change-флоу счётчик не затрагивает.
 
 Строки биометрии вычисляются в Composable через `stringResource()` **до** `LaunchedEffect` — ViewModel не имеет доступа к Compose-контексту.
 
@@ -131,7 +133,8 @@ startKoin { modules(coreUtilsModule(AppIdentifier.ANCHOR), corePasscodeModule) }
 create_passcode_step1_title / step2_title / subtitle / skip /
   skip_alert_title / skip_alert_subtitle / skip_alert_confirm / skip_alert_cancel
 enter_passcode_title / title_change / subtitle / subtitle_change /
-  forgot / forgot_alert_title / forgot_alert_subtitle / forgot_alert_confirm / forgot_alert_cancel
+  forgot / forgot_alert_title / forgot_alert_subtitle / forgot_alert_confirm / forgot_alert_cancel /
+  last_attempt_warning
 biometry_title / subtitle / enable / skip /
   face_id_title / touch_id_title / biometry_prompt_reason / biometry_prompt_cancel
 ```

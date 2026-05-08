@@ -53,6 +53,7 @@ class EnterPasscodeViewModel(
     private var biometricJob: Job? = null
 
     private var isScreenInitialized = false
+    private var failedAttempts = 0
 
     /**
      * Инициализирует экран и параметры биометрии.
@@ -153,9 +154,40 @@ class EnterPasscodeViewModel(
         if (savedHash != null && savedHash == enteredHash) {
             _uiEvent.emit(EnterPasscodeUiEvent.EnterSuccess)
         } else {
-            _uiEvent.emit(EnterPasscodeUiEvent.InvalidPasscode)
-            updateResult {
-                it.copy(enteredDigits = emptyList(), isError = true, shakeTrigger = it.shakeTrigger + 1)
+            val current = successfulResult() ?: return
+            if (current.isChangeFlow) {
+                _uiEvent.emit(EnterPasscodeUiEvent.InvalidPasscode)
+                updateResult { it.copy(enteredDigits = emptyList(), isError = true, shakeTrigger = it.shakeTrigger + 1) }
+            } else {
+                failedAttempts++
+                when {
+                    failedAttempts >= MAX_FAILED_ATTEMPTS -> {
+                        repository.clearPasscode()
+                        _uiEvent.emit(EnterPasscodeUiEvent.ForgotPasscodeRequested)
+                    }
+                    failedAttempts == MAX_FAILED_ATTEMPTS - 1 -> {
+                        _uiEvent.emit(EnterPasscodeUiEvent.InvalidPasscode)
+                        updateResult {
+                            it.copy(
+                                enteredDigits = emptyList(),
+                                isError = true,
+                                shakeTrigger = it.shakeTrigger + 1,
+                                showLastAttemptWarning = true,
+                            )
+                        }
+                    }
+                    else -> {
+                        _uiEvent.emit(EnterPasscodeUiEvent.InvalidPasscode)
+                        updateResult {
+                            it.copy(
+                                enteredDigits = emptyList(),
+                                isError = true,
+                                shakeTrigger = it.shakeTrigger + 1,
+                                showLastAttemptWarning = false,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -198,5 +230,6 @@ class EnterPasscodeViewModel(
     private companion object {
         const val AUTO_CHECK_DELAY_MS = 200L
         const val AUTO_BIOMETRIC_DELAY_MS = 300L
+        const val MAX_FAILED_ATTEMPTS = 5
     }
 }

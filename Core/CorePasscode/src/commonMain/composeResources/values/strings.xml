@@ -22,6 +22,7 @@
     <string name="enter_passcode_forgot_alert_confirm">Reset</string>
     <string name="enter_passcode_forgot_alert_cancel">Cancel</string>
     <string name="enter_passcode_error_snackbar">Wrong passcode</string>
+    <string name="enter_passcode_last_attempt_warning">1&#160;attempt left. The&#160;passcode will&#160;be reset</string>
 
     <!-- Biometry setup -->
     <string name="biometry_title">Enable Biometry</string>

@@ -9,6 +9,7 @@ import anchor_app.core.corepasscode.generated.resources.enter_passcode_forgot_al
 import anchor_app.core.corepasscode.generated.resources.enter_passcode_forgot_alert_confirm
 import anchor_app.core.corepasscode.generated.resources.enter_passcode_forgot_alert_subtitle
 import anchor_app.core.corepasscode.generated.resources.enter_passcode_forgot_alert_title
+import anchor_app.core.corepasscode.generated.resources.enter_passcode_last_attempt_warning
 import anchor_app.core.corepasscode.generated.resources.enter_passcode_subtitle
 import anchor_app.core.corepasscode.generated.resources.enter_passcode_subtitle_change
 import anchor_app.core.corepasscode.generated.resources.enter_passcode_title
@@ -42,6 +43,9 @@ import com.chknkv.corepasscode.presentation.rememberBiometricContext
 import com.chknkv.designsystem.Footnote
 import com.chknkv.designsystem.Subheadline
 import com.chknkv.designsystem.Title1
+import androidx.compose.ui.graphics.Color
+import com.chknkv.designsystem.theme.Tokens
+import com.chknkv.designsystem.theme.getThemedColor
 import com.chknkv.designsystem.modifier.link
 import com.chknkv.designsystem.passcode.PasscodeKeyboard
 import com.chknkv.designsystem.screen.AppScaffold
@@ -136,15 +140,18 @@ private fun EnterPasscodeContent(
                         else Res.string.enter_passcode_title
                     )
                 )
+                val subtitleText = when {
+                    result.showLastAttemptWarning -> stringResource(Res.string.enter_passcode_last_attempt_warning)
+                    result.isChangeFlow -> stringResource(Res.string.enter_passcode_subtitle_change)
+                    else -> stringResource(Res.string.enter_passcode_subtitle)
+                }
                 Subheadline(
-                    text = stringResource(
-                        if (result.isChangeFlow) Res.string.enter_passcode_subtitle_change
-                        else Res.string.enter_passcode_subtitle
-                    ),
+                    text = subtitleText,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 4.dp),
-                    isSecondary = true,
+                    isSecondary = !result.showLastAttemptWarning,
+                    color = if (result.showLastAttemptWarning) Tokens.Warning.getThemedColor() else Color.Unspecified,
                 )
             }
 

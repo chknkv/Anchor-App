@@ -22,6 +22,7 @@
     <string name="enter_passcode_forgot_alert_confirm">Сбросить</string>
     <string name="enter_passcode_forgot_alert_cancel">Отмена</string>
     <string name="enter_passcode_error_snackbar">Неверный код-пароль. Попробуйте ещё&#160;раз.</string>
+    <string name="enter_passcode_last_attempt_warning">Осталась 1&#160;попытка. Код-пароль будет сброшен</string>
 
     <!-- Biometry setup -->
     <string name="biometry_title">Включите биометрию</string>

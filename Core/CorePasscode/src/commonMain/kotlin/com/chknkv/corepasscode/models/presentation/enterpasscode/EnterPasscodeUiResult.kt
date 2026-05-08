@@ -12,6 +12,7 @@ import com.chknkv.corepasscode.models.domain.BiometricType
  * @param biometricType Тип биометрии для отрисовки иконки (Face/Touch).
  * @param isChangeFlow `true` — режим верификации перед сменой (влияет на текст экрана).
  * @param shakeTrigger Счётчик ошибок для shake-анимации.
+ * @param showLastAttemptWarning `true` — показать предупреждение об оставшейся одной попытке (только в режиме входа).
  */
 data class EnterPasscodeUiResult(
     val enteredDigits: List<Int> = emptyList(),
@@ -21,4 +22,5 @@ data class EnterPasscodeUiResult(
     val biometricType: BiometricType = BiometricType.NONE,
     val isChangeFlow: Boolean = false,
     val shakeTrigger: Int = 0,
+    val showLastAttemptWarning: Boolean = false,
 )
