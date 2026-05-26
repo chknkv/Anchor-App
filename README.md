@@ -12,7 +12,16 @@
 
 > **Master's thesis.** This project was developed and defended in June 2026 at RTU MIREA as part of a Master's degree program in Mobile Development. Grade: _to be updated._
 
-### What is Anchor?
+---
+
+- [What is Anchor?](#what-is-anchor)
+- [Technical overview](#technical-overview)
+  - [Build and run](#build-and-run)
+  - [Tech stack](#tech-stack)
+  - [Project structure](#project-structure)
+  - [Other technical details](#other-technical-details)
+
+## What is Anchor?
 
 **Anchor** is a cross-platform mobile app for habit tracking — both building positive habits and breaking negative ones. It supports the full habit lifecycle: discovering what you want to change, committing to a daily routine, tracking your progress over time, and staying motivated.
 
@@ -30,16 +39,13 @@ On the main screen, alongside your habit list, **Anchor** shows a daily motivati
 
 Anchor is **open source**. The full client source is available on GitHub. The REST API backend was developed by a project co-author as part of the same thesis and is not included in this repository.
 
-### Technical overview
+## Technical overview
 
-#### Build and run
+### Build and run
 
-**Prerequisites**
 
 - **Android:** Android SDK, `ANDROID_HOME` set (or SDK at `~/Library/Android/sdk` on macOS). A device or emulator with API 24+ and USB debugging enabled.
 - **iOS:** Xcode, iOS Simulator or a physical device running iOS 15+. For device builds, code signing must be configured.
-
-**Commands**
 
 From the project root:
 
@@ -53,9 +59,7 @@ From the project root:
 
 The scripts use Gradle for the shared Kotlin framework and, on iOS, invoke `xcodebuild` for the app. They select a single device or simulator automatically if multiple are available.
 
----
-
-#### Tech stack
+### Tech stack
 
 |   | Area | Technologies |
 |---|------|--------------|
@@ -73,7 +77,7 @@ The scripts use Gradle for the shared Kotlin framework and, on iOS, invoke `xcod
 
 ---
 
-#### Project structure
+### Project structure
 
 ```
 Anchor-App/
@@ -103,9 +107,7 @@ Anchor-App/
 - Core modules do not import Feature modules
 - `CoreDesignSystem` only imports `CoreUtils` among Core modules
 
----
-
-#### Other technical details
+### Other technical details
 
 **Architecture.** Every Feature module follows a strict MVI contract: `UiAction` is emitted by the UI, processed by a `ViewModel` into `UiResult` (a plain data class), and exposed as a sealed `UiState` (Init / Loading / Successful / Error). One-shot navigation and side-effect events are delivered via `SharedFlow<UiEvent>`. All UI state is collected with `collectAsStateWithLifecycle()`.
 
@@ -124,5 +126,3 @@ Anchor-App/
 <p align="center">
   If you find Anchor useful, consider giving the repo a ⭐ on GitHub.
 </p>
-
----
