@@ -10,9 +10,7 @@
 
 ---
 
-> **Master's thesis.** This project was developed and defended in June 2026 at RTU MIREA as part of a Master's degree program in Mobile Development. Grade: _to be updated._
-
----
+> **Master's thesis.** This project was developed and defended in June 2026 at RTU MIREA (Moscow) as the graduation work for a Master's degree in Information Systems and Technologies — program 09.04.02 "Digital Product Development Management". Grade: _to be updated._
 
 - [What is Anchor?](#what-is-anchor)
 - [Technical overview](#technical-overview)
