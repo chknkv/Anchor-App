@@ -16,6 +16,7 @@ kotlinStdlib = "2.3.21"
 # Android Libraries
 androidx-appcompat = "1.7.1"
 androidx-core-ktx = "1.18.0"
+androidx-splashscreen = "1.0.1"
 
 # KMP Libraries
 coroutines = "1.10.2"
@@ -96,6 +97,7 @@ ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "ui" }
 material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "composeMultiplatform" }
 
 # Android Specific
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splashscreen" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
