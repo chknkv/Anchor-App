@@ -36,10 +36,10 @@ On the main screen, alongside your habit list, **Anchor** shows a daily motivati
 Anchor is **open source**. The full client source is available on GitHub. The REST API backend was developed by a project co-author as part of the same thesis and is not included in this repository.
 
 <p align="center">
-  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_001.jpg" alt="Anchor iOS - Screenshot 1" width="225" />
-  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_002.jpg" alt="Anchor iOS - Screenshot 2" width="225" />
-  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_003.jpg" alt="Anchor iOS - Screenshot 3" width="225" />
-  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_004.jpg" alt="Anchor iOS - Screenshot  4" width="225" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_001.jpg" alt="Anchor iOS - Screenshot 1" width="200" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_002.jpg" alt="Anchor iOS - Screenshot 2" width="200" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_003.jpg" alt="Anchor iOS - Screenshot 3" width="200" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_004.jpg" alt="Anchor iOS - Screenshot  4" width="200" />
 </p>
 
 ## Technical overview
