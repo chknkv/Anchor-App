@@ -8,8 +8,6 @@
   <img src="https://img.shields.io/badge/KMP-multiplatform-7F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="KMP" />
 </p>
 
----
-
 > **Master's thesis.** This project was developed and defended in June 2026 at RTU MIREA (Moscow) as the graduation work for a Master's degree in Information Systems and Technologies — program 09.04.02 "Digital Product Development Management". Grade: _to be updated._
 
 - [What is Anchor?](#what-is-anchor)
@@ -36,6 +34,13 @@ On the main screen, alongside your habit list, **Anchor** shows a daily motivati
 **Customization.** The app supports light, dark, and system-adaptive themes, and is fully localized in English and Russian. Language and theme can be changed at any time in settings.
 
 Anchor is **open source**. The full client source is available on GitHub. The REST API backend was developed by a project co-author as part of the same thesis and is not included in this repository.
+
+<p align="center">
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_001.jpg" alt="Anchor iOS - Screenshot 1" width="225" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_002.jpg" alt="Anchor iOS - Screenshot 2" width="225" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_003.jpg" alt="Anchor iOS - Screenshot 3" width="225" />
+  <img src="docs/IMAGES/SCREENS/IOS/IOS_EN_004.jpg" alt="Anchor iOS - Screenshot  4" width="225" />
+</p>
 
 ## Technical overview
 
